@@ -1,0 +1,93 @@
+<aside
+  :class="sidebarToggle ? 'translate-x-0 lg:w-[90px]' : '-translate-x-full'"
+  class="sidebar fixed left-0 top-0 z-9999 flex h-screen w-[290px] flex-col overflow-y-hidden border-r border-gray-200 bg-white px-5 dark:border-gray-800 dark:bg-black lg:static lg:translate-x-0"
+>
+  <!-- HEADER -->
+  <div
+    :class="sidebarToggle ? 'justify-center' : 'justify-between'"
+    class="flex items-center gap-2 pt-8 sidebar-header pb-7"
+  >
+    <a href="index.html">
+      <span class="logo" :class="sidebarToggle ? 'hidden' : ''">
+        <img class="dark:hidden" src="./images/logo.png" />
+        <img class="hidden dark:block" src="./images/logo.png" />
+      </span>
+
+      <img
+        class="logo-icon"
+        :class="sidebarToggle ? 'lg:block' : 'hidden'"
+        src="./images/logo.png"
+      />
+    </a>
+  </div>
+
+  <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+    <nav x-data="{selected: $persist('Dashboard')}">
+
+      <!-- ================= DASHBOARD ================= -->
+      <h3 class="mb-4 text-xs uppercase text-gray-400">MENU</h3>
+      <ul class="flex flex-col gap-2 mb-6">
+
+        <li>
+          <a href="index.html"
+            class="menu-item"
+            :class="page === 'dashboard' ? 'menu-item-active' : 'menu-item-inactive'">
+            Dashboard
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- ================= MASTER ================= -->
+      <h3 class="mb-4 text-xs uppercase text-gray-400">MASTER</h3>
+      <ul class="flex flex-col gap-2 mb-6">
+
+        <li><a href="sekolah.html" class="menu-item" :class="page==='sekolah' ? 'menu-item-active':'menu-item-inactive'">Sekolah</a></li>
+
+        <li><a href="pelajar.html" class="menu-item" :class="page==='pelajar' ? 'menu-item-active':'menu-item-inactive'">Pelajar</a></li>
+
+        <li><a href="pengajar.html" class="menu-item" :class="page==='pengajar' ? 'menu-item-active':'menu-item-inactive'">Pengajar</a></li>
+
+        <li><a href="pelajaran.html" class="menu-item" :class="page==='pelajaran' ? 'menu-item-active':'menu-item-inactive'">Pelajaran</a></li>
+
+        <li><a href="tempat.html" class="menu-item" :class="page==='tempat' ? 'menu-item-active':'menu-item-inactive'">Tempat</a></li>
+
+        <li><a href="paket.html" class="menu-item" :class="page==='paket' ? 'menu-item-active':'menu-item-inactive'">Paket</a></li>
+
+        <li><a href="personal.html" class="menu-item" :class="page==='personal' ? 'menu-item-active':'menu-item-inactive'">Personal</a></li>
+
+      </ul>
+
+      <!-- ================= TRANSAKSI ================= -->
+      <h3 class="mb-4 text-xs uppercase text-gray-400">TRANSAKSI</h3>
+      <ul class="flex flex-col gap-2 mb-6">
+
+        <li><a href="invoice.html" class="menu-item" :class="page==='invoice' ? 'menu-item-active':'menu-item-inactive'">Invoice</a></li>
+
+        <li><a href="invoice-berulang.html" class="menu-item" :class="page==='invoice_berulang' ? 'menu-item-active':'menu-item-inactive'">Invoice Berulang</a></li>
+
+        <li><a href="keuangan.html" class="menu-item" :class="page==='keuangan' ? 'menu-item-active':'menu-item-inactive'">Keuangan</a></li>
+
+      </ul>
+
+      <!-- ================= MANAGEMENT ================= -->
+      <h3 class="mb-4 text-xs uppercase text-gray-400">MANAGEMENT</h3>
+      <ul class="flex flex-col gap-2 mb-6">
+
+        <li><a href="penggajian.html" class="menu-item" :class="page==='penggajian' ? 'menu-item-active':'menu-item-inactive'">Penggajian</a></li>
+
+        <li><a href="pengajuan.html" class="menu-item" :class="page==='pengajuan' ? 'menu-item-active':'menu-item-inactive'">Pengajuan Penggantian</a></li>
+
+      </ul>
+
+      <!-- ================= REPORT ================= -->
+      <h3 class="mb-4 text-xs uppercase text-gray-400">REPORT</h3>
+      <ul class="flex flex-col gap-2 mb-6">
+
+        <li><a href="laporan.html" class="menu-item" :class="page==='laporan' ? 'menu-item-active':'menu-item-inactive'">Laporan</a></li>
+
+      </ul>
+
+    </nav>
+  </div>
+</aside>

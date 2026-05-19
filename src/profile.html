@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile TECH-C</title>
+  <script src="https://unpkg.com/alpinejs" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body
+  x-data="{ darkMode: false }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode'));
+    $watch('darkMode', v => localStorage.setItem('darkMode', JSON.stringify(v)))
+  "
+  :class="{'dark bg-gray-900': darkMode}"
+>
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <div class="w-64 bg-gray-800 text-white p-4">
+    Sidebar
+  </div>
+
+  <!-- CONTENT -->
+  <div class="flex flex-col flex-1 overflow-y-auto">
+
+    <!-- HEADER -->
+    <!-- COPY header.html di sini -->
+    <header class="flex justify-end p-4 border-b">
+      <div class="flex items-center gap-3">
+
+        <img id="header_avatar" class="w-10 h-10 rounded-full"
+             src="https://ui-avatars.com/api/?name=User">
+
+        <span id="header_name">Loading...</span>
+
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="p-6">
+
+      <div class="bg-white p-6 rounded-xl shadow">
+
+        <!-- PROFILE HEADER -->
+        <div class="flex items-center gap-6">
+
+          <div class="w-20 h-20 rounded-full overflow-hidden border">
+            <img id="profile_image" src="https://ui-avatars.com/api/?name=User">
+          </div>
+
+          <input type="file" id="upload_photo">
+
+          <div>
+            <h4 id="full_name" class="text-lg font-semibold">
+              Loading...
+            </h4>
+            <p class="text-gray-500 text-sm">User Profile</p>
+          </div>
+
+        </div>
+
+        <!-- DATA -->
+        <div class="mt-8 grid grid-cols-2 gap-6">
+
+          <div>
+            <p class="text-xs text-gray-500">First Name</p>
+            <p id="first_name">Loading...</p>
+          </div>
+
+          <div>
+            <p class="text-xs text-gray-500">Last Name</p>
+            <p id="last_name">Loading...</p>
+          </div>
+
+          <div>
+            <p class="text-xs text-gray-500">Email</p>
+            <p id="email">Loading...</p>
+          </div>
+
+          <div>
+            <p class="text-xs text-gray-500">Phone</p>
+            <p id="phone">Loading...</p>
+          </div>
+
+          <div>
+            <p class="text-xs text-gray-500">Bio</p>
+            <p id="bio">Loading...</p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+</div>
+
+<!-- ================= JS ================= -->
+
+<script>
+async function loadUser() {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/profile', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    });
+
+    const data = await res.json();
+
+    const fullName = `${data.first_name ?? ''} ${data.last_name ?? ''}`.trim();
+
+    // ===== PROFILE =====
+    document.getElementById('full_name').innerText = fullName || "User";
+    document.getElementById('first_name').innerText = data.first_name ?? "-";
+    document.getElementById('last_name').innerText = data.last_name ?? "-";
+    document.getElementById('email').innerText = data.email ?? "-";
+    document.getElementById('phone').innerText = data.phone ?? "-";
+    document.getElementById('bio').innerText = data.bio ?? "-";
+
+    // ===== FOTO =====
+    const photoUrl = data.photo
+      ? `http://127.0.0.1:8000/storage/${data.photo}`
+      : `https://ui-avatars.com/api/?name=${fullName}`;
+
+    document.getElementById('profile_image').src = photoUrl;
+
+    // ===== HEADER (INI YANG PENTING) =====
+    document.getElementById('header_name').innerText = fullName;
+    document.getElementById('header_avatar').src = photoUrl;
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadUser);
+</script>
+
+<!-- UPLOAD -->
+<script>
+document.getElementById('upload_photo').addEventListener('change', async function () {
+  const file = this.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('photo', file);
+
+  const res = await fetch('http://127.0.0.1:8000/api/profile/upload-photo', {
+    method: 'POST',
+    body: formData,
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token')
+    }
+  });
+
+  const data = await res.json();
+
+  document.getElementById('profile_image').src = data.photo_url;
+  document.getElementById('header_avatar').src = data.photo_url;
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TECH-C Robotic and Coding Dashboard</title>
+</head>
+
+<script>
+const token = localStorage.getItem('token');
+const role = localStorage.getItem('role');
+
+if (!token || role !== 'admin') {
+  window.location.href = './login.html';
+}
+</script>
+
+<body
+  x-data="{ page: 'ecommerce', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode'));
+    $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+  "
+  :class="{'dark bg-gray-900': darkMode === true}"
+>
+
+  <!-- Preloader -->
+  <include src="./partials/preloader.html"></include>
+
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <include src="./partials/sidebar.html"></include>
+
+
+    <!-- Content -->
+    <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
+
+      <include src="./partials/overlay.html"></include>
+
+      <!-- Header -->
+      <include src="./partials/header.html"></include>
+
+      <!-- MAIN -->
+      <main class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+
+        <!-- Statistik -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+
+          <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
+            <p class="text-sm text-gray-500">Total Pelajar</p>
+            <h2 id="pelajar" class="text-2xl font-bold text-gray-800 dark:text-white">0</h2>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
+            <p class="text-sm text-gray-500">Total Pendaftaran</p>
+            <h2 id="pendaftaran" class="text-2xl font-bold text-gray-800 dark:text-white">0</h2>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
+            <p class="text-sm text-gray-500">Total Pelajaran</p>
+            <h2 id="pelajaran" class="text-2xl font-bold text-gray-800 dark:text-white">0</h2>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
+            <p class="text-sm text-gray-500">Pendapatan</p>
+            <h2 id="pendapatan" class="text-2xl font-bold text-green-500">0</h2>
+          </div>
+
+        </div>
+
+        <!-- Chart (FIX ERROR CHART.JS) -->
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow h-[300px]">
+          <canvas id="studentChart"></canvas>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- LOAD PARTIAL -->
+  <script>
+  async function loadPartials() {
+    const includes = document.querySelectorAll('include');
+
+    for (let el of includes) {
+      const file = el.getAttribute('src');
+      try {
+        const res = await fetch(file);
+        const html = await res.text();
+        el.outerHTML = html;
+      } catch (e) {
+        console.error("Gagal load:", file);
+      }
+    }
+  }
+
+  loadPartials();
+  </script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- DASHBOARD SCRIPT -->
+  <script>
+  let chart;
+
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = value;
+  }
+
+  async function loadChart() {
+    try {
+      const res = await fetch('http://localhost:8000/api/dashboard');
+      const data = await res.json();
+
+      const ctx = document.getElementById('studentChart');
+      if (!ctx) return;
+
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.chart?.labels || [],
+          datasets: [{
+            label: 'Students',
+            data: data.chart?.data || [],
+            borderWidth: 2,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+
+    } catch (err) {
+      console.error("Chart error:", err);
+    }
+  }
+
+  async function loadDashboard() {
+    try {
+      const res = await fetch('http://localhost:8000/api/dashboard');
+      const data = await res.json();
+
+      console.log(data);
+
+      setText('pelajar', data.totalPelajar);
+      setText('pendaftaran', data.pemesananSiswa ?? 0);
+      setText('pelajaran', data.totalPelajaran);
+      setText('pendapatan', "IDR " + data.pendapatan);
+
+      // optional (kalau nanti ada elementnya)
+      setText('tagihan', data.tagihanBelumDibayar);
+      setText('penggantian', data.permintaanPenggantian);
+      setText('pemesanan', data.pemesananSiswa);
+      setText('pengumuman', data.pengumuman);
+
+    } catch (err) {
+      console.error("API error:", err);
+    }
+  }
+
+  // JALANKAN SETELAH SEMUA LOAD
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      loadDashboard();
+      loadChart();
+      setInterval(loadDashboard, 5000);
+    }, 500); // tunggu partial ke-load
+  });
+
+  </script>
+
+</body>
+</html>

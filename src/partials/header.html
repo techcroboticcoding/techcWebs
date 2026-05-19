@@ -1,0 +1,73 @@
+<header
+  x-data="{menuToggle: false}"
+  class="sticky top-0 z-99999 flex w-full border-gray-200 bg-white lg:border-b dark:border-gray-800 dark:bg-gray-900"
+>
+  <div class="flex grow flex-col items-center justify-between lg:flex-row lg:px-6">
+    
+    <!-- KIRI -->
+    <div class="flex w-full items-center justify-between gap-2 px-3 py-3 lg:px-0">
+
+      <!-- LOGO -->
+      <a href="index.html" class="lg:hidden">
+        <img src="./images/logo.png" />
+      </a>
+
+    </div>
+
+    <!-- KANAN -->
+    <div class="flex items-center gap-4 px-5 py-4 lg:px-0">
+
+      <!-- USER -->
+      <div class="relative">
+        <a class="flex items-center text-gray-700">
+          
+          <!-- FOTO -->
+          <span class="mr-3 h-11 w-11 overflow-hidden rounded-full">
+            <img id="header_avatar" src="https://ui-avatars.com/api/?name=User">
+          </span>
+
+          <!-- NAMA -->
+          <span id="header_name" class="text-theme-sm mr-1 font-medium">
+            Loading...
+          </span>
+
+        </a>
+      </div>
+
+    </div>
+  </div>
+</header><script>
+async function loadHeaderUser() {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/profile', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    });
+
+    const data = await res.json();
+    console.log("HEADER USER:", data);
+
+    // NAME
+    const name = data.name ?? "User";
+    const nameEl = document.getElementById('header_name');
+    if (nameEl) nameEl.innerText = name;
+
+    // AVATAR
+    const avatarEl = document.getElementById('header_avatar');
+    if (avatarEl) {
+      avatarEl.src = data.photo
+        ? `http://127.0.0.1:8000/storage/${data.photo}`
+        : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
+    }
+
+  } catch (err) {
+    console.error("Header error:", err);
+  }
+}
+
+// tunggu DOM + partial ke-load
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(loadHeaderUser, 500);
+});
+</script>

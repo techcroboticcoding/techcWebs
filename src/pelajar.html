@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftar Pelajar</title>
+</head>
+
+<script>
+if (!localStorage.getItem('token')) {
+  window.location.href = './login.html';
+}
+</script>
+
+<body
+  x-data="{ page: 'pelajar', darkMode: false }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode'));
+    $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+  "
+  :class="{'dark bg-gray-900': darkMode === true}"
+>
+
+<!-- HEADER -->
+<include src="./partials/header.html"></include>
+
+<!-- CONTENT -->
+<main class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+
+  <!-- TITLE -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+      Daftar Pelajar
+    </h1>
+    <p class="text-gray-500 text-sm">
+      Pilih pelajar untuk melihat detail
+    </p>
+  </div>
+
+  <!-- GRID -->
+  <div id="pelajarList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+    <p class="text-gray-500">Loading...</p>
+  </div>
+
+</main>
+
+<!-- LOAD PARTIAL -->
+<script>
+async function loadPartials() {
+  const includes = document.querySelectorAll('include');
+  for (let el of includes) {
+    const file = el.getAttribute('src');
+    const res = await fetch(file);
+    const html = await res.text();
+    el.outerHTML = html;
+  }
+}
+loadPartials();
+</script>
+
+<!-- LOAD DATA MURID -->
+<script>
+async function loadPelajar() {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/students', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    });
+
+    const data = await res.json();
+
+    const container = document.getElementById('pelajarList');
+    container.innerHTML = "";
+
+    data.forEach(murid => {
+
+      const foto = murid.photo
+        ? `http://127.0.0.1:8000/storage/${murid.photo}`
+        : `https://ui-avatars.com/api/?name=${encodeURIComponent(murid.name)}`;
+
+      const card = `
+        <div onclick="pilihPelajar(${murid.id})"
+          class="cursor-pointer bg-white dark:bg-gray-800 p-5 rounded-xl shadow hover:shadow-lg transition">
+
+          <div class="flex flex-col items-center text-center">
+
+            <img src="${foto}"
+              class="w-20 h-20 rounded-full mb-4 object-cover border" />
+
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
+              ${murid.name}
+            </h2>
+
+            <p class="text-sm text-gray-500">
+              Klik untuk lihat profile
+            </p>
+
+          </div>
+        </div>
+      `;
+
+      container.innerHTML += card;
+    });
+
+  } catch (err) {
+    console.error("Error load pelajar:", err);
+  }
+}
+
+function pilihPelajar(id) {
+  localStorage.setItem('student_id', id);
+  window.location.href = "profile.html";
+}
+
+loadPelajar();
+</script>
+
+</body>
+</html>

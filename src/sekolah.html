@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pilih Sekolah</title>
+</head>
+
+<script>
+if (!localStorage.getItem('token')) {
+  window.location.href = './login.html';
+}
+</script>
+
+<body
+  x-data="{ page: 'sekolah', darkMode: false }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode'));
+    $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+  "
+  :class="{'dark bg-gray-900': darkMode === true}"
+>
+
+<!-- INCLUDE HEADER -->
+<include src="./partials/header.html"></include>
+
+<!-- CONTENT -->
+<main class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+
+  <!-- TITLE -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+      Pilih Sekolah
+    </h1>
+    <p class="text-gray-500 text-sm">
+      Pilih sekolah untuk melihat data
+    </p>
+  </div>
+
+  <!-- GRID SEKOLAH -->
+  <div id="schoolList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+    
+    <!-- LOADING -->
+    <p class="text-gray-500">Loading...</p>
+
+  </div>
+
+</main>
+
+<!-- LOAD PARTIAL -->
+<script>
+async function loadPartials() {
+  const includes = document.querySelectorAll('include');
+  for (let el of includes) {
+    const file = el.getAttribute('src');
+    const res = await fetch(file);
+    const html = await res.text();
+    el.outerHTML = html;
+  }
+}
+loadPartials();
+</script>
+
+<!-- SCRIPT LOAD SEKOLAH -->
+<script>
+async function loadSekolah() {
+  try {
+    // 🔥 nanti ganti API Laravel kamu
+    // const res = await fetch('http://127.0.0.1:8000/api/sekolah');
+    // const data = await res.json();
+
+    // sementara dummy dulu
+const data = [
+  { id: 1, nama: "SD Daar El Latif", logo: "https://ui-avatars.com/api/?name=Daar+El+Latif" },
+  { id: 2, nama: "SDIT Al-Khairiyah", logo: "https://ui-avatars.com/api/?name=Al+Khairiyah" },
+  { id: 3, nama: "SDIT BIS", logo: "https://ui-avatars.com/api/?name=BIS" },
+  { id: 4, nama: "SDIT Al Hanif", logo: "https://ui-avatars.com/api/?name=Al+Hanif" },
+  { id: 5, nama: "MTsN 3 Cilegon", logo: "https://ui-avatars.com/api/?name=MTsN+3" },
+  { id: 6, nama: "SDIT CIS", logo: "https://ui-avatars.com/api/?name=CIS" },
+  { id: 7, nama: "SDIT Irsyadul Ibad 2", logo: "https://ui-avatars.com/api/?name=Irsyadul+Ibad" },
+  { id: 8, nama: "SDIT Al-Izzah 1", logo: "https://ui-avatars.com/api/?name=Al+Izzah" },
+  { id: 9, nama: "SDIT Al-Izzah 2", logo: "https://ui-avatars.com/api/?name=Al+Izzah" },
+  { id: 10, nama: "MIN 1 Cilegon", logo: "https://ui-avatars.com/api/?name=MIN+1" },
+  { id: 11, nama: "SD Peradaban", logo: "https://ui-avatars.com/api/?name=Peradaban" },
+  { id: 12, nama: "SMA Al Azhar", logo: "https://ui-avatars.com/api/?name=Al+Azhar" },
+  { id: 13, nama: "SD WR", logo: "https://ui-avatars.com/api/?name=SD+WR" },
+  { id: 14, nama: "MTsN 2 Cilegon", logo: "https://ui-avatars.com/api/?name=MTsN+2" },
+  { id: 15, nama: "SMP CIS", logo: "https://ui-avatars.com/api/?name=SMP+CIS" },
+  { id: 16, nama: "SIS", logo: "https://ui-avatars.com/api/?name=SIS" },
+  { id: 17, nama: "SMP Al Azhar", logo: "https://ui-avatars.com/api/?name=SMP+Al+Azhar" },
+  { id: 18, nama: "SD YPKS 2 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+2" },
+  { id: 19, nama: "SD YPKS 4 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+4" },
+  { id: 20, nama: "SD YPKS 5 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+5" },
+  { id: 21, nama: "TK Bosowa", logo: "https://ui-avatars.com/api/?name=Bosowa" },
+  { id: 22, nama: "SD Bosowa", logo: "https://ui-avatars.com/api/?name=Bosowa" },
+  { id: 23, nama: "SDIT Bina Insani", logo: "https://ui-avatars.com/api/?name=Bina+Insani" },
+  { id: 24, nama: "SDIT Bina Bangsa", logo: "https://ui-avatars.com/api/?name=Bina+Bangsa" },
+  { id: 25, nama: "MTsN 1 Kota Serang", logo: "https://ui-avatars.com/api/?name=MTsN+1" },
+  { id: 26, nama: "SMP Ibnu Syam", logo: "https://ui-avatars.com/api/?name=Ibnu+Syam" },
+  { id: 27, nama: "SMA Al Bayan", logo: "https://ui-avatars.com/api/?name=Al+Bayan" }
+];
+
+    const container = document.getElementById('schoolList');
+    container.innerHTML = "";
+
+    data.forEach(sekolah => {
+      const card = `
+        <div onclick="pilihSekolah(${sekolah.id})"
+          class="cursor-pointer bg-white dark:bg-gray-800 p-5 rounded-xl shadow hover:shadow-lg transition">
+
+          <div class="flex flex-col items-center text-center">
+
+            <img src="${sekolah.logo}"
+              class="w-20 h-20 rounded-full mb-4 object-cover border" />
+
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
+              ${sekolah.nama}
+            </h2>
+
+            <p class="text-sm text-gray-500">
+              Klik untuk masuk
+            </p>
+
+          </div>
+        </div>
+      `;
+      container.innerHTML += card;
+    });
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function pilihSekolah(id) {
+  // simpan ke localStorage
+  localStorage.setItem('school_id', id);
+
+  // redirect (bebas mau kemana)
+  window.location.href = "index.html";
+}
+
+loadSekolah();
+</script>
+
+</body>
+</html>
