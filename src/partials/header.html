@@ -39,7 +39,7 @@
 </header><script>
 async function loadHeaderUser() {
   try {
-    const res = await fetch('https://microwave-machines-hosted-lol.trycloudflare.com/api/profile', {
+    const res = await fetch('http://localhost:8000/api/profile', {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('token')
       }
@@ -57,7 +57,7 @@ async function loadHeaderUser() {
     const avatarEl = document.getElementById('header_avatar');
     if (avatarEl) {
       avatarEl.src = data.photo
-        ? `https://microwave-machines-hosted-lol.trycloudflare.com/storage/${data.photo}`
+        ? `http://localhost:8000/storage/${data.photo}`
         : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
     }
 

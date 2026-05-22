@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - TECH-C</title>
 
   <!-- Tailwind CDN -->
@@ -12,28 +12,38 @@
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
   <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
-    
+
     <h2 class="text-2xl font-bold text-center mb-6">Login TECH-C</h2>
 
     <form id="loginForm" class="space-y-4">
 
       <div>
         <label class="block text-sm mb-1">Email</label>
-        <input type="email" id="email"
-          class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200"
-          placeholder="email@gmail.com" required>
+        <input
+          type="email"
+          id="email"
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
+          placeholder="email@gmail.com"
+          required
+        />
       </div>
 
       <div>
         <label class="block text-sm mb-1">Password</label>
-        <input type="password" id="password"
-          class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200"
-          placeholder="********" required>
+        <input
+          type="password"
+          id="password"
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
+          placeholder="********"
+          required
+        />
       </div>
 
       <button
+        id="loginBtn"
         type="submit"
-        class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+        class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+      >
         Login
       </button>
 
@@ -43,55 +53,146 @@
 
   </div>
 
-  <!-- SCRIPT LOGIN -->
   <script>
-  document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+    // =========================
+    // CONFIG
+    // =========================
+    const API_BASE_URL = "http://localhost:8000/api";
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const errorEl = document.getElementById('error');
+    // =========================
+    // AUTO REDIRECT KALAU SUDAH LOGIN
+    // =========================
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
 
-    try {
-const res = await fetch('https://microwave-machines-hosted-lol.trycloudflare.com/api/login', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  },
-  body: JSON.stringify({ email, password })
-});
-
-      const data = await res.json();
-
-      if (res.ok) {
-        // simpan token
-
-  localStorage.setItem('token', data.token);
-  localStorage.setItem('role', data.role);
-  localStorage.setItem('name', data.name);
-
-  // redirect sesuai role
-  if (data.role === 'admin') {
-    window.location.href = 'index.html';
-  } else if (data.role === 'siswa') {
-    window.location.href = 'dashboardSiswa.html';
-  } else {
-    errorEl.innerText = 'Role tidak valid';
-    errorEl.classList.remove('hidden');
-  }
-
-      } else {
-        errorEl.innerText = data.message || 'Login gagal';
-        errorEl.classList.remove('hidden');
+      if (token && role === "admin") {
+        window.location.href = "index.html";
       }
 
-    } catch (err) {
-      errorEl.innerText = 'Server error';
-      errorEl.classList.remove('hidden');
+      if (token && role === "siswa") {
+        window.location.href = "dashboardSiswa.html";
+      }
+    });
+
+    // =========================
+    // ELEMENT
+    // =========================
+    const loginForm = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const errorEl = document.getElementById("error");
+    const loginBtn = document.getElementById("loginBtn");
+
+    function showError(message) {
+      errorEl.innerText = message;
+      errorEl.classList.remove("hidden");
     }
-  });
+
+    function hideError() {
+      errorEl.innerText = "";
+      errorEl.classList.add("hidden");
+    }
+
+    function setLoading(isLoading) {
+      loginBtn.disabled = isLoading;
+      loginBtn.innerText = isLoading ? "Loading..." : "Login";
+    }
+
+    // =========================
+    // LOGIN SUBMIT
+    // =========================
+    loginForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      hideError();
+      setLoading(true);
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
+
+        let data = null;
+
+        try {
+          data = await res.json();
+        } catch (jsonError) {
+          const text = await res.text();
+          console.error("Response bukan JSON:", text);
+          showError("Response server bukan JSON. Cek Laravel API.");
+          setLoading(false);
+          return;
+        }
+
+        console.log("LOGIN RESPONSE:", data);
+
+        if (!res.ok) {
+          showError(data.message || "Login gagal. Email atau password salah.");
+          setLoading(false);
+          return;
+        }
+
+        // Support dua bentuk response:
+        // 1. { token, role, name }
+        // 2. { token, user: { role, name } }
+        const token = data.token || data.access_token || "";
+        const role = data.role || data.user?.role || "";
+        const name = data.name || data.user?.name || "";
+
+        if (!token) {
+          showError("Token tidak ditemukan dari server.");
+          setLoading(false);
+          return;
+        }
+
+        if (!role) {
+          showError("Role tidak ditemukan dari server.");
+          setLoading(false);
+          return;
+        }
+
+        // Bersihkan session lama
+        localStorage.clear();
+
+        // Simpan session baru
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", role);
+        localStorage.setItem("name", name);
+
+        // Redirect sesuai role
+        if (role === "admin") {
+          window.location.href = "index.html";
+          return;
+        }
+
+        if (role === "siswa") {
+          window.location.href = "dashboardSiswa.html";
+          return;
+        }
+
+        localStorage.clear();
+        showError("Role tidak valid: " + role);
+        setLoading(false);
+
+      } catch (err) {
+        console.error("LOGIN ERROR:", err);
+        showError("Server error. Pastikan Laravel jalan di http://localhost:8000");
+        setLoading(false);
+      }
+    });
   </script>
 
 </body>
-</html> 
+</html>

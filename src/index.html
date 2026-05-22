@@ -10,8 +10,13 @@
 const token = localStorage.getItem('token');
 const role = localStorage.getItem('role');
 
-if (!token || role !== 'admin') {
-  window.location.href = './login.html';
+if (!token) {
+  window.location.replace('./login.html');
+} else if (role === 'siswa') {
+  window.location.replace('./dashboardSiswa.html');
+} else if (role !== 'admin') {
+  localStorage.clear();
+  window.location.replace('./login.html');
 }
 </script>
 
@@ -102,6 +107,8 @@ if (!token || role !== 'admin') {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- DASHBOARD SCRIPT -->
+
+  
   <script>
   let chart;
 
@@ -109,70 +116,78 @@ if (!token || role !== 'admin') {
     const el = document.getElementById(id);
     if (el) el.innerText = value;
   }
+const API_BASE = 'http://localhost:8000/api';
 
-  async function loadChart() {
-    try {
-      const res = await fetch('https://microwave-machines-hosted-lol.trycloudflare.com/api/dashboard');
-      const data = await res.json();
+async function apiGet(path) {
+  const token = localStorage.getItem('token');
 
-      const ctx = document.getElementById('studentChart');
-      if (!ctx) return;
-
-      if (chart) chart.destroy();
-
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: data.chart?.labels || [],
-          datasets: [{
-            label: 'Students',
-            data: data.chart?.data || [],
-            borderWidth: 2,
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false
-        }
-      });
-
-    } catch (err) {
-      console.error("Chart error:", err);
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`
     }
-  }
-
-  async function loadDashboard() {
-    try {
-      const res = await fetch('http://localhost:8000/api/dashboard');
-      const data = await res.json();
-
-      console.log(data);
-
-      setText('pelajar', data.totalPelajar);
-      setText('pendaftaran', data.pemesananSiswa ?? 0);
-      setText('pelajaran', data.totalPelajaran);
-      setText('pendapatan', "IDR " + data.pendapatan);
-
-      // optional (kalau nanti ada elementnya)
-      setText('tagihan', data.tagihanBelumDibayar);
-      setText('penggantian', data.permintaanPenggantian);
-      setText('pemesanan', data.pemesananSiswa);
-      setText('pengumuman', data.pengumuman);
-
-    } catch (err) {
-      console.error("API error:", err);
-    }
-  }
-
-  // JALANKAN SETELAH SEMUA LOAD
-  window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-      loadDashboard();
-      loadChart();
-      setInterval(loadDashboard, 5000);
-    }, 500); // tunggu partial ke-load
   });
+
+  if (res.status === 401) {
+    localStorage.clear();
+    window.location.href = './login.html';
+    return null;
+  }
+}
+async function loadChart() {
+  try {
+    const data = await apiGet('/dashboard');
+    if (!data) return;
+
+    const ctx = document.getElementById('studentChart');
+    if (!ctx) return;
+
+    if (chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.chart?.labels || [],
+        datasets: [{
+          label: 'Students',
+          data: data.chart?.data || [],
+          borderWidth: 2,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+  } catch (err) {
+    console.error("Chart error:", err);
+  }
+}
+
+async function loadDashboard() {
+  try {
+    const data = await apiGet('/dashboard');
+    if (!data) return;
+
+    console.log(data);
+
+    setText('pelajar', data.totalPelajar ?? 0);
+    setText('pendaftaran', data.pemesananSiswa ?? 0);
+    setText('pelajaran', data.totalPelajaran ?? 0);
+    setText('pendapatan', "IDR " + (data.pendapatan ?? 0));
+
+    setText('tagihan', data.tagihanBelumDibayar ?? 0);
+    setText('penggantian', data.permintaanPenggantian ?? 0);
+    setText('pemesanan', data.pemesananSiswa ?? 0);
+    setText('pengumuman', data.pengumuman ?? 0);
+
+  } catch (err) {
+    console.error("API error:", err);
+  }
+}
 
   </script>
 
