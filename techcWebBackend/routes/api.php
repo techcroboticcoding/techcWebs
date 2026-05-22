@@ -30,6 +30,12 @@ Route::post('/login', function (Request $request) {
     ]);
 });
 
+Route::get('/health', function () {
+    return response()->json([
+        'status' => true,
+        'message' => 'Laravel API Railway jalan',
+    ]);
+});
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'getProfile']);
