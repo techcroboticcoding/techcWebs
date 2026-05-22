@@ -130,7 +130,7 @@ if (!token || role !== 'siswa') {
 
   async function loadChart() {
     try {
-      const res = await fetch('https://microwave-machines-hosted-lol.trycloudflare.com/api/dashboard');
+      const res = await fetch('https://techcwebs-production.up.railway.app/api/dashboard');
       const data = await res.json();
 
       const ctx = document.getElementById('studentChart');
@@ -162,7 +162,7 @@ if (!token || role !== 'siswa') {
 
   async function loadDashboard() {
     try {
-      const res = await fetch('https://microwave-machines-hosted-lol.trycloudflare.com/api/dashboard');
+      const res = await fetch('https://techcwebs-production.up.railway.app/api/dashboard');
       const data = await res.json();
 
       console.log(data);
