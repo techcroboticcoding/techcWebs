@@ -21,22 +21,22 @@ if (!token) {
 </script>
 
 <body
-  x-data="{ page: 'ecommerce', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-data="{ page: 'dashboard', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
   x-init="
-    darkMode = JSON.parse(localStorage.getItem('darkMode'));
+    darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
     $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
   "
-  :class="{'dark bg-gray-900': darkMode === true}"
+  :class="{'dark bg-gray-950': darkMode === true}"
+  class="bg-gray-50"
 >
 
   <!-- Preloader -->
   <include src="./partials/preloader.html"></include>
 
-  <div class="flex h-screen overflow-hidden">
+  <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
 
     <!-- Sidebar -->
     <include src="./partials/sidebar.html"></include>
-
 
     <!-- Content -->
     <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
@@ -47,38 +47,205 @@ if (!token) {
       <include src="./partials/header.html"></include>
 
       <!-- MAIN -->
-      <main class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+      <main class="relative min-h-screen overflow-hidden p-4 sm:p-6 lg:p-8">
 
-        <!-- Statistik -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
-
-          <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-            <p class="text-sm text-gray-500">Total Pelajar</p>
-            <h2 id="pelajar" class="text-2xl font-bold text-gray-800 dark:text-white">0</h2>
-          </div>
-
-          <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-            <p class="text-sm text-gray-500">Total Pendaftaran</p>
-            <h2 id="pendaftaran" class="text-2xl font-bold text-gray-800 dark:text-white">0</h2>
-          </div>
-
-          <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-            <p class="text-sm text-gray-500">Total Pelajaran</p>
-            <h2 id="pelajaran" class="text-2xl font-bold text-gray-800 dark:text-white">0</h2>
-          </div>
-
-          <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-            <p class="text-sm text-gray-500">Pendapatan</p>
-            <h2 id="pendapatan" class="text-2xl font-bold text-green-500">0</h2>
-          </div>
-
+        <!-- Background decoration -->
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <div class="absolute -top-32 -right-32 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl"></div>
+          <div class="absolute top-60 -left-32 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl"></div>
+          <div class="absolute bottom-0 right-1/3 h-72 w-72 rounded-full bg-purple-500/10 blur-3xl"></div>
         </div>
 
-        <!-- Chart (FIX ERROR CHART.JS) -->
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow h-[300px]">
-          <canvas id="studentChart"></canvas>
-        </div>
+        <section class="relative z-10">
 
+          <!-- Header Dashboard -->
+          <div class="mb-8 rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl shadow-gray-200/60 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/80 dark:shadow-black/20">
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+
+              <div>
+                <div class="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
+                  <span class="h-2 w-2 rounded-full bg-green-500"></span>
+                  Admin Dashboard
+                </div>
+
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">
+                  TECH-C Robotic & Coding
+                </h1>
+
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-500 dark:text-gray-400">
+                  Pantau data pelajar, pendaftaran, pelajaran, dan pendapatan Tech-C secara real-time.
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                <div class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-950">
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Status API</p>
+                  <p id="apiStatus" class="mt-1 text-sm font-semibold text-yellow-500">Checking...</p>
+                </div>
+
+                <button
+                  onclick="loadDashboard()"
+                  class="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:-translate-y-0.5 hover:bg-blue-700 active:translate-y-0"
+                >
+                  Refresh Data
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Statistik -->
+          <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+
+            <!-- Card 1 -->
+            <div class="group relative overflow-hidden rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-blue-500/10"></div>
+
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Pelajar</p>
+                  <h2 id="pelajar" class="mt-3 text-3xl font-extrabold text-gray-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs text-gray-400">Jumlah siswa aktif</p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+                  <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path d="M16 11a4 4 0 1 0-8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M4 20c.8-3.4 3.7-5 8-5s7.2 1.6 8 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="group relative overflow-hidden rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-cyan-500/10"></div>
+
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Pendaftaran</p>
+                  <h2 id="pendaftaran" class="mt-3 text-3xl font-extrabold text-gray-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs text-gray-400">Data pemesanan siswa</p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-cyan-600 dark:bg-cyan-950 dark:text-cyan-300">
+                  <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path d="M7 7h10M7 12h10M7 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="group relative overflow-hidden rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-purple-500/10"></div>
+
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Pelajaran</p>
+                  <h2 id="pelajaran" class="mt-3 text-3xl font-extrabold text-gray-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs text-gray-400">Program pembelajaran</p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-100 text-purple-600 dark:bg-purple-950 dark:text-purple-300">
+                  <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path d="M4 19V5a2 2 0 0 1 2-2h11a3 3 0 0 1 3 3v14H6a2 2 0 0 1-2-2Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M8 7h8M8 11h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="group relative overflow-hidden rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-green-500/10"></div>
+
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pendapatan</p>
+                  <h2 id="pendapatan" class="mt-3 text-2xl font-extrabold text-green-500">IDR 0</h2>
+                  <p class="mt-2 text-xs text-gray-400">Total pemasukan</p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-300">
+                  <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path d="M12 3v18M17 7.5c-.8-1-2.2-1.5-4-1.5-2.4 0-4 1.1-4 2.8 0 4.2 8 1.8 8 6.4 0 1.7-1.6 2.8-4 2.8-2 0-3.6-.7-4.5-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Content Grid -->
+          <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+
+            <!-- Chart -->
+            <div class="xl:col-span-2 rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
+              <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h3 class="text-lg font-bold text-gray-900 dark:text-white">Grafik Pelajar</h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">Perkembangan jumlah student berdasarkan data dashboard.</p>
+                </div>
+
+                <div class="rounded-full bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                  Realtime Data
+                </div>
+              </div>
+
+              <div class="h-[340px]">
+                <canvas id="studentChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
+              <div class="mb-5">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Ringkasan Cepat</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Info tambahan dari dashboard.</p>
+              </div>
+
+              <div class="space-y-4">
+
+                <div class="flex items-center justify-between rounded-2xl bg-gray-50 p-4 dark:bg-gray-950">
+                  <div>
+                    <p class="text-sm font-semibold text-gray-800 dark:text-white">Tagihan Belum Dibayar</p>
+                    <p class="text-xs text-gray-500">Perlu follow up</p>
+                  </div>
+                  <span id="tagihan" class="rounded-full bg-red-100 px-3 py-1 text-sm font-bold text-red-600 dark:bg-red-950 dark:text-red-300">0</span>
+                </div>
+
+                <div class="flex items-center justify-between rounded-2xl bg-gray-50 p-4 dark:bg-gray-950">
+                  <div>
+                    <p class="text-sm font-semibold text-gray-800 dark:text-white">Permintaan Penggantian</p>
+                    <p class="text-xs text-gray-500">Request siswa</p>
+                  </div>
+                  <span id="penggantian" class="rounded-full bg-yellow-100 px-3 py-1 text-sm font-bold text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">0</span>
+                </div>
+
+                <div class="flex items-center justify-between rounded-2xl bg-gray-50 p-4 dark:bg-gray-950">
+                  <div>
+                    <p class="text-sm font-semibold text-gray-800 dark:text-white">Pemesanan Siswa</p>
+                    <p class="text-xs text-gray-500">Pendaftaran baru</p>
+                  </div>
+                  <span id="pemesanan" class="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-600 dark:bg-blue-950 dark:text-blue-300">0</span>
+                </div>
+
+                <div class="flex items-center justify-between rounded-2xl bg-gray-50 p-4 dark:bg-gray-950">
+                  <div>
+                    <p class="text-sm font-semibold text-gray-800 dark:text-white">Pengumuman</p>
+                    <p class="text-xs text-gray-500">Informasi aktif</p>
+                  </div>
+                  <span id="pengumuman" class="rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-600 dark:bg-green-950 dark:text-green-300">0</span>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+        </section>
       </main>
     </div>
   </div>
@@ -90,6 +257,7 @@ if (!token) {
 
     for (let el of includes) {
       const file = el.getAttribute('src');
+
       try {
         const res = await fetch(file);
         const html = await res.text();
@@ -107,43 +275,79 @@ if (!token) {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- DASHBOARD SCRIPT -->
-
-  
   <script>
-  let chart;
+  const API_BASE = 'http://localhost:8000/api';
+  let chart = null;
 
   function setText(id, value) {
     const el = document.getElementById(id);
     if (el) el.innerText = value;
   }
-const API_BASE = 'http://localhost:8000/api';
 
-async function apiGet(path) {
-  const token = localStorage.getItem('token');
+  function setApiStatus(text, type = 'loading') {
+    const el = document.getElementById('apiStatus');
+    if (!el) return;
 
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${token}`
+    el.innerText = text;
+
+    el.className = 'mt-1 text-sm font-semibold';
+
+    if (type === 'success') {
+      el.classList.add('text-green-500');
+    } else if (type === 'error') {
+      el.classList.add('text-red-500');
+    } else {
+      el.classList.add('text-yellow-500');
     }
-  });
-
-  if (res.status === 401) {
-    localStorage.clear();
-    window.location.href = './login.html';
-    return null;
   }
-}
-async function loadChart() {
-  try {
-    const data = await apiGet('/dashboard');
-    if (!data) return;
 
-    const ctx = document.getElementById('studentChart');
-    if (!ctx) return;
+  function formatRupiah(value) {
+    const number = Number(value || 0);
 
-    if (chart) chart.destroy();
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0
+    }).format(number);
+  }
+
+  async function apiGet(path) {
+    const token = localStorage.getItem('token');
+
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (res.status === 401) {
+      localStorage.clear();
+      window.location.href = './login.html';
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`HTTP Error ${res.status}`);
+    }
+
+    return await res.json();
+  }
+
+  function renderChart(data) {
+    const canvas = document.getElementById('studentChart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+
+    if (chart) {
+      chart.destroy();
+    }
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 340);
+    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.28)');
+    gradient.addColorStop(1, 'rgba(37, 99, 235, 0.02)');
 
     chart = new Chart(ctx, {
       type: 'line',
@@ -152,43 +356,93 @@ async function loadChart() {
         datasets: [{
           label: 'Students',
           data: data.chart?.data || [],
-          borderWidth: 2,
-          tension: 0.4
+          borderWidth: 3,
+          borderColor: '#2563eb',
+          backgroundColor: gradient,
+          fill: true,
+          tension: 0.45,
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          pointBackgroundColor: '#2563eb',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2
         }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: '#111827',
+            titleColor: '#ffffff',
+            bodyColor: '#d1d5db',
+            padding: 12,
+            cornerRadius: 12
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              color: '#9ca3af'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(156, 163, 175, 0.18)'
+            },
+            ticks: {
+              color: '#9ca3af',
+              precision: 0
+            }
+          }
+        }
       }
     });
-
-  } catch (err) {
-    console.error("Chart error:", err);
   }
-}
 
-async function loadDashboard() {
-  try {
-    const data = await apiGet('/dashboard');
-    if (!data) return;
+  async function loadDashboard() {
+    try {
+      setApiStatus('Loading...', 'loading');
 
-    console.log(data);
+      const data = await apiGet('/dashboard');
+      if (!data) return;
 
-    setText('pelajar', data.totalPelajar ?? 0);
-    setText('pendaftaran', data.pemesananSiswa ?? 0);
-    setText('pelajaran', data.totalPelajaran ?? 0);
-    setText('pendapatan', "IDR " + (data.pendapatan ?? 0));
+      console.log(data);
 
-    setText('tagihan', data.tagihanBelumDibayar ?? 0);
-    setText('penggantian', data.permintaanPenggantian ?? 0);
-    setText('pemesanan', data.pemesananSiswa ?? 0);
-    setText('pengumuman', data.pengumuman ?? 0);
+      setText('pelajar', data.totalPelajar ?? 0);
+      setText('pendaftaran', data.pemesananSiswa ?? 0);
+      setText('pelajaran', data.totalPelajaran ?? 0);
+      setText('pendapatan', formatRupiah(data.pendapatan ?? 0));
 
-  } catch (err) {
-    console.error("API error:", err);
+      setText('tagihan', data.tagihanBelumDibayar ?? 0);
+      setText('penggantian', data.permintaanPenggantian ?? 0);
+      setText('pemesanan', data.pemesananSiswa ?? 0);
+      setText('pengumuman', data.pengumuman ?? 0);
+
+      renderChart(data);
+
+      setApiStatus('Connected', 'success');
+
+    } catch (err) {
+      console.error("Dashboard error:", err);
+      setApiStatus('Disconnected', 'error');
+    }
   }
-}
 
+  document.addEventListener('DOMContentLoaded', () => {
+    loadDashboard();
+  });
   </script>
 
 </body>
