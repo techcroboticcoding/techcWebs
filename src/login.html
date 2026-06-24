@@ -3,55 +3,294 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Login - TECH-C</title>
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    * {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+
+    .float-robot {
+      animation: floatRobot 4s ease-in-out infinite;
+    }
+
+    @keyframes floatRobot {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+      background-size: 38px 38px;
+    }
+
+    .loader {
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255, 255, 255, .35);
+      border-top-color: #fff;
+      border-radius: 999px;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="min-h-screen overflow-hidden bg-slate-950">
 
-  <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
+  <!-- BACKGROUND -->
+  <div class="fixed inset-0 grid-bg"></div>
 
-    <h2 class="text-2xl font-bold text-center mb-6">Login TECH-C</h2>
+  <div class="fixed -top-40 -right-40 h-[460px] w-[460px] rounded-full bg-blue-600/30 blur-3xl"></div>
+  <div class="fixed top-40 -left-40 h-[420px] w-[420px] rounded-full bg-cyan-500/25 blur-3xl"></div>
+  <div class="fixed bottom-[-160px] right-1/3 h-[420px] w-[420px] rounded-full bg-violet-600/25 blur-3xl"></div>
 
-    <form id="loginForm" class="space-y-4">
+  <!-- MAIN WRAPPER -->
+  <main class="relative z-10 flex min-h-screen items-center justify-center p-4 sm:p-6 lg:p-8">
 
-      <div>
-        <label class="block text-sm mb-1">Email</label>
-        <input
-          type="email"
-          id="email"
-          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
-          placeholder="email@gmail.com"
-          required
-        />
+    <section class="grid w-full max-w-6xl overflow-hidden rounded-[2rem] border border-white/10 bg-white/10 shadow-2xl shadow-black/40 backdrop-blur-xl lg:grid-cols-2">
+
+      <!-- LEFT BRAND PANEL -->
+      <div class="relative hidden overflow-hidden bg-gradient-to-br from-blue-700 via-cyan-600 to-slate-950 p-10 text-white lg:block">
+
+        <div class="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl"></div>
+        <div class="absolute -bottom-24 -left-20 h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl"></div>
+
+        <div class="relative z-10 flex h-full flex-col justify-between">
+
+          <!-- LOGO -->
+          <div>
+            <div class="flex items-center gap-3">
+              <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+                <img src="./images/logo.png" class="h-10 w-10 object-contain" alt="TECH-C" />
+              </div>
+
+              <div>
+                <h1 class="text-2xl font-black tracking-tight">TECH-C</h1>
+                <p class="text-sm font-semibold text-white/70">Robotic & Coding</p>
+              </div>
+            </div>
+
+            <div class="mt-14">
+              <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white/85 backdrop-blur">
+                <span class="h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
+                Learning Management Portal
+              </div>
+
+              <h2 class="max-w-md text-4xl font-black leading-tight tracking-tight">
+                Kelola kelas robotik, siswa, jadwal, dan progress belajar dalam satu sistem.
+              </h2>
+
+              <p class="mt-5 max-w-md text-sm leading-6 text-white/70">
+                Dashboard modern untuk Admin Tech-C, Pengajar, dan Siswa agar proses belajar coding dan robotik lebih rapi, cepat, dan terpantau.
+              </p>
+            </div>
+          </div>
+
+          <!-- ROBOT CARD -->
+          <div class="relative mt-10">
+
+            <div class="float-robot mx-auto flex h-56 w-56 items-center justify-center rounded-[3rem] border border-white/20 bg-white/15 shadow-2xl shadow-cyan-900/30 backdrop-blur">
+              <svg width="130" height="130" viewBox="0 0 24 24" fill="none">
+                <path d="M12 3v3" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6.5 8h11A2.5 2.5 0 0 1 20 10.5v6A3.5 3.5 0 0 1 16.5 20h-9A3.5 3.5 0 0 1 4 16.5v-6A2.5 2.5 0 0 1 6.5 8Z" stroke="white" stroke-width="1.8"/>
+                <path d="M9 13h.01M15 13h.01" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                <path d="M9 17h6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <div class="mt-8 grid grid-cols-3 gap-3">
+              <div class="rounded-2xl bg-white/10 p-4 backdrop-blur">
+                <p class="text-2xl font-black">27+</p>
+                <p class="mt-1 text-xs text-white/65">Sekolah</p>
+              </div>
+
+              <div class="rounded-2xl bg-white/10 p-4 backdrop-blur">
+                <p class="text-2xl font-black">AI</p>
+                <p class="mt-1 text-xs text-white/65">Coding</p>
+              </div>
+
+              <div class="rounded-2xl bg-white/10 p-4 backdrop-blur">
+                <p class="text-2xl font-black">IoT</p>
+                <p class="mt-1 text-xs text-white/65">Robotik</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      <div>
-        <label class="block text-sm mb-1">Password</label>
-        <input
-          type="password"
-          id="password"
-          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
-          placeholder="********"
-          required
-        />
+      <!-- RIGHT LOGIN PANEL -->
+      <div class="relative bg-white p-5 dark:bg-slate-950 sm:p-8 lg:p-10">
+
+        <div class="mx-auto flex min-h-[640px] max-w-md flex-col justify-center">
+
+          <!-- MOBILE LOGO -->
+          <div class="mb-8 flex items-center justify-center gap-3 lg:hidden">
+            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50">
+              <img src="./images/logo.png" class="h-10 w-10 object-contain" alt="TECH-C" />
+            </div>
+
+            <div>
+              <h1 class="text-2xl font-black text-slate-900">TECH-C</h1>
+              <p class="text-sm font-semibold text-slate-500">Robotic & Coding</p>
+            </div>
+          </div>
+
+          <!-- TITLE -->
+          <div class="mb-8 text-center lg:text-left">
+            <div class="mb-3 inline-flex rounded-full bg-blue-50 px-4 py-2 text-xs font-bold text-blue-600">
+              Welcome back
+            </div>
+
+            <h2 class="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+              Login TECH-C
+            </h2>
+
+            <p class="mt-3 text-sm leading-6 text-slate-500">
+              Masuk ke dashboard untuk mengelola pembelajaran robotic & coding.
+            </p>
+          </div>
+
+          <!-- FORM CARD -->
+          <div class="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
+
+            <form id="loginForm" class="space-y-5">
+
+              <!-- EMAIL -->
+              <div>
+                <label for="email" class="mb-2 block text-sm font-bold text-slate-700">
+                  Email
+                </label>
+
+                <div class="relative">
+                  <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    ✉️
+                  </div>
+
+                  <input
+                    type="email"
+                    id="email"
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-4 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                    placeholder="email@gmail.com"
+                    autocomplete="email"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- PASSWORD -->
+              <div>
+                <label for="password" class="mb-2 block text-sm font-bold text-slate-700">
+                  Password
+                </label>
+
+                <div class="relative">
+                  <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    🔒
+                  </div>
+
+                  <input
+                    type="password"
+                    id="password"
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-4 pr-14 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                    placeholder="Masukkan password"
+                    autocomplete="current-password"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    id="togglePassword"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 rounded-xl px-2 py-1 text-xs font-bold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+                  >
+                    Show
+                  </button>
+                </div>
+              </div>
+
+              <!-- OPTIONS -->
+              <div class="flex items-center justify-between gap-3">
+                <label class="flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-500">
+                  <input
+                    id="rememberEmail"
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  Ingat email
+                </label>
+
+                <button
+                  type="button"
+                  class="text-sm font-bold text-blue-600 hover:text-blue-700"
+                  onclick="alert('Hubungi admin TECH-C untuk reset password.')"
+                >
+                  Lupa password?
+                </button>
+              </div>
+
+              <!-- ERROR -->
+              <div
+                id="errorBox"
+                class="hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-600"
+              >
+                <span id="error"></span>
+              </div>
+
+              <!-- SUCCESS -->
+              <div
+                id="successBox"
+                class="hidden rounded-2xl border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-600"
+              >
+                Login berhasil. Mengalihkan dashboard...
+              </div>
+
+              <!-- BUTTON -->
+              <button
+                id="loginBtn"
+                type="submit"
+                class="flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-4 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-500/35 disabled:translate-y-0 disabled:cursor-not-allowed disabled:from-slate-400 disabled:to-slate-400 disabled:shadow-none"
+              >
+                <span id="loginBtnText">Login Sekarang</span>
+                <span id="loginLoader" class="loader hidden"></span>
+              </button>
+
+            </form>
+          </div>
+
+          <!-- FOOTER INFO -->
+          <div class="mt-6 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-center text-xs font-semibold text-slate-500">
+            TECH-C Robotic & Coding Management System
+            <br />
+            <span class="text-slate-400">Admin Portal • Student Portal • Learning Tracking</span>
+          </div>
+
+        </div>
       </div>
 
-      <button
-        id="loginBtn"
-        type="submit"
-        class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        Login
-      </button>
-
-      <p id="error" class="text-red-500 text-sm text-center hidden"></p>
-
-    </form>
-
-  </div>
+    </section>
+  </main>
 
   <script>
     // =========================
@@ -59,21 +298,8 @@
     // =========================
     const API_BASE_URL = "https://techcwebs-production.up.railway.app/api";
 
-    // =========================
-    // AUTO REDIRECT KALAU SUDAH LOGIN
-    // =========================
-    document.addEventListener("DOMContentLoaded", () => {
-      const token = localStorage.getItem("token");
-      const role = localStorage.getItem("role");
-
-      if (token && role === "admin") {
-        window.location.href = "index.html";
-      }
-
-      if (token && role === "siswa") {
-        window.location.href = "dashboardSiswa.html";
-      }
-    });
+    // Kalau mau pakai localhost, ganti jadi:
+    // const API_BASE_URL = "http://127.0.0.1:8000/api";
 
     // =========================
     // ELEMENT
@@ -81,23 +307,133 @@
     const loginForm = document.getElementById("loginForm");
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
+    const errorBox = document.getElementById("errorBox");
     const errorEl = document.getElementById("error");
+    const successBox = document.getElementById("successBox");
     const loginBtn = document.getElementById("loginBtn");
+    const loginBtnText = document.getElementById("loginBtnText");
+    const loginLoader = document.getElementById("loginLoader");
+    const togglePasswordBtn = document.getElementById("togglePassword");
+    const rememberEmail = document.getElementById("rememberEmail");
 
+    // =========================
+    // INIT
+    // =========================
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+
+      if (token && role === "admin") {
+        window.location.href = "index.html";
+        return;
+      }
+
+      if (token && role === "siswa") {
+        window.location.href = "dashboardSiswa.html";
+        return;
+      }
+
+      const rememberedEmail = localStorage.getItem("remembered_email");
+
+      if (rememberedEmail) {
+        emailInput.value = rememberedEmail;
+        rememberEmail.checked = true;
+        passwordInput.focus();
+      } else {
+        emailInput.focus();
+      }
+    });
+
+    // =========================
+    // UI HELPERS
+    // =========================
     function showError(message) {
       errorEl.innerText = message;
-      errorEl.classList.remove("hidden");
+      errorBox.classList.remove("hidden");
+      successBox.classList.add("hidden");
     }
 
     function hideError() {
       errorEl.innerText = "";
-      errorEl.classList.add("hidden");
+      errorBox.classList.add("hidden");
+    }
+
+    function showSuccess() {
+      successBox.classList.remove("hidden");
+      errorBox.classList.add("hidden");
     }
 
     function setLoading(isLoading) {
       loginBtn.disabled = isLoading;
-      loginBtn.innerText = isLoading ? "Loading..." : "Login";
+      loginBtnText.innerText = isLoading ? "Memproses..." : "Login Sekarang";
+
+      if (isLoading) {
+        loginLoader.classList.remove("hidden");
+      } else {
+        loginLoader.classList.add("hidden");
+      }
     }
+
+    function saveSession({ token, role, name, email, user }) {
+      const savedDarkMode = localStorage.getItem("darkMode");
+      const rememberedEmail = localStorage.getItem("remembered_email");
+
+      localStorage.clear();
+
+      if (savedDarkMode !== null) {
+        localStorage.setItem("darkMode", savedDarkMode);
+      }
+
+      if (rememberedEmail !== null) {
+        localStorage.setItem("remembered_email", rememberedEmail);
+      }
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+      localStorage.setItem("name", name || "");
+      localStorage.setItem("email", email || "");
+
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+    }
+
+    function redirectByRole(role) {
+      if (role === "admin") {
+        window.location.href = "index.html";
+        return;
+      }
+
+      if (role === "siswa") {
+        window.location.href = "dashboardSiswa.html";
+        return;
+      }
+
+      localStorage.clear();
+      showError("Role tidak valid: " + role);
+      setLoading(false);
+    }
+
+    async function parseJsonResponse(res) {
+      const raw = await res.text();
+
+      try {
+        return JSON.parse(raw);
+      } catch (err) {
+        console.error("Response bukan JSON:", raw);
+        throw new Error("Response server bukan JSON. Cek Laravel API / route login.");
+      }
+    }
+
+    // =========================
+    // TOGGLE PASSWORD
+    // =========================
+    togglePasswordBtn.addEventListener("click", () => {
+      const isPassword = passwordInput.type === "password";
+
+      passwordInput.type = isPassword ? "text" : "password";
+      togglePasswordBtn.innerText = isPassword ? "Hide" : "Show";
+    });
 
     // =========================
     // LOGIN SUBMIT
@@ -111,9 +447,25 @@
       const email = emailInput.value.trim();
       const password = passwordInput.value;
 
+      if (!email || !password) {
+        showError("Email dan password wajib diisi.");
+        setLoading(false);
+        return;
+      }
+
+      if (rememberEmail.checked) {
+        localStorage.setItem("remembered_email", email);
+      } else {
+        localStorage.removeItem("remembered_email");
+      }
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+
       try {
         const res = await fetch(`${API_BASE_URL}/login`, {
           method: "POST",
+          signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
             "Accept": "application/json"
@@ -124,17 +476,9 @@
           })
         });
 
-        let data = null;
+        clearTimeout(timeout);
 
-        try {
-          data = await res.json();
-        } catch (jsonError) {
-          const text = await res.text();
-          console.error("Response bukan JSON:", text);
-          showError("Response server bukan JSON. Cek Laravel API.");
-          setLoading(false);
-          return;
-        }
+        const data = await parseJsonResponse(res);
 
         console.log("LOGIN RESPONSE:", data);
 
@@ -144,12 +488,12 @@
           return;
         }
 
-        // Support dua bentuk response:
-        // 1. { token, role, name }
-        // 2. { token, user: { role, name } }
         const token = data.token || data.access_token || "";
-        const role = data.role || data.user?.role || "";
-        const name = data.name || data.user?.name || "";
+        const user = data.user || null;
+
+        const role = data.role || user?.role || "";
+        const name = data.name || user?.name || "";
+        const userEmail = data.email || user?.email || email;
 
         if (!token) {
           showError("Token tidak ditemukan dari server.");
@@ -158,37 +502,36 @@
         }
 
         if (!role) {
-          showError("Role tidak ditemukan dari server.");
+          showError("Role tidak ditemukan dari server. Pastikan API login mengirim role admin/siswa.");
           setLoading(false);
           return;
         }
 
-        // Bersihkan session lama
-        localStorage.clear();
+        saveSession({
+          token,
+          role,
+          name,
+          email: userEmail,
+          user
+        });
 
-        // Simpan session baru
-        localStorage.setItem("token", token);
-        localStorage.setItem("role", role);
-        localStorage.setItem("name", name);
+        showSuccess();
 
-        // Redirect sesuai role
-        if (role === "admin") {
-          window.location.href = "index.html";
-          return;
-        }
-
-        if (role === "siswa") {
-          window.location.href = "dashboardSiswa.html";
-          return;
-        }
-
-        localStorage.clear();
-        showError("Role tidak valid: " + role);
-        setLoading(false);
+        setTimeout(() => {
+          redirectByRole(role);
+        }, 500);
 
       } catch (err) {
+        clearTimeout(timeout);
+
         console.error("LOGIN ERROR:", err);
-        showError("Server error. Pastikan Laravel jalan di http://localhost:8000");
+
+        if (err.name === "AbortError") {
+          showError("Request timeout. Server terlalu lama merespon.");
+        } else {
+          showError(err.message || "Server error. Pastikan Laravel API berjalan.");
+        }
+
         setLoading(false);
       }
     });
