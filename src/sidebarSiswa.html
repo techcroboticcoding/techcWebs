@@ -1,0 +1,193 @@
+<aside
+  :class="sidebarToggle ? 'translate-x-0 lg:w-[90px]' : '-translate-x-full'"
+  class="fixed left-0 top-0 z-[99999] flex h-screen w-[290px] flex-col overflow-y-hidden border-r border-slate-200 bg-white px-5 dark:border-slate-800 dark:bg-slate-950 lg:static lg:translate-x-0"
+>
+  <!-- LOGO -->
+  <div
+    :class="sidebarToggle ? 'justify-center' : 'justify-between'"
+    class="flex items-center gap-2 pt-8 pb-7"
+  >
+    <a href="dashboardSiswa.html" class="flex items-center gap-3">
+      <img src="./images/logo.png" class="h-14 object-contain" alt="TECH-C" />
+
+      <div :class="sidebarToggle ? 'lg:hidden' : ''">
+        <p class="text-sm font-black text-slate-900 dark:text-white">TECH-C</p>
+        <p class="text-xs font-semibold text-slate-400">Student Portal</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="flex flex-1 flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+
+    <nav class="space-y-6">
+
+      <!-- MENU -->
+      <div>
+        <h3
+          :class="sidebarToggle ? 'lg:hidden' : ''"
+          class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400"
+        >
+          Menu
+        </h3>
+
+        <ul class="space-y-2">
+
+          <!-- Dashboard -->
+          <li>
+            <a
+              href="dashboardSiswa.html"
+              class="menu-item group"
+              :class="page === 'student-dashboard' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="text-lg">🏠</span>
+              <span :class="sidebarToggle ? 'lg:hidden' : ''">Dashboard</span>
+            </a>
+          </li>
+
+          <!-- Progress -->
+          <li>
+            <a
+              href="progress-siswa.html"
+              class="menu-item group"
+              :class="page === 'progress-siswa' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="text-lg">📈</span>
+              <span :class="sidebarToggle ? 'lg:hidden' : ''">Progress Belajar</span>
+            </a>
+          </li>
+
+          <!-- Jadwal -->
+          <li>
+            <a
+              href="jadwal-siswa.html"
+              class="menu-item group"
+              :class="page === 'jadwal-siswa' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="text-lg">🗓️</span>
+              <span :class="sidebarToggle ? 'lg:hidden' : ''">Jadwal Kelas</span>
+            </a>
+          </li>
+
+          <!-- Tagihan -->
+          <li>
+            <a
+              href="tagihan-siswa.html"
+              class="menu-item group"
+              :class="page === 'tagihan-siswa' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="text-lg">🧾</span>
+              <span :class="sidebarToggle ? 'lg:hidden' : ''">Tagihan</span>
+            </a>
+          </li>
+
+          <!-- Pengumuman -->
+          <li>
+            <a
+              href="pengumuman-siswa.html"
+              class="menu-item group"
+              :class="page === 'pengumuman-siswa' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="text-lg">📢</span>
+              <span :class="sidebarToggle ? 'lg:hidden' : ''">Pengumuman</span>
+            </a>
+          </li>
+
+          <!-- Catatan Guru -->
+          <li>
+            <a
+              href="catatan-siswa.html"
+              class="menu-item group"
+              :class="page === 'catatan-siswa' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="text-lg">💬</span>
+              <span :class="sidebarToggle ? 'lg:hidden' : ''">Catatan Guru</span>
+            </a>
+          </li>
+
+          <!-- Materi -->
+          <li>
+            <a
+              href="materi-siswa.html"
+              class="menu-item group"
+              :class="page === 'materi-siswa' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="text-lg">📚</span>
+              <span :class="sidebarToggle ? 'lg:hidden' : ''">Materi Belajar</span>
+            </a>
+          </li>
+
+          <!-- Sertifikat -->
+          <li>
+            <a
+              href="sertifikat-siswa.html"
+              class="menu-item group"
+              :class="page === 'sertifikat-siswa' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="text-lg">🎓</span>
+              <span :class="sidebarToggle ? 'lg:hidden' : ''">Sertifikat</span>
+            </a>
+          </li>
+
+        </ul>
+      </div>
+
+      <!-- AKUN -->
+      <div>
+        <h3
+          :class="sidebarToggle ? 'lg:hidden' : ''"
+          class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400"
+        >
+          Akun
+        </h3>
+
+        <ul class="space-y-2">
+
+          <!-- Profile -->
+          <li>
+            <a
+              href="profileSiswa.html"
+              class="menu-item group"
+              :class="page === 'profile-siswa' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="text-lg">👤</span>
+              <span :class="sidebarToggle ? 'lg:hidden' : ''">Profile Siswa</span>
+            </a>
+          </li>
+
+          <!-- Bantuan -->
+          <li>
+            <a
+              href="bantuan-siswa.html"
+              class="menu-item group"
+              :class="page === 'bantuan-siswa' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span class="text-lg">❓</span>
+              <span :class="sidebarToggle ? 'lg:hidden' : ''">Bantuan</span>
+            </a>
+          </li>
+
+        </ul>
+      </div>
+
+    </nav>
+
+    <!-- LOGOUT -->
+    <div class="mt-auto pb-6 pt-6">
+      <button
+        onclick="logoutSiswa()"
+        class="flex w-full items-center gap-3 rounded-2xl bg-red-50 px-4 py-3 text-sm font-bold text-red-600 transition hover:bg-red-100 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950"
+      >
+        <span class="text-lg">🚪</span>
+        <span :class="sidebarToggle ? 'lg:hidden' : ''">Logout</span>
+      </button>
+    </div>
+
+  </div>
+</aside>
+
+<script>
+function logoutSiswa() {
+  localStorage.clear();
+  window.location.href = './login.html';
+}
+</script>
