@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TECH-C Robotic and Coding Dashboard</title>
+  <title>TECH-C Student Dashboard</title>
 </head>
 
 <script>
@@ -16,83 +16,298 @@ if (!token || role !== 'siswa') {
 </script>
 
 <body
-  x-data="{ page: 'ecommerce', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-data="{ page: 'student-dashboard', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
   x-init="
-    darkMode = JSON.parse(localStorage.getItem('darkMode'));
+    darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
     $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
   "
-  :class="{'dark bg-gray-900': darkMode === true}"
+  :class="{'dark bg-slate-950': darkMode === true}"
+  class="bg-slate-50"
 >
 
-  <!-- Preloader -->
   <include src="./partials/preloader.html"></include>
 
-  <div class="flex h-screen overflow-hidden">
+  <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
 
-    <!-- Sidebar -->
-     
     <include src="./partials/sidebarSiswa.html"></include>
 
-    <!-- Content -->
     <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
 
       <include src="./partials/overlay.html"></include>
-
-      <!-- Header -->
       <include src="./partials/header.html"></include>
-<!-- MAIN -->
-<main class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
 
-  <!-- Statistik Orang Tua -->
-  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+      <main class="relative min-h-screen overflow-hidden p-4 sm:p-6 lg:p-8">
 
-    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-      <p class="text-sm text-gray-500">Anak Terdaftar</p>
-      <h2 id="anak" class="text-2xl font-bold text-gray-800 dark:text-white">0</h2>
-    </div>
+        <!-- Background Glow -->
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <div class="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl"></div>
+          <div class="absolute left-[-120px] top-72 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl"></div>
+          <div class="absolute bottom-10 right-1/4 h-72 w-72 rounded-full bg-violet-500/10 blur-3xl"></div>
+        </div>
 
-    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-      <p class="text-sm text-gray-500">Progress Belajar</p>
-      <h2 id="progress" class="text-2xl font-bold text-blue-500">0%</h2>
-    </div>
+        <section class="relative z-10 mx-auto max-w-7xl">
 
-    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-      <p class="text-sm text-gray-500">Tagihan Bulan Ini</p>
-      <h2 id="tagihan" class="text-2xl font-bold text-red-500">0</h2>
-    </div>
+          <!-- HERO -->
+          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="relative p-6 sm:p-7 lg:p-8">
 
-    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-      <p class="text-sm text-gray-500">Pengumuman Baru</p>
-      <h2 id="pengumuman" class="text-2xl font-bold text-yellow-500">0</h2>
-    </div>
+              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-blue-600/15 via-cyan-500/5 to-transparent lg:block"></div>
 
-  </div>
+              <div class="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
 
-  <!-- Chart Progress Anak -->
-  <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow h-[300px]">
-    <canvas id="studentChart"></canvas>
-  </div>
+                <div class="max-w-2xl">
+                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
+                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
+                    Student Portal Active
+                  </div>
 
-  <!-- Section tambahan -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                    Halo, selamat belajar di TECH-C 👋
+                  </h1>
 
-    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-      <h3 class="font-semibold text-gray-800 dark:text-white mb-2">Jadwal Belajar Anak</h3>
-      <ul id="jadwal" class="text-sm text-gray-600 dark:text-gray-300">
-        <li>- Loading...</li>
-      </ul>
-    </div>
+                  <p class="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+                    Pantau progress belajar, jadwal kelas, tagihan, pengumuman, dan catatan guru dalam satu dashboard modern.
+                  </p>
 
-    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow">
-      <h3 class="font-semibold text-gray-800 dark:text-white mb-2">Catatan Guru</h3>
-      <p id="catatan" class="text-sm text-gray-600 dark:text-gray-300">
-        Belum ada catatan
-      </p>
-    </div>
+                  <div class="mt-6 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs text-slate-500">Status API</p>
+                      <p id="apiStatus" class="mt-1 text-sm font-bold text-yellow-500">Checking...</p>
+                    </div>
 
-  </div>
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs text-slate-500">Update Terakhir</p>
+                      <p id="lastUpdate" class="mt-1 text-sm font-bold text-slate-800 dark:text-white">-</p>
+                    </div>
 
-</main>
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs text-slate-500">Status Belajar</p>
+                      <p id="statusBelajarHero" class="mt-1 text-sm font-bold text-green-500">Aktif</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Robot Card -->
+                <div class="relative shrink-0">
+                  <div class="absolute -inset-4 rounded-[2.4rem] bg-blue-500/20 blur-2xl"></div>
+
+                  <div class="relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[320px]">
+                    <div class="mb-6 flex items-center justify-between">
+                      <div>
+                        <p class="text-sm font-semibold text-white/80">TECH-C Learning</p>
+                        <h2 id="heroProgress" class="mt-1 text-5xl font-black">0%</h2>
+                      </div>
+
+                      <div class="flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-white/20 backdrop-blur">
+                        <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
+                          <path d="M12 3v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                          <path d="M6.5 8h11A2.5 2.5 0 0 1 20 10.5v6A3.5 3.5 0 0 1 16.5 20h-9A3.5 3.5 0 0 1 4 16.5v-6A2.5 2.5 0 0 1 6.5 8Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                          <path d="M9 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/15 p-4 backdrop-blur">
+                      <div class="flex items-center justify-between text-xs font-semibold text-white/80">
+                        <span>Progress bulan ini</span>
+                        <span id="heroLevel">Level -</span>
+                      </div>
+
+                      <div class="mt-3 h-3 overflow-hidden rounded-full bg-white/20">
+                        <div id="heroProgressBar" class="h-full w-0 rounded-full bg-white transition-all duration-700"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- STAT CARDS -->
+          <div class="mb-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+
+            <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-blue-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Anak Terdaftar</p>
+                  <h2 id="anak" class="mt-3 text-3xl font-black text-slate-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs text-slate-400">Jumlah anak aktif</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-300">👨‍🎓</div>
+              </div>
+            </div>
+
+            <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-cyan-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Progress Belajar</p>
+                  <h2 id="progress" class="mt-3 text-3xl font-black text-cyan-500">0%</h2>
+                  <p class="mt-2 text-xs text-slate-400">Rata-rata capaian</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-cyan-600 dark:bg-cyan-950 dark:text-cyan-300">📈</div>
+              </div>
+            </div>
+
+            <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-red-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Tagihan Bulan Ini</p>
+                  <h2 id="tagihan" class="mt-3 text-2xl font-black text-red-500">Rp 0</h2>
+                  <p class="mt-2 text-xs text-slate-400">Status pembayaran</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300">🧾</div>
+              </div>
+            </div>
+
+            <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-yellow-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Pengumuman Baru</p>
+                  <h2 id="pengumuman" class="mt-3 text-3xl font-black text-yellow-500">0</h2>
+                  <p class="mt-2 text-xs text-slate-400">Info dari Tech-C</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-100 text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">📢</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- CONTENT GRID -->
+          <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+
+            <!-- LEFT -->
+            <div class="xl:col-span-2 space-y-6">
+
+              <!-- Progress Chart -->
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white">Grafik Progress Belajar</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Perkembangan belajar anak dari data dashboard.</p>
+                  </div>
+
+                  <div class="inline-flex w-fit items-center rounded-full bg-blue-50 px-4 py-2 text-xs font-bold text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+                    Realtime Tracking
+                  </div>
+                </div>
+
+                <div class="h-[330px]">
+                  <canvas id="studentChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Jadwal -->
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                <div class="mb-5 flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white">Jadwal Belajar Anak</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Kelas dan sesi belajar yang terdaftar.</p>
+                  </div>
+
+                  <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-100 text-violet-600 dark:bg-violet-950 dark:text-violet-300">🗓️</div>
+                </div>
+
+                <div id="jadwal" class="space-y-3">
+                  <div class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500 dark:bg-slate-950 dark:text-slate-400">
+                    Loading jadwal...
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="space-y-6">
+
+              <!-- Circular Progress -->
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                <div class="mb-5">
+                  <h3 class="text-lg font-black text-slate-900 dark:text-white">Capaian Bulan Ini</h3>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">Ringkasan performa belajar anak.</p>
+                </div>
+
+                <div class="flex justify-center">
+                  <div class="relative h-44 w-44">
+                    <svg class="h-full w-full -rotate-90" viewBox="0 0 120 120">
+                      <circle cx="60" cy="60" r="50" stroke="currentColor" stroke-width="10" fill="none" class="text-slate-100 dark:text-slate-800" />
+                      <circle id="progressCircle" cx="60" cy="60" r="50" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round" class="text-blue-600" stroke-dasharray="314" stroke-dashoffset="314" />
+                    </svg>
+
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                      <p id="progressCircleText" class="text-4xl font-black text-slate-900 dark:text-white">0%</p>
+                      <p class="text-xs font-semibold text-slate-400">Progress</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-5 grid grid-cols-2 gap-3">
+                  <div class="rounded-2xl bg-slate-50 p-4 text-center dark:bg-slate-950">
+                    <p class="text-xs text-slate-500">Status</p>
+                    <p id="statusBelajar" class="mt-1 text-sm font-bold text-green-500">Aktif</p>
+                  </div>
+
+                  <div class="rounded-2xl bg-slate-50 p-4 text-center dark:bg-slate-950">
+                    <p class="text-xs text-slate-500">Level</p>
+                    <p id="levelBelajar" class="mt-1 text-sm font-bold text-blue-500">-</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Catatan Guru -->
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                <div class="mb-5 flex items-center gap-3">
+                  <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-300">💬</div>
+                  <div>
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white">Catatan Guru</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Feedback pembimbing.</p>
+                  </div>
+                </div>
+
+                <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                  <p id="catatan" class="text-sm leading-6 text-slate-600 dark:text-slate-300">
+                    Belum ada catatan.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Quick Actions -->
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                <h3 class="mb-4 text-lg font-black text-slate-900 dark:text-white">Menu Cepat</h3>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <a href="jadwal-siswa.html" class="rounded-2xl bg-blue-50 p-4 text-left transition hover:-translate-y-1 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-950">
+                    <p class="text-sm font-bold text-blue-600 dark:text-blue-300">Jadwal</p>
+                    <p class="mt-1 text-xs text-slate-500">Lihat kelas</p>
+                  </a>
+
+                  <a href="tagihan-siswa.html" class="rounded-2xl bg-red-50 p-4 text-left transition hover:-translate-y-1 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-950">
+                    <p class="text-sm font-bold text-red-600 dark:text-red-300">Tagihan</p>
+                    <p class="mt-1 text-xs text-slate-500">Pembayaran</p>
+                  </a>
+
+                  <a href="pengumuman-siswa.html" class="rounded-2xl bg-yellow-50 p-4 text-left transition hover:-translate-y-1 hover:bg-yellow-100 dark:bg-yellow-950/50 dark:hover:bg-yellow-950">
+                    <p class="text-sm font-bold text-yellow-600 dark:text-yellow-300">Info</p>
+                    <p class="mt-1 text-xs text-slate-500">Pengumuman</p>
+                  </a>
+
+                  <a href="progress-siswa.html" class="rounded-2xl bg-green-50 p-4 text-left transition hover:-translate-y-1 hover:bg-green-100 dark:bg-green-950/50 dark:hover:bg-green-950">
+                    <p class="text-sm font-bold text-green-600 dark:text-green-300">Progress</p>
+                    <p class="mt-1 text-xs text-slate-500">Laporan</p>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+      </main>
     </div>
   </div>
 
@@ -103,95 +318,294 @@ if (!token || role !== 'siswa') {
 
     for (let el of includes) {
       const file = el.getAttribute('src');
+
       try {
         const res = await fetch(file);
         const html = await res.text();
         el.outerHTML = html;
       } catch (e) {
-        console.error("Gagal load:", file);
+        console.error("Gagal load partial:", file, e);
       }
     }
   }
-
-  loadPartials();
   </script>
 
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- DASHBOARD SCRIPT -->
   <script>
-  let chart;
+  const API_BASE = 'https://techcwebs-production.up.railway.app/api';
+  let chart = null;
 
   function setText(id, value) {
     const el = document.getElementById(id);
     if (el) el.innerText = value;
   }
 
-  async function loadChart() {
-    try {
-      const res = await fetch('https://techcwebs-production.up.railway.app/api/dashboard');
-      const data = await res.json();
+  function getNumber(value, fallback = 0) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
 
-      const ctx = document.getElementById('studentChart');
-      if (!ctx) return;
+  function formatRupiah(value) {
+    const number = getNumber(value, 0);
 
-      if (chart) chart.destroy();
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0
+    }).format(number);
+  }
 
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: data.chart?.labels || [],
-          datasets: [{
-            label: 'Students',
-            data: data.chart?.data || [],
-            borderWidth: 2,
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false
-        }
-      });
+  function setApiStatus(text, type = 'loading') {
+    const el = document.getElementById('apiStatus');
+    if (!el) return;
 
-    } catch (err) {
-      console.error("Chart error:", err);
+    el.innerText = text;
+    el.className = 'mt-1 text-sm font-bold';
+
+    if (type === 'success') el.classList.add('text-green-500');
+    else if (type === 'error') el.classList.add('text-red-500');
+    else el.classList.add('text-yellow-500');
+  }
+
+  function updateLastUpdate() {
+    const now = new Date();
+    setText('lastUpdate', now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }));
+  }
+
+  async function apiGet(path) {
+    const token = localStorage.getItem('token');
+
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (res.status === 401) {
+      localStorage.clear();
+      window.location.href = './login.html';
+      return null;
     }
+
+    if (!res.ok) {
+      throw new Error(`HTTP Error ${res.status}`);
+    }
+
+    return await res.json();
+  }
+
+  function setProgressCircle(percent) {
+    const cleanPercent = Math.max(0, Math.min(100, getNumber(percent, 0)));
+    const circle = document.getElementById('progressCircle');
+
+    if (circle) {
+      const circumference = 314;
+      const offset = circumference - (cleanPercent / 100) * circumference;
+      circle.style.strokeDashoffset = offset;
+    }
+
+    const heroBar = document.getElementById('heroProgressBar');
+    if (heroBar) heroBar.style.width = `${cleanPercent}%`;
+
+    setText('progressCircleText', `${cleanPercent}%`);
+    setText('progress', `${cleanPercent}%`);
+    setText('heroProgress', `${cleanPercent}%`);
+  }
+
+  function renderJadwal(jadwal) {
+    const wrapper = document.getElementById('jadwal');
+    if (!wrapper) return;
+
+    let items = [];
+
+    if (Array.isArray(jadwal)) {
+      items = jadwal;
+    } else if (typeof jadwal === 'string' && jadwal.trim() !== '') {
+      try {
+        const parsed = JSON.parse(jadwal);
+        items = Array.isArray(parsed) ? parsed : [jadwal];
+      } catch {
+        items = jadwal.split('\n').filter(Boolean);
+      }
+    }
+
+    if (!items.length) {
+      wrapper.innerHTML = `
+        <div class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-500 dark:bg-slate-950 dark:text-slate-400">
+          Belum ada jadwal belajar.
+        </div>
+      `;
+      return;
+    }
+
+    wrapper.innerHTML = items.map((item, index) => {
+      let hari = `Jadwal ${index + 1}`;
+      let waktu = '-';
+      let kelas = '-';
+
+      if (typeof item === 'object' && item !== null) {
+        hari = item.hari || item.day || item.tanggal || `Jadwal ${index + 1}`;
+        waktu = item.waktu || item.time || item.jam || '-';
+        kelas = item.kelas || item.class || item.mapel || item.pelajaran || 'Robotic & Coding';
+      } else {
+        kelas = item;
+      }
+
+      return `
+        <div class="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+              🗓️
+            </div>
+
+            <div>
+              <p class="text-sm font-bold text-slate-900 dark:text-white">${kelas}</p>
+              <p class="text-xs text-slate-500">${hari}</p>
+            </div>
+          </div>
+
+          <span class="shrink-0 rounded-full bg-white px-3 py-1 text-xs font-bold text-blue-600 shadow-sm dark:bg-slate-900 dark:text-blue-300">
+            ${waktu}
+          </span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderChart(data) {
+    const canvas = document.getElementById('studentChart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+
+    if (chart) chart.destroy();
+
+    const labels = data.chart?.labels || data.progressChart?.labels || ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
+    const values = data.chart?.data || data.progressChart?.data || [
+      getNumber(data.progress_belajar, 0) * 0.45,
+      getNumber(data.progress_belajar, 0) * 0.65,
+      getNumber(data.progress_belajar, 0) * 0.82,
+      getNumber(data.progress_belajar, 0)
+    ];
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 330);
+    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.28)');
+    gradient.addColorStop(1, 'rgba(37, 99, 235, 0.02)');
+
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Progress',
+          data: values,
+          borderWidth: 3,
+          borderColor: '#2563eb',
+          backgroundColor: gradient,
+          fill: true,
+          tension: 0.45,
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          pointBackgroundColor: '#2563eb',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0f172a',
+            titleColor: '#ffffff',
+            bodyColor: '#cbd5e1',
+            padding: 12,
+            cornerRadius: 14,
+            callbacks: {
+              label: function(context) {
+                return `Progress: ${context.parsed.y}%`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#94a3b8' }
+          },
+          y: {
+            beginAtZero: true,
+            suggestedMax: 100,
+            grid: { color: 'rgba(148, 163, 184, 0.18)' },
+            ticks: {
+              color: '#94a3b8',
+              precision: 0,
+              callback: function(value) {
+                return value + '%';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function normalizeDashboardData(data) {
+    return {
+      anak: data.jumlah_anak ?? data.anak ?? data.totalAnak ?? data.totalPelajar ?? 0,
+      progress: data.progress_belajar ?? data.progress ?? data.progressBelajar ?? 0,
+      tagihan: data.tagihan ?? data.tagihan_bulan_ini ?? data.tagihanBelumDibayar ?? 0,
+      pengumuman: data.pengumuman ?? data.pengumumanBaru ?? 0,
+      jadwal: data.jadwal ?? data.jadwal_belajar ?? [],
+      catatan: data.catatan ?? data.catatan_guru ?? data.catatanGuru ?? 'Belum ada catatan.',
+      level: data.level ?? data.kategori ?? data.category ?? '-',
+      status: data.status_belajar ?? data.status ?? 'Aktif'
+    };
   }
 
   async function loadDashboard() {
     try {
-      const res = await fetch('https://techcwebs-production.up.railway.app/api/dashboard');
-      const data = await res.json();
+      setApiStatus('Loading...', 'loading');
 
-      console.log(data);
+      const data = await apiGet('/dashboard');
+      if (!data) return;
 
-      setText('pelajar', data.totalPelajar);
-      setText('pendaftaran', data.pemesananSiswa ?? 0);
-      setText('pelajaran', data.totalPelajaran);
-      setText('pendapatan', "IDR " + data.pendapatan);
+      const clean = normalizeDashboardData(data);
 
-      // optional (kalau nanti ada elementnya)
-      setText('tagihan', data.tagihanBelumDibayar);
-      setText('penggantian', data.permintaanPenggantian);
-      setText('pemesanan', data.pemesananSiswa);
-      setText('pengumuman', data.pengumuman);
+      setText('anak', clean.anak);
+      setText('tagihan', formatRupiah(clean.tagihan));
+      setText('pengumuman', clean.pengumuman);
+      setText('catatan', clean.catatan || 'Belum ada catatan.');
+      setText('levelBelajar', clean.level || '-');
+      setText('heroLevel', `Level ${clean.level || '-'}`);
+      setText('statusBelajar', clean.status || 'Aktif');
+      setText('statusBelajarHero', clean.status || 'Aktif');
+
+      setProgressCircle(clean.progress);
+      renderJadwal(clean.jadwal);
+      renderChart(data);
+
+      setApiStatus('Connected', 'success');
+      updateLastUpdate();
 
     } catch (err) {
-      console.error("API error:", err);
+      console.error('Dashboard siswa error:', err);
+      setApiStatus('Disconnected', 'error');
     }
   }
 
-  // JALANKAN SETELAH SEMUA LOAD
-  window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-      loadDashboard();
-      loadChart();
-      setInterval(loadDashboard, 5000);
-    }, 500); // tunggu partial ke-load
-  });
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadPartials();
 
+    loadDashboard();
+    setInterval(loadDashboard, 5000);
+  });
   </script>
 
 </body>
