@@ -3,7 +3,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TECH-C Robotic and Coding Dashboard</title>
+
+  <title>TECH-C Admin Dashboard</title>
+
+  <style>
+    * {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .admin-grid-bg {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .dark .admin-grid-bg {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+
+    .float-soft {
+      animation: floatSoft 4s ease-in-out infinite;
+    }
+
+    @keyframes floatSoft {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .pulse-glow {
+      animation: pulseGlow 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, .28);
+      }
+      50% {
+        box-shadow: 0 0 0 12px rgba(37, 99, 235, 0);
+      }
+    }
+  </style>
 </head>
 
 <script>
@@ -26,20 +81,20 @@ if (!token) {
     darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
     $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
   "
-  :class="{'dark bg-gray-950': darkMode === true}"
-  class="bg-gray-50"
+  :class="{'dark bg-slate-950': darkMode === true}"
+  class="bg-slate-50"
 >
 
   <!-- Preloader -->
   <include src="./partials/preloader.html"></include>
 
-  <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
+  <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
 
     <!-- Sidebar -->
     <include src="./partials/sidebar.html"></include>
 
     <!-- Content -->
-    <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
+    <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto no-scrollbar">
 
       <include src="./partials/overlay.html"></include>
 
@@ -47,202 +102,424 @@ if (!token) {
       <include src="./partials/header.html"></include>
 
       <!-- MAIN -->
-      <main class="relative min-h-screen overflow-hidden p-4 sm:p-6 lg:p-8">
+      <main class="admin-grid-bg relative min-h-screen overflow-hidden p-4 sm:p-6 lg:p-8">
 
-        <!-- Background decoration -->
+        <!-- Background Decoration -->
         <div class="pointer-events-none absolute inset-0 overflow-hidden">
-          <div class="absolute -top-32 -right-32 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl"></div>
-          <div class="absolute top-60 -left-32 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl"></div>
-          <div class="absolute bottom-0 right-1/3 h-72 w-72 rounded-full bg-purple-500/10 blur-3xl"></div>
+          <div class="absolute -right-40 -top-40 h-[480px] w-[480px] rounded-full bg-blue-500/10 blur-3xl"></div>
+          <div class="absolute left-[-160px] top-80 h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-3xl"></div>
+          <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
         </div>
 
-        <section class="relative z-10">
+        <section class="relative z-10 mx-auto max-w-7xl">
 
-          <!-- Header Dashboard -->
-          <div class="mb-8 rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl shadow-gray-200/60 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/80 dark:shadow-black/20">
-            <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <!-- HERO -->
+          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="relative p-6 sm:p-7 lg:p-8">
 
-              <div>
-                <div class="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
-                  <span class="h-2 w-2 rounded-full bg-green-500"></span>
-                  Admin Dashboard
+              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-blue-600/15 via-cyan-500/5 to-transparent lg:block"></div>
+
+              <div class="relative flex flex-col gap-7 xl:flex-row xl:items-center xl:justify-between">
+
+                <!-- Hero Text -->
+                <div class="max-w-3xl">
+                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
+                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
+                    Admin Control Center
+                  </div>
+
+                  <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                    TECH-C Robotic & Coding Dashboard
+                  </h1>
+
+                  <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+                    Pantau pelajar, sekolah, kelas, pendaftaran, tagihan, inventaris, dan keuangan TECH-C dalam satu dashboard modern.
+                  </p>
+
+                  <div class="mt-6 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Status API</p>
+                      <p id="apiStatus" class="mt-1 text-sm font-black text-yellow-500">Checking...</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Update Terakhir</p>
+                      <p id="lastUpdate" class="mt-1 text-sm font-black text-slate-900 dark:text-white">-</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Mode</p>
+                      <p class="mt-1 text-sm font-black text-blue-600 dark:text-blue-300">Admin</p>
+                    </div>
+
+                  </div>
                 </div>
 
-                <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">
-                  TECH-C Robotic & Coding
-                </h1>
+                <!-- Admin Pulse Card -->
+                <div class="relative shrink-0">
+                  <div class="absolute -inset-4 rounded-[2.5rem] bg-blue-500/20 blur-2xl"></div>
 
-                <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-500 dark:text-gray-400">
-                  Pantau data pelajar, pendaftaran, pelajaran, dan pendapatan Tech-C secara real-time.
-                </p>
-              </div>
+                  <div class="float-soft relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[360px]">
 
-              <div class="flex flex-wrap gap-3">
-                <div class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-950">
-                  <p class="text-xs text-gray-500 dark:text-gray-400">Status API</p>
-                  <p id="apiStatus" class="mt-1 text-sm font-semibold text-yellow-500">Checking...</p>
+                    <div class="mb-5 flex items-start justify-between gap-4">
+                      <div>
+                        <p class="text-sm font-bold text-white/80">TECH-C Operations</p>
+                        <h2 id="heroIncome" class="mt-2 text-3xl font-black">Rp 0</h2>
+                        <p class="mt-1 text-xs font-semibold text-white/70">Pendapatan terdata</p>
+                      </div>
+
+                      <div class="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white/20 text-3xl backdrop-blur">
+                        🤖
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3">
+                      <div class="rounded-2xl bg-white/15 p-3 backdrop-blur">
+                        <p id="miniStudents" class="text-xl font-black">0</p>
+                        <p class="mt-1 text-[11px] font-semibold text-white/70">Pelajar</p>
+                      </div>
+
+                      <div class="rounded-2xl bg-white/15 p-3 backdrop-blur">
+                        <p id="miniLessons" class="text-xl font-black">0</p>
+                        <p class="mt-1 text-[11px] font-semibold text-white/70">Pelajaran</p>
+                      </div>
+
+                      <div class="rounded-2xl bg-white/15 p-3 backdrop-blur">
+                        <p id="miniOrders" class="text-xl font-black">0</p>
+                        <p class="mt-1 text-[11px] font-semibold text-white/70">Order</p>
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
 
-                <button
-                  onclick="loadDashboard()"
-                  class="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:-translate-y-0.5 hover:bg-blue-700 active:translate-y-0"
-                >
-                  Refresh Data
-                </button>
               </div>
-
             </div>
           </div>
 
-          <!-- Statistik -->
-          <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <!-- TOP STAT CARDS -->
+          <div class="mb-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
-            <!-- Card 1 -->
-            <div class="group relative overflow-hidden rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-blue-500/10"></div>
+            <!-- Total Pelajar -->
+            <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-blue-500/10"></div>
 
               <div class="relative flex items-start justify-between">
                 <div>
-                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Pelajar</p>
-                  <h2 id="pelajar" class="mt-3 text-3xl font-extrabold text-gray-900 dark:text-white">0</h2>
-                  <p class="mt-2 text-xs text-gray-400">Jumlah siswa aktif</p>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Total Pelajar</p>
+                  <h2 id="pelajar" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Siswa aktif TECH-C</p>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-300">
-                  <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path d="M16 11a4 4 0 1 0-8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M4 20c.8-3.4 3.7-5 8-5s7.2 1.6 8 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
+                <div class="pulse-glow flex h-13 w-13 items-center justify-center rounded-2xl bg-blue-100 text-2xl text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+                  👨‍🎓
                 </div>
               </div>
             </div>
 
-            <!-- Card 2 -->
-            <div class="group relative overflow-hidden rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-cyan-500/10"></div>
+            <!-- Pendaftaran -->
+            <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-cyan-500/10"></div>
 
               <div class="relative flex items-start justify-between">
                 <div>
-                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Pendaftaran</p>
-                  <h2 id="pendaftaran" class="mt-3 text-3xl font-extrabold text-gray-900 dark:text-white">0</h2>
-                  <p class="mt-2 text-xs text-gray-400">Data pemesanan siswa</p>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Pendaftaran</p>
+                  <h2 id="pendaftaran" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Pemesanan siswa</p>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-cyan-600 dark:bg-cyan-950 dark:text-cyan-300">
-                  <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path d="M7 7h10M7 12h10M7 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="2"/>
-                  </svg>
+                <div class="flex h-13 w-13 items-center justify-center rounded-2xl bg-cyan-100 text-2xl text-cyan-600 dark:bg-cyan-950 dark:text-cyan-300">
+                  📝
                 </div>
               </div>
             </div>
 
-            <!-- Card 3 -->
-            <div class="group relative overflow-hidden rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-purple-500/10"></div>
+            <!-- Pelajaran -->
+            <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-violet-500/10"></div>
 
               <div class="relative flex items-start justify-between">
                 <div>
-                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Pelajaran</p>
-                  <h2 id="pelajaran" class="mt-3 text-3xl font-extrabold text-gray-900 dark:text-white">0</h2>
-                  <p class="mt-2 text-xs text-gray-400">Program pembelajaran</p>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Pelajaran</p>
+                  <h2 id="pelajaran" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Program aktif</p>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-100 text-purple-600 dark:bg-purple-950 dark:text-purple-300">
-                  <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path d="M4 19V5a2 2 0 0 1 2-2h11a3 3 0 0 1 3 3v14H6a2 2 0 0 1-2-2Z" stroke="currentColor" stroke-width="2"/>
-                    <path d="M8 7h8M8 11h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
+                <div class="flex h-13 w-13 items-center justify-center rounded-2xl bg-violet-100 text-2xl text-violet-600 dark:bg-violet-950 dark:text-violet-300">
+                  📚
                 </div>
               </div>
             </div>
 
-            <!-- Card 4 -->
-            <div class="group relative overflow-hidden rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-green-500/10"></div>
+            <!-- Pendapatan -->
+            <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-green-500/10"></div>
 
               <div class="relative flex items-start justify-between">
                 <div>
-                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pendapatan</p>
-                  <h2 id="pendapatan" class="mt-3 text-2xl font-extrabold text-green-500">IDR 0</h2>
-                  <p class="mt-2 text-xs text-gray-400">Total pemasukan</p>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Pendapatan</p>
+                  <h2 id="pendapatan" class="mt-3 text-2xl font-black text-green-500">Rp 0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Total pemasukan</p>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-300">
-                  <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path d="M12 3v18M17 7.5c-.8-1-2.2-1.5-4-1.5-2.4 0-4 1.1-4 2.8 0 4.2 8 1.8 8 6.4 0 1.7-1.6 2.8-4 2.8-2 0-3.6-.7-4.5-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
+                <div class="flex h-13 w-13 items-center justify-center rounded-2xl bg-green-100 text-2xl text-green-600 dark:bg-green-950 dark:text-green-300">
+                  💰
                 </div>
               </div>
             </div>
 
           </div>
 
-          <!-- Content Grid -->
+          <!-- QUICK ACTIONS -->
+          <div class="mb-7 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
+
+            <a href="pelajar.html" class="group rounded-[1.5rem] border border-white/70 bg-white/90 p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-xl dark:bg-blue-950/60">👨‍🎓</div>
+              <p class="text-sm font-black text-slate-900 dark:text-white">Pelajar</p>
+              <p class="mt-1 text-xs font-semibold text-slate-400">Data siswa</p>
+            </a>
+
+            <a href="sekolah.html" class="group rounded-[1.5rem] border border-white/70 bg-white/90 p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-50 text-xl dark:bg-cyan-950/60">🏫</div>
+              <p class="text-sm font-black text-slate-900 dark:text-white">Sekolah</p>
+              <p class="mt-1 text-xs font-semibold text-slate-400">Mitra ekskul</p>
+            </a>
+
+            <a href="pengajar.html" class="group rounded-[1.5rem] border border-white/70 bg-white/90 p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-50 text-xl dark:bg-violet-950/60">👨‍🏫</div>
+              <p class="text-sm font-black text-slate-900 dark:text-white">Pengajar</p>
+              <p class="mt-1 text-xs font-semibold text-slate-400">Tutor</p>
+            </a>
+
+            <a href="invoice.html" class="group rounded-[1.5rem] border border-white/70 bg-white/90 p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-green-50 text-xl dark:bg-green-950/60">🧾</div>
+              <p class="text-sm font-black text-slate-900 dark:text-white">Invoice</p>
+              <p class="mt-1 text-xs font-semibold text-slate-400">Tagihan</p>
+            </a>
+
+            <a href="inventaris.html" class="group rounded-[1.5rem] border border-white/70 bg-white/90 p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50 text-xl dark:bg-orange-950/60">🤖</div>
+              <p class="text-sm font-black text-slate-900 dark:text-white">Inventaris</p>
+              <p class="mt-1 text-xs font-semibold text-slate-400">Robotik</p>
+            </a>
+
+            <a href="laporan.html" class="group rounded-[1.5rem] border border-white/70 bg-white/90 p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-xl dark:bg-red-950/60">📊</div>
+              <p class="text-sm font-black text-slate-900 dark:text-white">Laporan</p>
+              <p class="mt-1 text-xs font-semibold text-slate-400">Export data</p>
+            </a>
+
+          </div>
+
+          <!-- CONTENT GRID -->
           <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
-            <!-- Chart -->
-            <div class="xl:col-span-2 rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
-              <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h3 class="text-lg font-bold text-gray-900 dark:text-white">Grafik Pelajar</h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">Perkembangan jumlah student berdasarkan data dashboard.</p>
+            <!-- LEFT -->
+            <div class="space-y-6 xl:col-span-2">
+
+              <!-- Chart -->
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+
+                <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white">Grafik Perkembangan Pelajar</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Monitoring perkembangan data siswa dan pendaftaran TECH-C.</p>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <div class="rounded-full bg-blue-50 px-4 py-2 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+                      Realtime Data
+                    </div>
+
+                    <button
+                      onclick="loadDashboard()"
+                      class="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                    >
+                      Refresh
+                    </button>
+                  </div>
                 </div>
 
-                <div class="rounded-full bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                  Realtime Data
+                <div class="h-[360px]">
+                  <canvas id="studentChart"></canvas>
                 </div>
+
               </div>
 
-              <div class="h-[340px]">
-                <canvas id="studentChart"></canvas>
+              <!-- Operational Cards -->
+              <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+
+                <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                  <div class="mb-5 flex items-center justify-between">
+                    <div>
+                      <h3 class="text-lg font-black text-slate-900 dark:text-white">Operasional Hari Ini</h3>
+                      <p class="text-sm text-slate-500 dark:text-slate-400">Ringkasan aktivitas kantor.</p>
+                    </div>
+                    <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-100 text-xl dark:bg-blue-950">
+                      ⚡
+                    </div>
+                  </div>
+
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                      <div>
+                        <p class="text-sm font-black text-slate-900 dark:text-white">Follow up pembayaran</p>
+                        <p class="text-xs font-semibold text-slate-400">Tagihan belum dibayar</p>
+                      </div>
+                      <span id="tagihan" class="rounded-full bg-red-100 px-3 py-1 text-sm font-black text-red-600 dark:bg-red-950 dark:text-red-300">0</span>
+                    </div>
+
+                    <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                      <div>
+                        <p class="text-sm font-black text-slate-900 dark:text-white">Request penggantian</p>
+                        <p class="text-xs font-semibold text-slate-400">Butuh approval admin</p>
+                      </div>
+                      <span id="penggantian" class="rounded-full bg-yellow-100 px-3 py-1 text-sm font-black text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">0</span>
+                    </div>
+
+                    <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                      <div>
+                        <p class="text-sm font-black text-slate-900 dark:text-white">Pemesanan siswa</p>
+                        <p class="text-xs font-semibold text-slate-400">Lead / daftar baru</p>
+                      </div>
+                      <span id="pemesanan" class="rounded-full bg-blue-100 px-3 py-1 text-sm font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">0</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                  <div class="mb-5 flex items-center justify-between">
+                    <div>
+                      <h3 class="text-lg font-black text-slate-900 dark:text-white">Fokus Admin</h3>
+                      <p class="text-sm text-slate-500 dark:text-slate-400">Shortcut pekerjaan penting.</p>
+                    </div>
+                    <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-100 text-xl dark:bg-cyan-950">
+                      🎯
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <a href="jadwal-ekskul.html" class="rounded-2xl bg-blue-50 p-4 transition hover:-translate-y-1 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-950">
+                      <p class="text-sm font-black text-blue-600 dark:text-blue-300">Jadwal</p>
+                      <p class="mt-1 text-xs font-semibold text-slate-500">Kelas ekskul</p>
+                    </a>
+
+                    <a href="keuangan.html" class="rounded-2xl bg-green-50 p-4 transition hover:-translate-y-1 hover:bg-green-100 dark:bg-green-950/50 dark:hover:bg-green-950">
+                      <p class="text-sm font-black text-green-600 dark:text-green-300">Keuangan</p>
+                      <p class="mt-1 text-xs font-semibold text-slate-500">Cashflow</p>
+                    </a>
+
+                    <a href="pengumuman.html" class="rounded-2xl bg-yellow-50 p-4 transition hover:-translate-y-1 hover:bg-yellow-100 dark:bg-yellow-950/50 dark:hover:bg-yellow-950">
+                      <p class="text-sm font-black text-yellow-600 dark:text-yellow-300">Info</p>
+                      <p class="mt-1 text-xs font-semibold text-slate-500">Pengumuman</p>
+                    </a>
+
+                    <a href="pengaturan.html" class="rounded-2xl bg-violet-50 p-4 transition hover:-translate-y-1 hover:bg-violet-100 dark:bg-violet-950/50 dark:hover:bg-violet-950">
+                      <p class="text-sm font-black text-violet-600 dark:text-violet-300">Sistem</p>
+                      <p class="mt-1 text-xs font-semibold text-slate-500">Pengaturan</p>
+                    </a>
+                  </div>
+                </div>
+
               </div>
+
             </div>
 
-            <!-- Right Panel -->
-            <div class="rounded-3xl border border-white/70 bg-white/85 p-5 shadow-xl shadow-gray-200/60 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/85 dark:shadow-black/20">
-              <div class="mb-5">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Ringkasan Cepat</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Info tambahan dari dashboard.</p>
+            <!-- RIGHT -->
+            <div class="space-y-6">
+
+              <!-- Summary Panel -->
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                <div class="mb-5">
+                  <h3 class="text-lg font-black text-slate-900 dark:text-white">Ringkasan Cepat</h3>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">Status penting dashboard.</p>
+                </div>
+
+                <div class="space-y-4">
+
+                  <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                    <div class="mb-2 flex items-center justify-between">
+                      <p class="text-sm font-black text-slate-900 dark:text-white">Pengumuman</p>
+                      <span id="pengumuman" class="rounded-full bg-green-100 px-3 py-1 text-sm font-black text-green-600 dark:bg-green-950 dark:text-green-300">0</span>
+                    </div>
+                    <p class="text-xs font-semibold text-slate-400">Informasi aktif untuk siswa / orang tua.</p>
+                  </div>
+
+                  <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                    <div class="mb-2 flex items-center justify-between">
+                      <p class="text-sm font-black text-slate-900 dark:text-white">Status Sistem</p>
+                      <span id="systemStatus" class="rounded-full bg-yellow-100 px-3 py-1 text-sm font-black text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">Checking</span>
+                    </div>
+                    <p class="text-xs font-semibold text-slate-400">Koneksi dashboard dengan Laravel API.</p>
+                  </div>
+
+                  <div class="rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 p-5 text-white">
+                    <p class="text-sm font-bold text-white/80">TECH-C Note</p>
+                    <h4 class="mt-2 text-xl font-black">Rapihin data harian</h4>
+                    <p class="mt-2 text-xs leading-5 text-white/75">
+                      Pastikan data pelajar, jadwal, tagihan, dan progress selalu update biar laporan bulanan gampang dibuat.
+                    </p>
+                  </div>
+
+                </div>
               </div>
 
-              <div class="space-y-4">
-
-                <div class="flex items-center justify-between rounded-2xl bg-gray-50 p-4 dark:bg-gray-950">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-800 dark:text-white">Tagihan Belum Dibayar</p>
-                    <p class="text-xs text-gray-500">Perlu follow up</p>
-                  </div>
-                  <span id="tagihan" class="rounded-full bg-red-100 px-3 py-1 text-sm font-bold text-red-600 dark:bg-red-950 dark:text-red-300">0</span>
+              <!-- Progress Admin -->
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                <div class="mb-5">
+                  <h3 class="text-lg font-black text-slate-900 dark:text-white">Komposisi Data</h3>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">Rasio pendaftaran terhadap pelajar.</p>
                 </div>
 
-                <div class="flex items-center justify-between rounded-2xl bg-gray-50 p-4 dark:bg-gray-950">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-800 dark:text-white">Permintaan Penggantian</p>
-                    <p class="text-xs text-gray-500">Request siswa</p>
+                <div class="flex justify-center">
+                  <div class="relative h-44 w-44">
+                    <svg class="h-full w-full -rotate-90" viewBox="0 0 120 120">
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="50"
+                        stroke="currentColor"
+                        stroke-width="10"
+                        fill="none"
+                        class="text-slate-100 dark:text-slate-800"
+                      />
+                      <circle
+                        id="adminCircle"
+                        cx="60"
+                        cy="60"
+                        r="50"
+                        stroke="currentColor"
+                        stroke-width="10"
+                        fill="none"
+                        stroke-linecap="round"
+                        class="text-blue-600"
+                        stroke-dasharray="314"
+                        stroke-dashoffset="314"
+                      />
+                    </svg>
+
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                      <p id="adminCircleText" class="text-4xl font-black text-slate-900 dark:text-white">0%</p>
+                      <p class="text-xs font-bold text-slate-400">Ratio</p>
+                    </div>
                   </div>
-                  <span id="penggantian" class="rounded-full bg-yellow-100 px-3 py-1 text-sm font-bold text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">0</span>
                 </div>
 
-                <div class="flex items-center justify-between rounded-2xl bg-gray-50 p-4 dark:bg-gray-950">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-800 dark:text-white">Pemesanan Siswa</p>
-                    <p class="text-xs text-gray-500">Pendaftaran baru</p>
+                <div class="mt-5 grid grid-cols-2 gap-3">
+                  <div class="rounded-2xl bg-slate-50 p-4 text-center dark:bg-slate-950">
+                    <p class="text-xs font-semibold text-slate-500">Pelajar</p>
+                    <p id="rightStudents" class="mt-1 text-sm font-black text-blue-500">0</p>
                   </div>
-                  <span id="pemesanan" class="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-600 dark:bg-blue-950 dark:text-blue-300">0</span>
-                </div>
 
-                <div class="flex items-center justify-between rounded-2xl bg-gray-50 p-4 dark:bg-gray-950">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-800 dark:text-white">Pengumuman</p>
-                    <p class="text-xs text-gray-500">Informasi aktif</p>
+                  <div class="rounded-2xl bg-slate-50 p-4 text-center dark:bg-slate-950">
+                    <p class="text-xs font-semibold text-slate-500">Order</p>
+                    <p id="rightOrders" class="mt-1 text-sm font-black text-cyan-500">0</p>
                   </div>
-                  <span id="pengumuman" class="rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-600 dark:bg-green-950 dark:text-green-300">0</span>
                 </div>
-
               </div>
+
             </div>
-
           </div>
 
         </section>
@@ -250,7 +527,7 @@ if (!token) {
     </div>
   </div>
 
-  <!-- LOAD PARTIAL -->
+  <!-- LOAD PARTIALS -->
   <script>
   async function loadPartials() {
     const includes = document.querySelectorAll('include');
@@ -263,12 +540,10 @@ if (!token) {
         const html = await res.text();
         el.outerHTML = html;
       } catch (e) {
-        console.error("Gagal load:", file);
+        console.error("Gagal load partial:", file, e);
       }
     }
   }
-
-  loadPartials();
   </script>
 
   <!-- Chart.js -->
@@ -276,39 +551,68 @@ if (!token) {
 
   <!-- DASHBOARD SCRIPT -->
   <script>
-  const API_BASE = 'http://localhost:8000/api';
+  const API_BASE = localStorage.getItem('api_base') || 'http://127.0.0.1:8000/api';
   let chart = null;
+  let dashboardInterval = null;
 
   function setText(id, value) {
     const el = document.getElementById(id);
     if (el) el.innerText = value;
   }
 
-  function setApiStatus(text, type = 'loading') {
-    const el = document.getElementById('apiStatus');
-    if (!el) return;
-
-    el.innerText = text;
-
-    el.className = 'mt-1 text-sm font-semibold';
-
-    if (type === 'success') {
-      el.classList.add('text-green-500');
-    } else if (type === 'error') {
-      el.classList.add('text-red-500');
-    } else {
-      el.classList.add('text-yellow-500');
-    }
+  function getNumber(value, fallback = 0) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
   }
 
   function formatRupiah(value) {
-    const number = Number(value || 0);
+    const number = getNumber(value, 0);
 
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
       maximumFractionDigits: 0
     }).format(number);
+  }
+
+  function updateLastUpdate() {
+    const now = new Date();
+
+    setText('lastUpdate', now.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }));
+  }
+
+  function setApiStatus(text, type = 'loading') {
+    const el = document.getElementById('apiStatus');
+    const systemEl = document.getElementById('systemStatus');
+
+    if (el) {
+      el.innerText = text;
+      el.className = 'mt-1 text-sm font-black';
+
+      if (type === 'success') {
+        el.classList.add('text-green-500');
+      } else if (type === 'error') {
+        el.classList.add('text-red-500');
+      } else {
+        el.classList.add('text-yellow-500');
+      }
+    }
+
+    if (systemEl) {
+      systemEl.innerText = type === 'success' ? 'Online' : type === 'error' ? 'Offline' : 'Checking';
+      systemEl.className = 'rounded-full px-3 py-1 text-sm font-black';
+
+      if (type === 'success') {
+        systemEl.classList.add('bg-green-100', 'text-green-600', 'dark:bg-green-950', 'dark:text-green-300');
+      } else if (type === 'error') {
+        systemEl.classList.add('bg-red-100', 'text-red-600', 'dark:bg-red-950', 'dark:text-red-300');
+      } else {
+        systemEl.classList.add('bg-yellow-100', 'text-yellow-600', 'dark:bg-yellow-950', 'dark:text-yellow-300');
+      }
+    }
   }
 
   async function apiGet(path) {
@@ -328,14 +632,55 @@ if (!token) {
       return null;
     }
 
-    if (!res.ok) {
-      throw new Error(`HTTP Error ${res.status}`);
+    const raw = await res.text();
+
+    let data = null;
+
+    try {
+      data = JSON.parse(raw);
+    } catch (err) {
+      console.error("Response API bukan JSON:", raw);
+      throw new Error("Response API bukan JSON");
     }
 
-    return await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || `HTTP Error ${res.status}`);
+    }
+
+    return data;
   }
 
-  function renderChart(data) {
+  function normalizeDashboardData(data) {
+    return {
+      totalPelajar: getNumber(data.totalPelajar ?? data.total_pelajar ?? data.students ?? data.jumlah_siswa ?? 0),
+      totalPendaftaran: getNumber(data.totalPendaftaran ?? data.pemesananSiswa ?? data.total_pendaftaran ?? data.orders ?? 0),
+      totalPelajaran: getNumber(data.totalPelajaran ?? data.total_pelajaran ?? data.lessons ?? 0),
+      pendapatan: getNumber(data.pendapatan ?? data.totalPendapatan ?? data.revenue ?? 0),
+      tagihanBelumDibayar: getNumber(data.tagihanBelumDibayar ?? data.tagihan_belum_dibayar ?? data.tagihan ?? 0),
+      permintaanPenggantian: getNumber(data.permintaanPenggantian ?? data.permintaan_penggantian ?? data.penggantian ?? 0),
+      pemesananSiswa: getNumber(data.pemesananSiswa ?? data.pemesanan_siswa ?? data.totalPendaftaran ?? 0),
+      pengumuman: getNumber(data.pengumuman ?? data.pengumumanBaru ?? data.announcement ?? 0),
+      chartLabels: data.chart?.labels || data.studentChart?.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+      chartData: data.chart?.data || data.studentChart?.data || []
+    };
+  }
+
+  function setAdminCircle(totalPelajar, totalPendaftaran) {
+    const max = Math.max(totalPelajar, totalPendaftaran, 1);
+    const percent = Math.min(100, Math.round((totalPendaftaran / max) * 100));
+
+    const circle = document.getElementById('adminCircle');
+
+    if (circle) {
+      const circumference = 314;
+      const offset = circumference - (percent / 100) * circumference;
+      circle.style.strokeDashoffset = offset;
+    }
+
+    setText('adminCircleText', `${percent}%`);
+  }
+
+  function renderChart(rawData, clean) {
     const canvas = document.getElementById('studentChart');
     if (!canvas) return;
 
@@ -345,17 +690,32 @@ if (!token) {
       chart.destroy();
     }
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, 340);
-    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.28)');
+    const labels = clean.chartLabels;
+    let values = clean.chartData;
+
+    if (!Array.isArray(values) || values.length === 0) {
+      const total = clean.totalPelajar;
+      values = [
+        Math.max(0, Math.round(total * 0.30)),
+        Math.max(0, Math.round(total * 0.45)),
+        Math.max(0, Math.round(total * 0.58)),
+        Math.max(0, Math.round(total * 0.72)),
+        Math.max(0, Math.round(total * 0.88)),
+        total
+      ];
+    }
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 360);
+    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.32)');
     gradient.addColorStop(1, 'rgba(37, 99, 235, 0.02)');
 
     chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: data.chart?.labels || [],
+        labels: labels,
         datasets: [{
-          label: 'Students',
-          data: data.chart?.data || [],
+          label: 'Pelajar',
+          data: values,
           borderWidth: 3,
           borderColor: '#2563eb',
           backgroundColor: gradient,
@@ -380,11 +740,16 @@ if (!token) {
             display: false
           },
           tooltip: {
-            backgroundColor: '#111827',
+            backgroundColor: '#0f172a',
             titleColor: '#ffffff',
-            bodyColor: '#d1d5db',
+            bodyColor: '#cbd5e1',
             padding: 12,
-            cornerRadius: 12
+            cornerRadius: 14,
+            callbacks: {
+              label: function(context) {
+                return `Total: ${context.parsed.y}`;
+              }
+            }
           }
         },
         scales: {
@@ -393,22 +758,59 @@ if (!token) {
               display: false
             },
             ticks: {
-              color: '#9ca3af'
+              color: '#94a3b8',
+              font: {
+                weight: '700'
+              }
             }
           },
           y: {
             beginAtZero: true,
             grid: {
-              color: 'rgba(156, 163, 175, 0.18)'
+              color: 'rgba(148, 163, 184, 0.18)'
             },
             ticks: {
-              color: '#9ca3af',
-              precision: 0
+              color: '#94a3b8',
+              precision: 0,
+              font: {
+                weight: '700'
+              }
             }
           }
         }
       }
     });
+  }
+
+  async function loadHeaderUser() {
+    try {
+      const res = await fetch(`${API_BASE}/profile`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!res.ok) return;
+
+      const data = await res.json();
+
+      const name = data.name || localStorage.getItem('name') || 'Admin';
+      const email = data.email || localStorage.getItem('email') || '';
+
+      setText('header_name', name);
+      setText('dropdown_name', name);
+      setText('dropdown_email', email);
+
+      const avatar = document.getElementById('header_avatar');
+
+      if (avatar) {
+        avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
+      }
+
+    } catch (err) {
+      console.warn('Header profile gagal:', err);
+    }
   }
 
   async function loadDashboard() {
@@ -418,21 +820,33 @@ if (!token) {
       const data = await apiGet('/dashboard');
       if (!data) return;
 
-      console.log(data);
+      console.log('ADMIN DASHBOARD:', data);
 
-      setText('pelajar', data.totalPelajar ?? 0);
-      setText('pendaftaran', data.pemesananSiswa ?? 0);
-      setText('pelajaran', data.totalPelajaran ?? 0);
-      setText('pendapatan', formatRupiah(data.pendapatan ?? 0));
+      const clean = normalizeDashboardData(data);
 
-      setText('tagihan', data.tagihanBelumDibayar ?? 0);
-      setText('penggantian', data.permintaanPenggantian ?? 0);
-      setText('pemesanan', data.pemesananSiswa ?? 0);
-      setText('pengumuman', data.pengumuman ?? 0);
+      setText('pelajar', clean.totalPelajar);
+      setText('pendaftaran', clean.totalPendaftaran);
+      setText('pelajaran', clean.totalPelajaran);
+      setText('pendapatan', formatRupiah(clean.pendapatan));
 
-      renderChart(data);
+      setText('heroIncome', formatRupiah(clean.pendapatan));
+      setText('miniStudents', clean.totalPelajar);
+      setText('miniLessons', clean.totalPelajaran);
+      setText('miniOrders', clean.totalPendaftaran);
+
+      setText('tagihan', clean.tagihanBelumDibayar);
+      setText('penggantian', clean.permintaanPenggantian);
+      setText('pemesanan', clean.pemesananSiswa);
+      setText('pengumuman', clean.pengumuman);
+
+      setText('rightStudents', clean.totalPelajar);
+      setText('rightOrders', clean.totalPendaftaran);
+
+      setAdminCircle(clean.totalPelajar, clean.totalPendaftaran);
+      renderChart(data, clean);
 
       setApiStatus('Connected', 'success');
+      updateLastUpdate();
 
     } catch (err) {
       console.error("Dashboard error:", err);
@@ -440,8 +854,17 @@ if (!token) {
     }
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    loadDashboard();
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadPartials();
+
+    await loadHeaderUser();
+    await loadDashboard();
+
+    if (dashboardInterval) {
+      clearInterval(dashboardInterval);
+    }
+
+    dashboardInterval = setInterval(loadDashboard, 15000);
   });
   </script>
 
