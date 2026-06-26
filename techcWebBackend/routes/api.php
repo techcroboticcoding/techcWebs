@@ -668,7 +668,9 @@ Route::post('/invoices/{invoice}/upload-proof-paid', function (Invoice $invoice,
 |--------------------------------------------------------------------------
 | STUDENT DASHBOARD
 |--------------------------------------------------------------------------
-*/Route::get('/student/dashboard', function (\Illuminate\Http\Request $request) {
+/*/
+
+Route::get('/student/dashboard', function (Request $request) {
     try {
         $user = techc_user_from_request($request);
 
@@ -679,15 +681,11 @@ Route::post('/invoices/{invoice}/upload-proof-paid', function (Invoice $invoice,
             ?? $request->input('student_id');
 
         if ($studentId) {
-            $student = \App\Models\Student::with(['school', 'package'])
-                ->where('id', $studentId)
-                ->first();
+            $student = Student::where('id', $studentId)->first();
         }
 
         if (!$student && $user) {
-            $student = \App\Models\Student::with(['school', 'package'])
-                ->where('user_id', $user->id)
-                ->first();
+            $student = Student::where('user_id', $user->id)->first();
         }
 
         if (!$student) {
@@ -699,30 +697,106 @@ Route::post('/invoices/{invoice}/upload-proof-paid', function (Invoice $invoice,
                     'x_user_id' => $request->header('X-User-Id'),
                     'x_student_id' => $request->header('X-Student-Id'),
                     'x_user_email' => $request->header('X-User-Email'),
+                    'authorization' => $request->header('Authorization'),
                 ],
             ], 404);
         }
 
-        $invoices = \App\Models\Invoice::with(['items', 'payments'])
-            ->where('student_id', $student->id)
-            ->latest()
-            ->get();
+        $studentData = $student->toArray();
+
+        try {
+            $school = $student->school;
+            $studentData['school'] = $school;
+            $studentData['school_name'] = $school?->nama;
+            $studentData['asal_sekolah'] = $school?->nama;
+        } catch (\Throwable $e) {
+            $studentData['school'] = null;
+            $studentData['school_name'] = $student->asal_sekolah ?? null;
+            $studentData['asal_sekolah'] = $student->asal_sekolah ?? null;
+        }
+
+        try {
+            $package = $student->package;
+            $studentData['package'] = $package;
+            $studentData['package_name'] = $package?->nama;
+        } catch (\Throwable $e) {
+            $studentData['package'] = null;
+            $studentData['package_name'] = null;
+        }
+
+        $invoices = collect();
+
+        try {
+            $invoices = Invoice::where('student_id', $student->id)
+                ->latest()
+                ->get()
+                ->map(function ($invoice) {
+                    $invoiceData = $invoice->toArray();
+
+                    try {
+                        $invoiceData['items'] = $invoice->items()->get();
+                    } catch (\Throwable $e) {
+                        $invoiceData['items'] = [];
+                    }
+
+                    try {
+                        $invoiceData['payments'] = $invoice->payments()->get()->map(function ($payment) {
+                            $paymentData = $payment->toArray();
+                            $paymentData['proof_url'] = techc_storage_url($payment->proof_file ?? null);
+                            return $paymentData;
+                        });
+                    } catch (\Throwable $e) {
+                        $invoiceData['payments'] = [];
+                    }
+
+                    return $invoiceData;
+                });
+        } catch (\Throwable $e) {
+            $invoices = collect();
+        }
 
         $unpaidTotal = $invoices
-            ->filter(fn ($invoice) => in_array($invoice->status, ['Belum Dibayar', 'Pending']))
-            ->sum('total');
+            ->filter(function ($invoice) {
+                $status = $invoice['status'] ?? 'Belum Dibayar';
+                return in_array($status, ['Belum Dibayar', 'Pending']);
+            })
+            ->sum(function ($invoice) {
+                return (int) ($invoice['total'] ?? 0);
+            });
+
+        $notifications = [];
+
+        try {
+            $notifications = StudentNotification::where('student_id', $student->id)
+                ->latest()
+                ->take(10)
+                ->get();
+        } catch (\Throwable $e) {
+            $notifications = [];
+        }
+
+        $jadwal = [];
+
+        try {
+            if (is_array($student->jadwal)) {
+                $jadwal = $student->jadwal;
+            } elseif (is_string($student->jadwal) && $student->jadwal !== '') {
+                $decoded = json_decode($student->jadwal, true);
+                $jadwal = is_array($decoded) ? $decoded : [];
+            }
+        } catch (\Throwable $e) {
+            $jadwal = [];
+        }
 
         return response()->json([
-            'student' => $student,
+            'student' => $studentData,
             'jumlah_anak' => 1,
-            'progress_belajar' => $student->progress_belajar ?? 0,
+            'progress_belajar' => (int) ($student->progress_belajar ?? 0),
             'tagihan' => $unpaidTotal,
-            'catatan' => $student->catatan,
-            'jadwal' => $student->jadwal ? json_decode($student->jadwal, true) : [],
-            'invoices' => $invoices,
-            'notifications' => class_exists(\App\Models\StudentNotification::class)
-                ? \App\Models\StudentNotification::where('student_id', $student->id)->latest()->take(10)->get()
-                : [],
+            'catatan' => $student->catatan ?? null,
+            'jadwal' => $jadwal,
+            'invoices' => $invoices->values(),
+            'notifications' => $notifications,
         ]);
 
     } catch (\Throwable $e) {
@@ -734,31 +808,61 @@ Route::post('/invoices/{invoice}/upload-proof-paid', function (Invoice $invoice,
         ], 500);
     }
 });
-
 Route::get('/student/invoices', function (Request $request) {
-    $user = techc_user_from_request($request);
+    try {
+        $user = techc_user_from_request($request);
 
-    $studentId = $request->header('X-Student-Id')
-        ?? $request->query('student_id');
+        $studentId = $request->header('X-Student-Id')
+            ?? $request->query('student_id')
+            ?? $request->input('student_id');
 
-    $student = null;
+        $student = null;
 
-    if ($studentId) {
-        $student = Student::find($studentId);
+        if ($studentId) {
+            $student = Student::find($studentId);
+        }
+
+        if (!$student && $user) {
+            $student = Student::where('user_id', $user->id)->first();
+        }
+
+        if (!$student) {
+            return response()->json([]);
+        }
+
+        return Invoice::where('student_id', $student->id)
+            ->latest()
+            ->get()
+            ->map(function ($invoice) {
+                $invoiceData = $invoice->toArray();
+
+                try {
+                    $invoiceData['items'] = $invoice->items()->get();
+                } catch (\Throwable $e) {
+                    $invoiceData['items'] = [];
+                }
+
+                try {
+                    $invoiceData['payments'] = $invoice->payments()->get()->map(function ($payment) {
+                        $paymentData = $payment->toArray();
+                        $paymentData['proof_url'] = techc_storage_url($payment->proof_file ?? null);
+                        return $paymentData;
+                    });
+                } catch (\Throwable $e) {
+                    $invoiceData['payments'] = [];
+                }
+
+                return $invoiceData;
+            });
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Student invoices API error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
     }
-
-    if (!$student && $user) {
-        $student = Student::where('user_id', $user->id)->first();
-    }
-
-    if (!$student) {
-        return response()->json([]);
-    }
-
-    return Invoice::with(['student.school', 'items', 'payments'])
-        ->where('student_id', $student->id)
-        ->latest()
-        ->get();
 });
 
 Route::get('/students/{student}/invoices', function (Student $student) {
