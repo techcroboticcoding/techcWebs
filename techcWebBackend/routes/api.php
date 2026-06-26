@@ -41,6 +41,30 @@ if (!function_exists('techc_storage_url')) {
         return asset('storage/' . $path);
     }
 }
+if (!function_exists('techc_photo_url')) {
+    function techc_photo_url($path)
+    {
+        if (!$path) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        $path = ltrim($path, '/');
+
+        if (str_starts_with($path, 'storage/')) {
+            return asset($path);
+        }
+
+        if (str_starts_with($path, 'public/')) {
+            $path = str_replace('public/', '', $path);
+        }
+
+        return asset('storage/' . $path);
+    }
+}
 if (!function_exists('techc_user_from_request')) {
     function techc_user_from_request(Request $request)
     {
@@ -134,24 +158,94 @@ Route::post('/login', function (Request $request) {
 |--------------------------------------------------------------------------
 */
 Route::get('/profile', function (Request $request) {
-    $user = techc_user_from_request($request);
+    try {
+        $user = null;
 
-    return response()->json([
-        'id' => $user?->id,
-        'name' => $user?->name ?? 'User TECH-C',
-        'email' => $user?->email,
-        'phone' => $user?->phone,
-        'bio' => $user?->bio,
-        'country' => $user?->country,
-        'city' => $user?->city,
-        'postal_code' => $user?->postal_code,
-        'tax_id' => $user?->tax_id,
-        'role' => $user?->role,
-        'photo' => $user?->photo,
-        'photo_url' => techc_photo_url($user?->photo),
-    ]);
+        // Ambil user dari Authorization: Bearer dummy-token-xx
+        $authorization = $request->header('Authorization');
+
+        if ($authorization && str_contains($authorization, 'dummy-token-')) {
+            $userId = trim(str_replace('Bearer dummy-token-', '', $authorization));
+
+            if (is_numeric($userId)) {
+                $user = User::find((int) $userId);
+            }
+        }
+
+        // Fallback ambil dari header email
+        if (!$user) {
+            $email = $request->header('X-User-Email')
+                ?? $request->query('email')
+                ?? $request->input('email');
+
+            if ($email) {
+                $user = User::where('email', $email)->first();
+            }
+        }
+
+        // Fallback terakhir
+        if (!$user) {
+            $user = User::first();
+        }
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User tidak ditemukan',
+            ], 404);
+        }
+
+        $student = null;
+
+        if (($user->role ?? '') === 'siswa') {
+            $student = Student::where('user_id', $user->id)->first();
+        }
+
+        $photo = $user->photo_url
+            ?? $user->photo
+            ?? $user->foto
+            ?? null;
+
+        $photoUrl = null;
+
+        if ($photo) {
+            if (str_starts_with($photo, 'http://') || str_starts_with($photo, 'https://')) {
+                $photoUrl = $photo;
+            } else {
+                $photo = ltrim($photo, '/');
+
+                if (str_starts_with($photo, 'storage/')) {
+                    $photoUrl = asset($photo);
+                } else {
+                    $photoUrl = asset('storage/' . $photo);
+                }
+            }
+        }
+
+        return response()->json([
+            'id' => $user->id,
+            'user_id' => $user->id,
+            'student_id' => $student?->id,
+
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+
+            'photo' => $user->photo ?? null,
+            'foto' => $user->foto ?? null,
+            'photo_url' => $photoUrl,
+
+            'student' => $student,
+        ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Profile API error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
+    }
 });
-
 /*
 |--------------------------------------------------------------------------
 | DASHBOARD ADMIN
