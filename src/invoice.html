@@ -156,102 +156,264 @@ if (!token) {
             </div>
           </div>
 
-          <div class="grid grid-cols-1 gap-6 xl:grid-cols-5">
+          <!-- PREVIEW INVOICE FULL WIDTH DI ATAS -->
+          <div class="mb-7 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white">Preview Invoice</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  Preview invoice ini yang akan dilihat siswa dan bisa di-download PNG.
+                </p>
+              </div>
 
-            <!-- FORM -->
-            <div class="xl:col-span-2 space-y-6">
+              <div class="flex flex-wrap gap-3">
+                <button
+                  onclick="generateInvoice()"
+                  class="rounded-2xl bg-blue-50 px-4 py-2 text-xs font-black text-blue-600 transition hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300"
+                >
+                  Update Preview
+                </button>
 
-              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-                <h2 class="text-xl font-black text-slate-900 dark:text-white">Data Invoice</h2>
-                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Isi data tagihan untuk siswa.</p>
+                <button
+                  type="button"
+                  onclick="downloadInvoicePNG()"
+                  class="rounded-2xl bg-slate-900 px-4 py-2 text-xs font-black text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-900"
+                >
+                  Download PNG
+                </button>
 
-                <div class="mt-5 space-y-4">
+                <button
+                  type="button"
+                  onclick="window.print()"
+                  class="rounded-2xl bg-violet-600 px-4 py-2 text-xs font-black text-white transition hover:bg-violet-700"
+                >
+                  Print
+                </button>
+              </div>
+            </div>
 
-                  <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Nomor Invoice</label>
-                    <input
-                      id="invoiceNo"
-                      type="text"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                    />
-                  </div>
+            <div class="w-full overflow-x-auto rounded-2xl bg-slate-100 p-4 dark:bg-slate-950">
+              <div id="invoicePreview" class="invoice-paper mx-auto shadow-2xl">
 
-                  <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Tanggal</label>
-                    <input
-                      id="invoiceDate"
-                      type="date"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                    />
-                  </div>
+                <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-[100px] bg-blue-500"></div>
 
-                  <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Tujuan Siswa</label>
-                    <select
-                      id="studentSelect"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                    >
-                      <option value="">Loading siswa...</option>
-                    </select>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-4">
+                <div class="px-16 py-16">
+                  <div class="flex items-start justify-between">
                     <div>
-                      <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Jumlah Pertemuan</label>
-                      <input
-                        id="meetingCount"
-                        type="number"
-                        min="1"
-                        value="4"
-                        class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                      />
+                      <img src="./images/logo.png" class="h-24 object-contain" alt="TECH-C Logo" />
+
+                      <div class="mt-12">
+                        <h3 class="text-2xl font-black text-slate-800">Office Address</h3>
+                        <p class="mt-5 max-w-xs text-base font-medium leading-6 text-slate-600">
+                          Taman Krakatau Blok J8 No. 24, Kab. Serang, Banten, 42453
+                        </p>
+                        <p class="mt-8 text-base font-black text-slate-700">
+                          0877-1020-8101
+                        </p>
+                      </div>
                     </div>
 
-                    <div>
-                      <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Harga / Pertemuan</label>
-                      <input
-                        id="pricePerMeeting"
-                        type="number"
-                        min="0"
-                        value="150000"
-                        class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                      />
+                    <div class="w-[360px] pt-9">
+                      <h1 class="text-5xl font-black tracking-wide text-black">INVOICE</h1>
+
+                      <div class="mt-12 space-y-3 text-xl">
+                        <p>
+                          <span class="font-medium tracking-widest text-slate-700">DATE:</span>
+                          <span id="previewDate" class="ml-3 font-semibold">-</span>
+                        </p>
+
+                        <p>
+                          <span class="font-black text-slate-800">To:</span>
+                          <span id="previewStudent" class="ml-2 font-semibold text-slate-700">-</span>
+                        </p>
+
+                        <p id="previewClassWrap" class="text-base font-semibold text-slate-500">
+                          -
+                        </p>
+
+                        <p class="text-base font-black text-blue-600">
+                          No: <span id="previewInvoiceNo">-</span>
+                        </p>
+                      </div>
                     </div>
                   </div>
 
-                  <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Keterangan Paket</label>
-                    <input
-                      id="packageName"
-                      type="text"
-                      value="Kelas Robotic & Coding"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                    />
+                  <div class="mt-14">
+                    <div class="grid grid-cols-12 bg-blue-500 px-5 py-5 text-xl font-black text-white">
+                      <div class="col-span-5">DESCRIPTION</div>
+                      <div class="col-span-2 text-center">PRICE</div>
+                      <div class="col-span-2 text-center">QTY</div>
+                      <div class="col-span-3 text-right">TOTAL</div>
+                    </div>
+
+                    <div id="previewItems" class="text-lg font-semibold text-slate-800"></div>
                   </div>
 
-                  <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Biaya Tambahan</label>
-                    <input
-                      id="extraFee"
-                      type="number"
-                      min="0"
-                      value="0"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                    />
+                  <div class="mt-8 flex justify-end">
+                    <div class="w-[380px]">
+                      <div class="space-y-4 text-xl font-black">
+                        <div class="flex justify-between">
+                          <span>Sub-total:</span>
+                          <span id="previewSubtotal">Rp 0</span>
+                        </div>
+
+                        <div class="flex justify-between">
+                          <span>Etc:</span>
+                          <span id="previewExtra">Rp 0</span>
+                        </div>
+
+                        <div class="invoice-line my-5"></div>
+
+                        <div class="flex justify-between text-2xl">
+                          <span>Total:</span>
+                          <span id="previewTotal">Rp 0</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Catatan Invoice</label>
-                    <textarea
-                      id="invoiceNote"
-                      rows="3"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                      placeholder="Contoh: Pembayaran maksimal 7 hari setelah invoice diterbitkan."
-                    ></textarea>
+                  <div class="mt-16 min-h-[90px]">
+                    <p class="text-lg font-black text-blue-800">Note:</p>
+                    <p id="previewNote" class="mt-2 max-w-2xl text-base font-medium leading-6 text-slate-600">
+                      -
+                    </p>
+                  </div>
+
+                  <div class="mt-36">
+                    <p class="text-lg font-black text-blue-800">Thank You.</p>
+
+                    <div class="mt-12 h-[3px] bg-lime-300"></div>
+
+                    <div class="mt-10 grid grid-cols-3 gap-10">
+                      <div>
+                        <h4 class="font-black text-blue-800">Questions?</h4>
+                        <div class="mt-5 text-sm leading-5 text-slate-800">
+                          <p>Call Us: <b>0877-1020-8101</b></p>
+                          <p>Write us: <b>robotictechc@gmail.com</b></p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 class="font-black text-blue-800">Payment Method:</h4>
+                        <div class="mt-2 text-base leading-5 font-black text-blue-800">
+                          <p>BCA 6521157701 A.N</p>
+                          <p>Rizki Rahayu Pratama</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 class="font-black text-blue-800">Terms & Conditions:</h4>
+                        <p class="mt-5 text-sm leading-5 text-slate-700">
+                          Invoice ini merupakan dokumen tagihan resmi TECH-C Robotic And Coding.
+                          Pembayaran dilakukan sesuai nominal total yang tertera.
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- FORM INVOICE + ITEM TAMBAHAN DI BAWAH PREVIEW -->
+          <div class="mb-7 grid grid-cols-1 gap-6 xl:grid-cols-2">
+
+            <!-- DATA INVOICE -->
+            <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <h2 class="text-xl font-black text-slate-900 dark:text-white">Data Invoice</h2>
+              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Isi data tagihan untuk siswa.</p>
+
+              <div class="mt-5 space-y-4">
+
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Nomor Invoice</label>
+                  <input
+                    id="invoiceNo"
+                    type="text"
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Tanggal</label>
+                  <input
+                    id="invoiceDate"
+                    type="date"
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Tujuan Siswa</label>
+                  <select
+                    id="studentSelect"
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                  >
+                    <option value="">Loading siswa...</option>
+                  </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Jumlah Pertemuan</label>
+                    <input
+                      id="meetingCount"
+                      type="number"
+                      min="1"
+                      value="4"
+                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Harga / Pertemuan</label>
+                    <input
+                      id="pricePerMeeting"
+                      type="number"
+                      min="0"
+                      value="150000"
+                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Keterangan Paket</label>
+                  <input
+                    id="packageName"
+                    type="text"
+                    value="Kelas Robotic & Coding"
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Biaya Tambahan</label>
+                  <input
+                    id="extraFee"
+                    type="number"
+                    min="0"
+                    value="0"
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Catatan Invoice</label>
+                  <textarea
+                    id="invoiceNote"
+                    rows="3"
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                    placeholder="Contoh: Pembayaran maksimal 7 hari setelah invoice diterbitkan."
+                  ></textarea>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ITEM TAMBAHAN + AKSI -->
+            <div class="space-y-6">
 
               <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
                 <h2 class="text-xl font-black text-slate-900 dark:text-white">Item Tambahan</h2>
@@ -268,193 +430,73 @@ if (!token) {
                 </button>
               </div>
 
-              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <button
-                  type="button"
-                  onclick="generateInvoice()"
-                  class="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-4 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5"
-                >
-                  Generate Preview
-                </button>
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                <h2 class="text-xl font-black text-slate-900 dark:text-white">Aksi Invoice</h2>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  Simpan invoice agar tagihan muncul di dashboard siswa.
+                </p>
 
-                <button
-                  type="button"
-                  onclick="downloadInvoicePNG()"
-                  class="rounded-2xl bg-slate-900 px-5 py-4 text-sm font-black text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-900"
-                >
-                  Download PNG
-                </button>
-
-                <button
-                  type="button"
-                  onclick="saveInvoice()"
-                  class="rounded-2xl bg-green-600 px-5 py-4 text-sm font-black text-white shadow-xl shadow-green-500/25 transition hover:-translate-y-0.5"
-                >
-                  Simpan Invoice
-                </button>
-
-                <button
-                  type="button"
-                  onclick="window.print()"
-                  class="rounded-2xl bg-violet-600 px-5 py-4 text-sm font-black text-white shadow-xl shadow-violet-500/25 transition hover:-translate-y-0.5"
-                >
-                  Print
-                </button>
-              </div>
-
-              <div id="saveStatus" class="hidden rounded-2xl p-4 text-sm font-bold"></div>
-
-            </div>
-
-            <!-- PREVIEW -->
-            <div class="xl:col-span-3">
-              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-                <div class="mb-4 flex items-center justify-between">
-                  <div>
-                    <h2 class="text-xl font-black text-slate-900 dark:text-white">Preview Invoice</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">Preview ini yang akan di-download PNG.</p>
-                  </div>
+                <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onclick="generateInvoice()"
+                    class="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-4 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5"
+                  >
+                    Generate Preview
+                  </button>
 
                   <button
-                    onclick="generateInvoice()"
-                    class="rounded-2xl bg-blue-50 px-4 py-2 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300"
+                    type="button"
+                    onclick="saveInvoice()"
+                    class="rounded-2xl bg-green-600 px-5 py-4 text-sm font-black text-white shadow-xl shadow-green-500/25 transition hover:-translate-y-0.5"
                   >
-                    Update
+                    Simpan Invoice
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="downloadInvoicePNG()"
+                    class="rounded-2xl bg-slate-900 px-5 py-4 text-sm font-black text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-900"
+                  >
+                    Download PNG
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="window.print()"
+                    class="rounded-2xl bg-violet-600 px-5 py-4 text-sm font-black text-white shadow-xl shadow-violet-500/25 transition hover:-translate-y-0.5"
+                  >
+                    Print
                   </button>
                 </div>
 
-                <div class="w-full overflow-x-auto rounded-2xl bg-slate-100 p-4 dark:bg-slate-950">
-                  <div id="invoicePreview" class="invoice-paper mx-auto shadow-2xl">
-
-                    <!-- top decoration -->
-                    <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-[100px] bg-blue-500"></div>
-
-                    <div class="px-16 py-16">
-                      <!-- header -->
-                      <div class="flex items-start justify-between">
-                        <div>
-                          <img src="./images/logo.png" class="h-24 object-contain" alt="TECH-C Logo" />
-
-                          <div class="mt-12">
-                            <h3 class="text-2xl font-black text-slate-800">Office Address</h3>
-                            <p class="mt-5 max-w-xs text-base font-medium leading-6 text-slate-600">
-                              Taman Krakatau Blok J8 No. 24, Kab. Serang, Banten, 42453
-                            </p>
-                            <p class="mt-8 text-base font-black text-slate-700">
-                              0877-1020-8101
-                            </p>
-                          </div>
-                        </div>
-
-                        <div class="w-[360px] pt-9">
-                          <h1 class="text-5xl font-black tracking-wide text-black">INVOICE</h1>
-
-                          <div class="mt-12 space-y-3 text-xl">
-                            <p>
-                              <span class="font-medium tracking-widest text-slate-700">DATE:</span>
-                              <span id="previewDate" class="ml-3 font-semibold">-</span>
-                            </p>
-
-                            <p>
-                              <span class="font-black text-slate-800">To:</span>
-                              <span id="previewStudent" class="ml-2 font-semibold text-slate-700">-</span>
-                            </p>
-
-                            <p id="previewClassWrap" class="text-base font-semibold text-slate-500">
-                              -
-                            </p>
-
-                            <p class="text-base font-black text-blue-600">
-                              No: <span id="previewInvoiceNo">-</span>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- table -->
-                      <div class="mt-14">
-                        <div class="grid grid-cols-12 bg-blue-500 px-5 py-5 text-xl font-black text-white">
-                          <div class="col-span-5">DESCRIPTION</div>
-                          <div class="col-span-2 text-center">PRICE</div>
-                          <div class="col-span-2 text-center">QTY</div>
-                          <div class="col-span-3 text-right">TOTAL</div>
-                        </div>
-
-                        <div id="previewItems" class="text-lg font-semibold text-slate-800"></div>
-                      </div>
-
-                      <!-- totals -->
-                      <div class="mt-8 flex justify-end">
-                        <div class="w-[380px]">
-                          <div class="space-y-4 text-xl font-black">
-                            <div class="flex justify-between">
-                              <span>Sub-total:</span>
-                              <span id="previewSubtotal">Rp 0</span>
-                            </div>
-
-                            <div class="flex justify-between">
-                              <span>Etc:</span>
-                              <span id="previewExtra">Rp 0</span>
-                            </div>
-
-                            <div class="invoice-line my-5"></div>
-
-                            <div class="flex justify-between text-2xl">
-                              <span>Total:</span>
-                              <span id="previewTotal">Rp 0</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- note -->
-                      <div class="mt-16 min-h-[90px]">
-                        <p class="text-lg font-black text-blue-800">Note:</p>
-                        <p id="previewNote" class="mt-2 max-w-2xl text-base font-medium leading-6 text-slate-600">
-                          -
-                        </p>
-                      </div>
-
-                      <!-- footer -->
-                      <div class="mt-36">
-                        <p class="text-lg font-black text-blue-800">Thank You.</p>
-
-                        <div class="mt-12 h-[3px] bg-lime-300"></div>
-
-                        <div class="mt-10 grid grid-cols-3 gap-10">
-                          <div>
-                            <h4 class="font-black text-blue-800">Questions?</h4>
-                            <div class="mt-5 text-sm leading-5 text-slate-800">
-                              <p>Call Us: <b>0877-1020-8101</b></p>
-                              <p>Write us: <b>robotictechc@gmail.com</b></p>
-                            </div>
-                          </div>
-
-                          <div>
-                            <h4 class="font-black text-blue-800">Payment Method:</h4>
-                            <div class="mt-2 text-base leading-5 font-black text-blue-800">
-                              <p>BCA 6521157701 A.N</p>
-                              <p>Rizki Rahayu Pratama</p>
-                            </div>
-                          </div>
-
-                          <div>
-                            <h4 class="font-black text-blue-800">Terms & Conditions:</h4>
-                            <p class="mt-5 text-sm leading-5 text-slate-700">
-                              Invoice ini merupakan dokumen tagihan resmi TECH-C Robotic And Coding.
-                              Pembayaran dilakukan sesuai nominal total yang tertera.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-                </div>
-
+                <div id="saveStatus" class="mt-4 hidden rounded-2xl p-4 text-sm font-bold"></div>
               </div>
+
             </div>
 
+          </div>
+
+          <!-- TAGIHAN BELUM LUNAS FULL WIDTH DI BAWAH -->
+          <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white">Tagihan Belum Lunas</h2>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  Admin bisa upload JPG bukti pembayaran untuk mengubah invoice menjadi Lunas.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onclick="loadAdminUnpaidInvoices()"
+                class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
+              >
+                Refresh
+              </button>
+            </div>
+
+            <div id="adminUnpaidList" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"></div>
           </div>
 
         </section>
@@ -806,33 +848,66 @@ if (!token) {
     }
 
     try {
+      showStatus('Menyimpan invoice ke Laravel...', 'loading');
+
       const res = await fetch(`${API_BASE}/invoices`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'X-User-Email': localStorage.getItem('email') || '',
+          'X-User-Role': localStorage.getItem('role') || 'admin'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+          invoice_no: data.invoice_no,
+          date: data.date,
+          due_date: data.due_date || null,
+
+          student_id: data.student_id,
+          student_name: data.student_name,
+          student_class: data.student_class,
+          student_school: data.student_school,
+
+          package_name: data.package_name,
+          meeting_count: data.meeting_count,
+          price_per_meeting: data.price_per_meeting,
+          main_total: data.main_total,
+
+          extra_fee: data.extra_fee,
+          extra_items: data.extra_items,
+
+          subtotal: data.subtotal,
+          total: data.total,
+          note: data.note,
+
+          status: 'Belum Dibayar'
+        })
       });
 
-      if (!res.ok) throw new Error('API invoice Laravel belum siap');
+      const raw = await res.text();
 
-      showStatus('Invoice berhasil disimpan ke Laravel.', 'success');
+      let result = null;
+
+      try {
+        result = JSON.parse(raw);
+      } catch {
+        throw new Error('Response Laravel bukan JSON: ' + raw);
+      }
+
+      if (!res.ok) {
+        throw new Error(result.message || 'Gagal menyimpan invoice ke Laravel.');
+      }
+
+      showStatus('Invoice berhasil disimpan ke Laravel dan akan tampil di dashboard siswa.', 'success');
+
+      await loadAdminUnpaidInvoices();
+
+      console.log('INVOICE SAVED:', result);
 
     } catch (err) {
-      const saved = JSON.parse(localStorage.getItem('techc_invoices') || '[]');
-
-      saved.unshift({
-        ...data,
-        id: Date.now(),
-        status: 'Belum Dibayar',
-        created_at: new Date().toISOString()
-      });
-
-      localStorage.setItem('techc_invoices', JSON.stringify(saved));
-
-      showStatus('Invoice disimpan sementara di browser. Nanti tinggal sambungkan ke Laravel.', 'success');
+      console.error('SAVE INVOICE ERROR:', err);
+      showStatus('Gagal simpan invoice ke Laravel: ' + err.message, 'error');
     }
   }
 
@@ -864,6 +939,125 @@ if (!token) {
 
     } catch (err) {
       console.warn("Header profile gagal:", err);
+    }
+  }
+
+  async function loadAdminUnpaidInvoices() {
+    const wrap = document.getElementById('adminUnpaidList');
+    if (!wrap) return;
+
+    wrap.innerHTML = `
+      <div class="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-400 dark:bg-slate-950">
+        Loading tagihan belum lunas...
+      </div>
+    `;
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/unpaid-invoices`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'X-User-Email': localStorage.getItem('email') || '',
+          'X-User-Role': localStorage.getItem('role') || 'admin'
+        }
+      });
+
+      if (!res.ok) throw new Error('Gagal mengambil invoice belum lunas.');
+
+      const data = await res.json();
+
+      if (!data.length) {
+        wrap.innerHTML = `
+          <div class="rounded-2xl bg-green-50 p-4 text-sm font-bold text-green-600 dark:bg-green-950 dark:text-green-300">
+            Semua invoice sudah lunas.
+          </div>
+        `;
+        return;
+      }
+
+      wrap.innerHTML = data.map(invoice => `
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
+          <div class="flex flex-col gap-4">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="text-sm font-black text-slate-900 dark:text-white">${escapeHtml(invoice.invoice_no || 'Invoice')}</p>
+                <p class="mt-1 text-xs font-bold text-slate-500">
+                  ${escapeHtml(invoice.student_name_display || invoice.student_name || '-')}
+                </p>
+                <p class="mt-1 text-xs font-bold text-slate-400">
+                  ${escapeHtml(invoice.student_school_display || invoice.student_school || '-')}
+                </p>
+              </div>
+
+              <div class="text-right">
+                <p class="text-lg font-black text-blue-600">${rupiah(invoice.total || 0)}</p>
+                <p class="mt-1 rounded-full bg-red-100 px-3 py-1 text-xs font-black text-red-600">
+                  ${escapeHtml(invoice.status || 'Belum Dibayar')}
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <label class="mb-2 block text-xs font-black text-slate-500">
+                Upload JPG bukti pembayaran
+              </label>
+
+              <input
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                onchange="uploadPaymentProof(${invoice.id}, this)"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold dark:border-slate-800 dark:bg-slate-900 dark:text-white"
+              />
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+    } catch (err) {
+      wrap.innerHTML = `
+        <div class="rounded-2xl bg-red-50 p-4 text-sm font-bold text-red-600 dark:bg-red-950 dark:text-red-300">
+          ${escapeHtml(err.message)}
+        </div>
+      `;
+    }
+  }
+
+  async function uploadPaymentProof(invoiceId, input) {
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('proof_file', file);
+
+    try {
+      input.disabled = true;
+
+      const res = await fetch(`${API_BASE}/invoices/${invoiceId}/upload-proof-paid`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'X-User-Email': localStorage.getItem('email') || '',
+          'X-User-Role': localStorage.getItem('role') || 'admin'
+        },
+        body: formData
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || 'Gagal upload bukti pembayaran.');
+      }
+
+      showStatus('Bukti pembayaran berhasil diupload. Invoice sudah Lunas.', 'success');
+
+      await loadAdminUnpaidInvoices();
+
+    } catch (err) {
+      console.error(err);
+      showStatus('Gagal upload bukti: ' + err.message, 'error');
+      input.disabled = false;
     }
   }
 
@@ -900,6 +1094,7 @@ if (!token) {
     await loadPartials();
     await loadHeaderUser();
     await loadStudents();
+    await loadAdminUnpaidInvoices();
     initForm();
   });
   </script>

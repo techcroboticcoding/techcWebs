@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>TECH-C Student Page</title>
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #pageScroller {
+      height: 100vh;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    #pageScroller::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #pageScroller::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #pageScroller::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, .55);
+      border-radius: 999px;
+    }
+
+    #pageScroller::-webkit-scrollbar-thumb:hover {
+      background: rgba(37, 99, 235, .75);
+    }
+
+    * {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .student-grid-bg {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .dark .student-grid-bg {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+
+    .float-soft {
+      animation: floatSoft 4s ease-in-out infinite;
+    }
+
+    @keyframes floatSoft {
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+  </style>
+</head>
+
+<script>
+const token = localStorage.getItem('token');
+const role = localStorage.getItem('role');
+
+if (!token) {
+  window.location.href = './login.html';
+} else if (role !== 'siswa') {
+  window.location.href = './index.html';
+}
+</script>
+
+<body
+  x-data="{ page: new URLSearchParams(window.location.search).get('page') || 'progress', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
+    $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+  "
+  :class="{'dark bg-slate-950': darkMode === true}"
+  class="bg-slate-50"
+>
+
+  <include src="./partials/preloader.html"></include>
+
+  <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+
+    <include src="./partials/sidebarSiswa.html"></include>
+
+    <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
+
+      <include src="./partials/overlay.html"></include>
+      <include src="./partials/header.html"></include>
+
+      <main class="student-grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
+
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <div class="absolute -right-40 -top-40 h-[480px] w-[480px] rounded-full bg-blue-500/10 blur-3xl"></div>
+          <div class="absolute left-[-160px] top-80 h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-3xl"></div>
+          <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
+        </div>
+
+        <section class="relative z-10 mx-auto max-w-7xl">
+
+          <!-- HERO -->
+          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="relative p-6 sm:p-7 lg:p-8">
+
+              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-blue-600/15 via-cyan-500/5 to-transparent lg:block"></div>
+
+              <div class="relative flex flex-col gap-7 xl:flex-row xl:items-center xl:justify-between">
+
+                <div class="max-w-3xl">
+                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
+                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
+                    Student Dashboard
+                  </div>
+
+                  <h1 id="pageTitle" class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                    Progress Belajar
+                  </h1>
+
+                  <p id="pageSubtitle" class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+                    Pantau progress belajar, jadwal kelas, tagihan, pengumuman, materi, sertifikat, dan bantuan siswa.
+                  </p>
+
+                  <div class="mt-6 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Status API</p>
+                      <p id="apiStatus" class="mt-1 text-sm font-black text-yellow-500">Checking...</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Nama Siswa</p>
+                      <p id="heroStudentName" class="mt-1 text-sm font-black text-slate-900 dark:text-white">-</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Kelas</p>
+                      <p id="heroStudentClass" class="mt-1 text-sm font-black text-blue-600 dark:text-blue-300">-</p>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="relative shrink-0">
+                  <div class="absolute -inset-4 rounded-[2.5rem] bg-blue-500/20 blur-2xl"></div>
+
+                  <div class="float-soft relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[360px]">
+
+                    <div class="mb-5 flex items-start justify-between gap-4">
+                      <div>
+                        <p class="text-sm font-bold text-white/80">TECH-C Student</p>
+                        <h2 id="heroProgress" class="mt-2 text-4xl font-black">0%</h2>
+                        <p class="mt-1 text-xs font-semibold text-white/70">Progress belajar</p>
+                      </div>
+
+                      <div class="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white/20 text-3xl backdrop-blur">
+                        👨‍🎓
+                      </div>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/15 p-4 backdrop-blur">
+                      <div class="mb-2 flex items-center justify-between">
+                        <p class="text-xs font-black text-white/80">Status belajar</p>
+                        <p id="heroStatus" class="text-xs font-black">Aktif</p>
+                      </div>
+
+                      <div class="h-2 overflow-hidden rounded-full bg-white/30">
+                        <div id="heroProgressBar" class="h-full w-0 rounded-full bg-white transition-all duration-700"></div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- SUMMARY -->
+          <div id="summaryGrid" class="mb-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4"></div>
+
+          <!-- MAIN CONTENT -->
+          <div id="contentWrap" class="relative min-h-[360px] rounded-[2rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="rounded-2xl bg-slate-50 p-5 text-sm font-bold text-slate-400 dark:bg-slate-950">
+              Loading...
+            </div>
+          </div>
+
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+  async function loadPartials() {
+    const includes = document.querySelectorAll('include');
+
+    for (let el of includes) {
+      const file = el.getAttribute('src');
+
+      try {
+        const res = await fetch(file);
+        const html = await res.text();
+        el.outerHTML = html;
+      } catch (e) {
+        console.error("Gagal load partial:", file, e);
+      }
+    }
+  }
+  </script>
+
+  <script>
+  const API_BASE = localStorage.getItem('api_base') || 'http://127.0.0.1:8000/api';
+
+  const pageKey = new URLSearchParams(window.location.search).get('page') || 'progress';
+
+  const pageMap = {
+    progress: {
+      title: 'Progress Belajar',
+      subtitle: 'Pantau perkembangan belajar, persentase progress, dan catatan pembimbing.',
+      icon: '📈'
+    },
+    jadwal: {
+      title: 'Jadwal Kelas',
+      subtitle: 'Lihat jadwal private class, materi, dan status kelas berikutnya.',
+      icon: '🗓️'
+    },
+    tagihan: {
+      title: 'Tagihan',
+      subtitle: 'Lihat invoice, status pembayaran, total tagihan, dan riwayat pembayaran.',
+      icon: '🧾'
+    },
+    pengumuman: {
+      title: 'Pengumuman',
+      subtitle: 'Informasi terbaru dari TECH-C untuk siswa dan orang tua.',
+      icon: '📢'
+    },
+    catatan: {
+      title: 'Catatan Guru',
+      subtitle: 'Catatan pembimbing untuk perkembangan belajar siswa.',
+      icon: '💬'
+    },
+    materi: {
+      title: 'Materi Belajar',
+      subtitle: 'Kumpulan materi belajar, link, file, video, dan dokumentasi pembelajaran.',
+      icon: '📚'
+    },
+    sertifikat: {
+      title: 'Sertifikat',
+      subtitle: 'Daftar sertifikat siswa yang sudah terbit.',
+      icon: '🎓'
+    },
+    dokumentasi: {
+      title: 'Dokumentasi Kelas',
+      subtitle: 'Galeri JPG dokumentasi belajar siswa yang tersimpan di Laravel.',
+      icon: '🖼️'
+    },
+    profile: {
+      title: 'Profile Siswa',
+      subtitle: 'Informasi akun, data siswa, kelas, dan asal sekolah.',
+      icon: '👤'
+    },
+    bantuan: {
+      title: 'Bantuan',
+      subtitle: 'Kirim pertanyaan atau kendala ke admin TECH-C.',
+      icon: '❓'
+    }
+  };
+
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = value;
+  }
+
+  function getNumber(value, fallback = 0) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
+function getBackendBaseUrl() {
+  return API_BASE.replace('/api', '');
+}
+
+function getDocumentationImageUrl(doc) {
+  const backendBase = getBackendBaseUrl();
+
+  const raw =
+    doc.image_url ||
+    doc.photo_url ||
+    doc.image_path ||
+    doc.image ||
+    doc.file_path ||
+    '';
+
+  if (!raw) {
+    return 'https://placehold.co/900x500/e2e8f0/64748b?text=Dokumentasi+TECH-C';
+  }
+
+  if (String(raw).startsWith('http')) {
+    return raw;
+  }
+
+  if (String(raw).startsWith('/storage/')) {
+    return `${backendBase}${raw}`;
+  }
+
+  if (String(raw).startsWith('storage/')) {
+    return `${backendBase}/${raw}`;
+  }
+
+  return `${backendBase}/storage/${raw}`;
+}
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function formatRupiah(value) {
+    const number = getNumber(value, 0);
+
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0
+    }).format(number);
+  }
+
+  function parseMaybeJson(value, fallback = []) {
+    if (Array.isArray(value)) return value;
+    if (!value) return fallback;
+
+    if (typeof value === 'string') {
+      try {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    return fallback;
+  }
+
+  function setApiStatus(text, type = 'loading') {
+    const el = document.getElementById('apiStatus');
+    if (!el) return;
+
+    el.innerText = text;
+    el.className = 'mt-1 text-sm font-black';
+
+    if (type === 'success') {
+      el.classList.add('text-green-500');
+    } else if (type === 'error') {
+      el.classList.add('text-red-500');
+    } else {
+      el.classList.add('text-yellow-500');
+    }
+  }
+
+  async function apiGet(path) {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'GET',
+headers: {
+  'Accept': 'application/json',
+  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+  'X-User-Id': localStorage.getItem('user_id') || '',
+  'X-Student-Id': localStorage.getItem('student_id') || '',
+  'X-User-Email': localStorage.getItem('email') || '',
+  'X-User-Role': localStorage.getItem('role') || 'siswa'
+}
+    });
+
+    const raw = await res.text();
+
+    let data = null;
+
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      console.error('Response bukan JSON:', raw);
+      throw new Error('Response API bukan JSON');
+    }
+
+    if (!res.ok) {
+      throw new Error(data.message || `HTTP ${res.status}`);
+    }
+
+    return data;
+  }
+
+  async function apiPost(path, body) {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+headers: {
+  'Accept': 'application/json',
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+  'X-User-Id': localStorage.getItem('user_id') || '',
+  'X-Student-Id': localStorage.getItem('student_id') || '',
+  'X-User-Email': localStorage.getItem('email') || '',
+  'X-User-Role': localStorage.getItem('role') || 'siswa'
+},
+      body: JSON.stringify(body)
+    });
+
+    const raw = await res.text();
+
+    let data = null;
+
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      data = { message: raw };
+    }
+
+    if (!res.ok) {
+      throw new Error(data.message || `HTTP ${res.status}`);
+    }
+
+    return data;
+  }
+
+  function getStudent(dashboard) {
+    return dashboard?.student || {};
+  }
+
+  function renderSummaryCards(dashboard, invoices = []) {
+    const student = getStudent(dashboard);
+    const progress = getNumber(dashboard?.progress_belajar ?? student.progress_belajar, 0);
+
+    const unpaid = invoices
+      .filter(item => item.status === 'Belum Dibayar')
+      .reduce((sum, item) => sum + getNumber(item.total, 0), 0);
+
+    const paidCount = invoices.filter(item => item.status === 'Lunas').length;
+
+    const cards = [
+      {
+        label: 'Progress',
+        value: `${progress}%`,
+        desc: 'Perkembangan belajar',
+        icon: '📈',
+        color: 'blue'
+      },
+      {
+        label: 'Tagihan',
+        value: formatRupiah(unpaid),
+        desc: 'Belum dibayar',
+        icon: '🧾',
+        color: 'red'
+      },
+      {
+        label: 'Invoice Lunas',
+        value: paidCount,
+        desc: 'Pembayaran selesai',
+        icon: '✅',
+        color: 'green'
+      },
+      {
+        label: 'Status',
+        value: student.status || 'Aktif',
+        desc: 'Status siswa',
+        icon: '⚡',
+        color: 'violet'
+      }
+    ];
+
+    const wrap = document.getElementById('summaryGrid');
+    if (!wrap) return;
+
+    wrap.innerHTML = cards.map(card => `
+      <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+        <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-${card.color}-500/10"></div>
+
+        <div class="relative flex items-start justify-between">
+          <div>
+            <p class="text-sm font-black text-slate-500 dark:text-slate-400">${card.label}</p>
+            <h2 class="mt-3 text-2xl font-black text-slate-900 dark:text-white">${card.value}</h2>
+            <p class="mt-2 text-xs font-semibold text-slate-400">${card.desc}</p>
+          </div>
+
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-2xl dark:bg-slate-950">
+            ${card.icon}
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderProgress(dashboard) {
+    const student = getStudent(dashboard);
+    const progress = getNumber(dashboard?.progress_belajar ?? student.progress_belajar, 0);
+    const catatan = dashboard?.catatan || student.catatan || 'Belum ada catatan guru.';
+
+    return `
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+        <div class="rounded-[1.5rem] bg-gradient-to-br from-blue-600 to-cyan-500 p-6 text-white lg:col-span-1">
+          <p class="text-sm font-bold text-white/80">Progress Belajar</p>
+          <h2 class="mt-3 text-5xl font-black">${progress}%</h2>
+
+          <div class="mt-5 h-3 overflow-hidden rounded-full bg-white/30">
+            <div class="h-full rounded-full bg-white" style="width: ${progress}%"></div>
+          </div>
+
+          <p class="mt-4 text-sm font-semibold text-white/80">
+            Siswa sedang mengikuti program ${escapeHtml(student.kategori_level || student.kelas || 'Private Class')}.
+          </p>
+        </div>
+
+        <div class="rounded-[1.5rem] bg-slate-50 p-6 dark:bg-slate-950 lg:col-span-2">
+          <p class="text-lg font-black text-slate-900 dark:text-white">Catatan Perkembangan</p>
+          <p class="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400">${escapeHtml(catatan)}</p>
+
+          <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div class="rounded-2xl bg-white p-4 dark:bg-slate-900">
+              <p class="text-xs font-bold text-slate-400">Nama</p>
+              <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">${escapeHtml(student.name || '-')}</p>
+            </div>
+
+            <div class="rounded-2xl bg-white p-4 dark:bg-slate-900">
+              <p class="text-xs font-bold text-slate-400">Kelas</p>
+              <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">${escapeHtml(student.kelas || '-')}</p>
+            </div>
+
+            <div class="rounded-2xl bg-white p-4 dark:bg-slate-900">
+              <p class="text-xs font-bold text-slate-400">Sekolah</p>
+              <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">${escapeHtml(student.school?.nama || student.school_name || '-')}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    `;
+  }
+
+  function renderJadwal(dashboard) {
+    const student = getStudent(dashboard);
+    const jadwal = parseMaybeJson(dashboard?.jadwal || student.jadwal, []);
+
+    if (!jadwal.length) {
+      return emptyState('Belum ada jadwal kelas.', 'Jadwal siswa akan muncul setelah admin mengatur jadwal.');
+    }
+
+    return `
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        ${jadwal.map((item, index) => `
+          <div class="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-950">
+            <div class="mb-4 flex items-center justify-between">
+              <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl dark:bg-blue-950">🗓️</div>
+              <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+                Jadwal ${index + 1}
+              </span>
+            </div>
+
+            <p class="text-lg font-black text-slate-900 dark:text-white">${escapeHtml(item.hari || item.kategori || 'Private Class')}</p>
+            <p class="mt-2 text-sm font-semibold text-slate-500 dark:text-slate-400">${escapeHtml(item.jam || item.status || 'Belum dijadwalkan')}</p>
+            <p class="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-400">${escapeHtml(item.materi || 'Robotic & Coding')}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+function getInvoiceProofUrl(invoice) {
+  const backendBase = API_BASE.replace('/api', '');
+
+  if (invoice.payment_proof_url) {
+    return invoice.payment_proof_url;
+  }
+
+  const payments = Array.isArray(invoice.payments) ? invoice.payments : [];
+  const payment = payments.find(item => item.proof_file || item.proof_url);
+
+  const raw = payment?.proof_url || payment?.proof_file || '';
+
+  if (!raw) return '';
+
+  if (String(raw).startsWith('http')) return raw;
+  if (String(raw).startsWith('/storage/')) return `${backendBase}${raw}`;
+
+  return `${backendBase}/storage/${raw}`;
+}
+
+function ensureInvoiceModal() {
+  if (document.getElementById('invoiceDetailModal')) return;
+
+  document.body.insertAdjacentHTML('beforeend', `
+    <div
+      id="invoiceDetailModal"
+      class="fixed inset-0 z-[999999] hidden items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+    >
+      <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-[2rem] bg-white p-6 shadow-2xl dark:bg-slate-900">
+        <div class="mb-5 flex items-start justify-between gap-4">
+          <div>
+            <p class="text-sm font-black text-blue-600">Detail Invoice</p>
+            <h2 id="modalInvoiceNo" class="mt-1 text-2xl font-black text-slate-900 dark:text-white">-</h2>
+            <p id="modalInvoiceDate" class="mt-1 text-sm font-semibold text-slate-500">-</p>
+          </div>
+
+          <button
+            onclick="closeInvoiceDetail()"
+            class="rounded-2xl bg-slate-100 px-4 py-2 text-sm font-black text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
+          >
+            Tutup
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+            <p class="text-xs font-bold text-slate-400">Siswa</p>
+            <p id="modalStudentName" class="mt-1 text-sm font-black text-slate-900 dark:text-white">-</p>
+          </div>
+
+          <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+            <p class="text-xs font-bold text-slate-400">Kelas</p>
+            <p id="modalStudentClass" class="mt-1 text-sm font-black text-slate-900 dark:text-white">-</p>
+          </div>
+
+          <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+            <p class="text-xs font-bold text-slate-400">Status</p>
+            <p id="modalInvoiceStatus" class="mt-1 text-sm font-black">-</p>
+          </div>
+        </div>
+
+        <div class="mt-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="grid grid-cols-12 rounded-t-2xl bg-blue-600 px-4 py-3 text-xs font-black text-white">
+            <div class="col-span-5">Deskripsi</div>
+            <div class="col-span-2 text-center">Harga</div>
+            <div class="col-span-2 text-center">Qty</div>
+            <div class="col-span-3 text-right">Total</div>
+          </div>
+
+          <div id="modalInvoiceItems"></div>
+        </div>
+
+        <div class="mt-5 flex justify-end">
+          <div class="w-full max-w-sm space-y-3 rounded-2xl bg-slate-50 p-5 dark:bg-slate-950">
+            <div class="flex justify-between text-sm font-bold text-slate-500">
+              <span>Subtotal</span>
+              <span id="modalSubtotal">Rp 0</span>
+            </div>
+
+            <div class="flex justify-between text-sm font-bold text-slate-500">
+              <span>Biaya Tambahan</span>
+              <span id="modalExtra">Rp 0</span>
+            </div>
+
+            <div class="border-t border-slate-200 pt-3 dark:border-slate-800">
+              <div class="flex justify-between text-xl font-black text-slate-900 dark:text-white">
+                <span>Total</span>
+                <span id="modalTotal" class="text-blue-600">Rp 0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 rounded-2xl bg-slate-50 p-5 dark:bg-slate-950">
+          <p class="text-sm font-black text-slate-900 dark:text-white">Catatan</p>
+          <p id="modalNote" class="mt-2 text-sm leading-6 text-slate-500">-</p>
+        </div>
+
+        <div id="modalProofWrap" class="mt-5 hidden rounded-2xl bg-green-50 p-5 dark:bg-green-950/40">
+          <p class="text-sm font-black text-green-700 dark:text-green-300">Bukti Pembayaran</p>
+          <img id="modalProofImage" src="" class="mt-4 max-h-[420px] w-full rounded-2xl object-contain bg-white" />
+        </div>
+
+        <div id="modalNoProof" class="mt-5 rounded-2xl bg-yellow-50 p-5 text-sm font-bold text-yellow-700 dark:bg-yellow-950/40 dark:text-yellow-300">
+          Invoice belum lunas atau bukti pembayaran belum diupload admin.
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function openInvoiceDetail(invoiceId) {
+  ensureInvoiceModal();
+
+  const invoice = (window.currentStudentInvoices || []).find(item => String(item.id) === String(invoiceId));
+
+  if (!invoice) return;
+
+  const status = invoice.status || 'Belum Dibayar';
+  const proofUrl = getInvoiceProofUrl(invoice);
+
+  setText('modalInvoiceNo', invoice.invoice_no || 'Invoice');
+  setText('modalInvoiceDate', `Tanggal: ${invoice.date || '-'}`);
+  setText('modalStudentName', invoice.student_name || invoice.student?.name || '-');
+  setText('modalStudentClass', invoice.student_class || invoice.student?.kelas || '-');
+  setText('modalSubtotal', formatRupiah(invoice.subtotal || 0));
+  setText('modalExtra', formatRupiah(invoice.extra_fee || 0));
+  setText('modalTotal', formatRupiah(invoice.total || 0));
+  setText('modalNote', invoice.note || '-');
+
+  const statusEl = document.getElementById('modalInvoiceStatus');
+
+  if (statusEl) {
+    statusEl.innerText = status;
+    statusEl.className = 'mt-1 text-sm font-black';
+
+    if (status === 'Lunas') {
+      statusEl.classList.add('text-green-600');
+    } else if (status === 'Pending') {
+      statusEl.classList.add('text-yellow-600');
+    } else {
+      statusEl.classList.add('text-red-600');
+    }
+  }
+
+  const items = Array.isArray(invoice.items) && invoice.items.length
+    ? invoice.items
+    : [
+        {
+          description: invoice.package_name || 'Kelas Robotic & Coding',
+          price: invoice.price_per_meeting || 0,
+          qty: invoice.meeting_count || 1,
+          total: invoice.main_total || invoice.total || 0
+        }
+      ];
+
+  const itemWrap = document.getElementById('modalInvoiceItems');
+
+  if (itemWrap) {
+    itemWrap.innerHTML = items.map(item => `
+      <div class="grid grid-cols-12 border-b border-slate-200 px-4 py-4 text-sm font-bold text-slate-700 dark:border-slate-800 dark:text-slate-300">
+        <div class="col-span-5">${escapeHtml(item.description || 'Item')}</div>
+        <div class="col-span-2 text-center">${formatRupiah(item.price || 0)}</div>
+        <div class="col-span-2 text-center">${item.qty || 1}</div>
+        <div class="col-span-3 text-right">${formatRupiah(item.total || 0)}</div>
+      </div>
+    `).join('');
+  }
+
+  const proofWrap = document.getElementById('modalProofWrap');
+  const proofImage = document.getElementById('modalProofImage');
+  const noProof = document.getElementById('modalNoProof');
+
+  if (proofUrl && status === 'Lunas') {
+    proofWrap?.classList.remove('hidden');
+    noProof?.classList.add('hidden');
+
+    if (proofImage) {
+      proofImage.src = proofUrl;
+    }
+  } else {
+    proofWrap?.classList.add('hidden');
+    noProof?.classList.remove('hidden');
+  }
+
+  const modal = document.getElementById('invoiceDetailModal');
+
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+}
+
+function closeInvoiceDetail() {
+  const modal = document.getElementById('invoiceDetailModal');
+
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+}
+
+function renderTagihan(invoices) {
+  window.currentStudentInvoices = invoices || [];
+
+  if (!invoices.length) {
+    return emptyState('Belum ada invoice.', 'Tagihan siswa akan muncul setelah admin membuat invoice.');
+  }
+
+  return `
+    <div class="space-y-4">
+      ${invoices.map(invoice => {
+        const status = invoice.status || '-';
+
+        const statusClass = status === 'Lunas'
+          ? 'bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-300'
+          : status === 'Pending'
+            ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300'
+            : 'bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300';
+
+        return `
+          <button
+            type="button"
+            onclick="openInvoiceDetail(${invoice.id})"
+            class="block w-full rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5 text-left transition hover:-translate-y-1 hover:border-blue-200 hover:bg-blue-50 hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-900"
+          >
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p class="text-lg font-black text-slate-900 dark:text-white">${escapeHtml(invoice.invoice_no || 'Invoice')}</p>
+                <p class="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">${escapeHtml(invoice.package_name || 'Kelas TECH-C')}</p>
+                <p class="mt-2 text-xs font-bold text-slate-400">Tanggal: ${escapeHtml(invoice.date || '-')}</p>
+                <p class="mt-2 text-xs font-black text-blue-600">Klik untuk lihat detail invoice</p>
+              </div>
+
+              <div class="text-left sm:text-right">
+                <p class="text-2xl font-black text-blue-600 dark:text-blue-300">${formatRupiah(invoice.total || 0)}</p>
+                <span class="mt-2 inline-flex rounded-full px-3 py-1 text-xs font-black ${statusClass}">
+                  ${escapeHtml(status)}
+                </span>
+              </div>
+            </div>
+          </button>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+  function renderPengumuman(dashboard) {
+    const pengumuman = Array.isArray(dashboard?.pengumuman) ? dashboard.pengumuman : [];
+
+    if (!pengumuman.length) {
+      return emptyState('Belum ada pengumuman.', 'Informasi dari TECH-C akan muncul di sini.');
+    }
+
+    return `
+      <div class="space-y-4">
+        ${pengumuman.map(item => `
+          <div class="rounded-[1.5rem] bg-slate-50 p-5 dark:bg-slate-950">
+            <p class="text-lg font-black text-slate-900 dark:text-white">${escapeHtml(item.title || 'Pengumuman')}</p>
+            <p class="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400">${escapeHtml(item.content || item.message || '-')}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderCatatan(dashboard) {
+    const student = getStudent(dashboard);
+    const catatan = dashboard?.catatan || student.catatan || 'Belum ada catatan guru.';
+
+    return `
+      <div class="rounded-[1.5rem] bg-slate-50 p-6 dark:bg-slate-950">
+        <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-3xl dark:bg-blue-950">
+          💬
+        </div>
+
+        <p class="text-xl font-black text-slate-900 dark:text-white">Catatan Guru</p>
+        <p class="mt-4 text-sm leading-7 text-slate-500 dark:text-slate-400">${escapeHtml(catatan)}</p>
+      </div>
+    `;
+  }
+
+  function renderMateri(materials) {
+    if (!materials.length) {
+      return emptyState('Belum ada materi belajar.', 'Materi akan muncul setelah admin menambahkan data materi.');
+    }
+
+    return `
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        ${materials.map(item => `
+          <div class="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-950">
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100 text-2xl dark:bg-orange-950">
+              📚
+            </div>
+
+            <p class="text-lg font-black text-slate-900 dark:text-white">${escapeHtml(item.title || 'Materi')}</p>
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">${escapeHtml(item.type || 'file')}</p>
+
+            ${item.url ? `
+              <a href="${escapeHtml(item.url)}" target="_blank" class="mt-4 inline-flex rounded-full bg-blue-600 px-4 py-2 text-xs font-black text-white">
+                Buka Materi
+              </a>
+            ` : ''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderSertifikat(certificates) {
+    if (!certificates.length) {
+      return emptyState('Belum ada sertifikat.', 'Sertifikat akan muncul setelah siswa menyelesaikan program.');
+    }
+
+    return `
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        ${certificates.map(item => `
+          <div class="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-950">
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-2xl dark:bg-violet-950">
+              🎓
+            </div>
+
+            <p class="text-lg font-black text-slate-900 dark:text-white">${escapeHtml(item.title || 'Sertifikat')}</p>
+            <p class="mt-2 text-sm font-semibold text-slate-500 dark:text-slate-400">${escapeHtml(item.certificate_no || '-')}</p>
+            <p class="mt-1 text-xs font-bold text-slate-400">Terbit: ${escapeHtml(item.issued_at || '-')}</p>
+
+            ${item.file ? `
+              <a href="${escapeHtml(item.file)}" target="_blank" class="mt-4 inline-flex rounded-full bg-blue-600 px-4 py-2 text-xs font-black text-white">
+                Lihat Sertifikat
+              </a>
+            ` : ''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+  function formatTanggalUpload(value) {
+  if (!value) return '-';
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return value;
+
+  return date.toLocaleDateString('id-ID', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }) + ' • ' + date.toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+  function renderDokumentasi(docs) {
+  
+    if (!docs.length) {
+      return emptyState('Belum ada dokumentasi JPG.', 'Dokumentasi kelas akan tampil setelah admin upload foto ke Laravel.');
+    }
+
+    return `
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        ${docs.map(doc => `
+          <div class="overflow-hidden rounded-[1.5rem] border border-slate-100 bg-slate-50 shadow-lg dark:border-slate-800 dark:bg-slate-950">
+<div class="w-full overflow-hidden rounded-t-[1.7rem] bg-slate-100 dark:bg-slate-950">
+  <img
+    src="${escapeHtml(getDocumentationImageUrl(doc))}"
+    onerror="this.onerror=null; this.src='https://placehold.co/900x500/e2e8f0/64748b?text=Gambar+Tidak+Ditemukan';"
+    alt="${escapeHtml(doc.title || 'Dokumentasi')}"
+    class="block h-auto w-full object-contain"
+  />
+</div>
+
+            <div class="p-5">
+              <p class="text-lg font-black text-slate-900 dark:text-white">${escapeHtml(doc.title || 'Dokumentasi Kelas')}</p>
+              <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">${escapeHtml(doc.description || doc.catatan || '')}</p>
+              <p class="mt-3 text-xs font-bold text-slate-400">Upload: ${escapeHtml(formatTanggalUpload(doc.created_at))}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderProfile(dashboard, profile) {
+    const student = getStudent(dashboard);
+    const name = student.name || profile.name || '-';
+    const initials = getInitials(name);
+
+    return `
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+        <div class="rounded-[1.5rem] bg-gradient-to-br from-blue-600 to-cyan-500 p-6 text-white">
+          <div class="flex h-24 w-24 items-center justify-center rounded-[2rem] border-4 border-white bg-white/20 text-3xl font-black">
+            ${initials}
+          </div>
+
+          <h2 class="mt-5 text-2xl font-black">${escapeHtml(name)}</h2>
+          <p class="mt-1 text-sm font-semibold text-white/75">${escapeHtml(profile.email || '-')}</p>
+          <p class="mt-4 rounded-full bg-white/15 px-4 py-2 text-xs font-black">${escapeHtml(student.kelas || 'Private Class')}</p>
+        </div>
+
+        <div class="rounded-[1.5rem] bg-slate-50 p-6 dark:bg-slate-950 lg:col-span-2">
+          <p class="text-lg font-black text-slate-900 dark:text-white">Data Siswa</p>
+
+          <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+            ${profileRow('Nama', name)}
+            ${profileRow('Email Login', profile.email || '-')}
+            ${profileRow('Kelas', student.kelas || '-')}
+            ${profileRow('Kategori', student.kategori_level || '-')}
+            ${profileRow('Sekolah', student.school?.nama || student.school_name || 'Private Class TECH-C')}
+            ${profileRow('Status', student.status || 'Aktif')}
+            ${profileRow('NIS', student.nis || '-')}
+            ${profileRow('Progress', `${getNumber(student.progress_belajar, 0)}%`)}
+          </div>
+        </div>
+
+      </div>
+    `;
+  }
+
+  function renderBantuan(dashboard) {
+    const student = getStudent(dashboard);
+
+    return `
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+        <div class="rounded-[1.5rem] bg-gradient-to-br from-blue-600 to-cyan-500 p-6 text-white">
+          <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 text-3xl">
+            ❓
+          </div>
+
+          <p class="text-2xl font-black">Butuh Bantuan?</p>
+          <p class="mt-3 text-sm leading-7 text-white/80">
+            Kirim pertanyaan ke admin TECH-C. Pesan akan tersimpan di Laravel sebagai help ticket.
+          </p>
+        </div>
+
+        <div class="rounded-[1.5rem] bg-slate-50 p-6 dark:bg-slate-950 lg:col-span-2">
+          <form id="helpForm" class="space-y-4">
+            <input type="hidden" id="helpStudentId" value="${escapeHtml(student.id || '')}" />
+
+            <div>
+              <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-300">Subjek</label>
+              <input
+                id="helpSubject"
+                type="text"
+                class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold outline-none transition focus:border-blue-500 dark:border-slate-800 dark:bg-slate-900 dark:text-white"
+                placeholder="Contoh: Jadwal kelas saya kapan?"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-300">Kategori</label>
+              <select
+                id="helpCategory"
+                class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold outline-none transition focus:border-blue-500 dark:border-slate-800 dark:bg-slate-900 dark:text-white"
+              >
+                <option>Umum</option>
+                <option>Jadwal</option>
+                <option>Tagihan</option>
+                <option>Materi</option>
+                <option>Akun</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-300">Pesan</label>
+              <textarea
+                id="helpMessage"
+                rows="5"
+                class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold outline-none transition focus:border-blue-500 dark:border-slate-800 dark:bg-slate-900 dark:text-white"
+                placeholder="Tulis pertanyaan kamu..."
+                required
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              class="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-500/20 transition hover:bg-blue-700"
+            >
+              Kirim Bantuan
+            </button>
+          </form>
+
+          <div id="helpResult" class="mt-4 hidden rounded-2xl p-4 text-sm font-bold"></div>
+        </div>
+
+      </div>
+    `;
+  }
+
+  function profileRow(label, value) {
+    return `
+      <div class="rounded-2xl bg-white p-4 dark:bg-slate-900">
+        <p class="text-xs font-bold text-slate-400">${escapeHtml(label)}</p>
+        <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">${escapeHtml(value)}</p>
+      </div>
+    `;
+  }
+
+  function emptyState(title, desc) {
+    return `
+      <div class="flex min-h-[300px] flex-col items-center justify-center rounded-[1.5rem] bg-slate-50 p-8 text-center dark:bg-slate-950">
+        <div class="mb-5 flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white text-3xl shadow-lg dark:bg-slate-900">
+          📭
+        </div>
+        <p class="text-xl font-black text-slate-900 dark:text-white">${escapeHtml(title)}</p>
+        <p class="mt-2 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">${escapeHtml(desc)}</p>
+      </div>
+    `;
+  }
+
+  function getInitials(name) {
+    return String(name || 'Siswa')
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(word => word[0])
+      .join('')
+      .toUpperCase();
+  }
+
+  async function loadHeaderUser() {
+    try {
+      const profile = await apiGet('/profile');
+
+      const name = profile.name || localStorage.getItem('name') || 'Siswa';
+      const email = profile.email || localStorage.getItem('email') || '';
+
+      setText('header_name', name);
+      setText('dropdown_name', name);
+      setText('dropdown_email', email);
+
+      const avatar = document.getElementById('header_avatar');
+
+      if (avatar) {
+        avatar.src = profile.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+      }
+    } catch (err) {
+      console.warn('Header profile gagal:', err);
+    }
+  }
+
+  async function loadPage() {
+    const config = pageMap[pageKey] || pageMap.progress;
+
+    setText('pageTitle', `${config.icon} ${config.title}`);
+    setText('pageSubtitle', config.subtitle);
+
+    const contentWrap = document.getElementById('contentWrap');
+
+    try {
+      setApiStatus('Loading...', 'loading');
+
+      const userId = localStorage.getItem('user_id') || '';
+      const dashboard = await apiGet(`/student/dashboard${userId ? `?user_id=${userId}` : ''}`);
+      const student = getStudent(dashboard);
+
+const invoices = await safeLoad(`/student/invoices${student.id ? `?student_id=${student.id}` : ''}`, []);
+      const profile = await safeLoad('/profile', {});
+
+      const progress = getNumber(dashboard?.progress_belajar ?? student.progress_belajar, 0);
+
+      setText('heroStudentName', student.name || profile.name || '-');
+      setText('heroStudentClass', student.kelas || student.kategori_level || '-');
+      setText('heroProgress', `${progress}%`);
+      setText('heroStatus', student.status || 'Aktif');
+
+      const progressBar = document.getElementById('heroProgressBar');
+      if (progressBar) {
+        progressBar.style.width = `${Math.min(100, progress)}%`;
+      }
+
+      renderSummaryCards(dashboard, invoices);
+
+      let html = '';
+
+      if (pageKey === 'progress') {
+        html = renderProgress(dashboard);
+      } else if (pageKey === 'jadwal') {
+        html = renderJadwal(dashboard);
+      } else if (pageKey === 'tagihan') {
+        html = renderTagihan(invoices);
+      } else if (pageKey === 'pengumuman') {
+        html = renderPengumuman(dashboard);
+      } else if (pageKey === 'catatan') {
+        html = renderCatatan(dashboard);
+      } else if (pageKey === 'materi') {
+        const materials = await safeLoad('/materials', []);
+        html = renderMateri(materials);
+      } else if (pageKey === 'sertifikat') {
+        const certificates = await safeLoad('/certificates', []);
+        html = renderSertifikat(certificates);
+      } else if (pageKey === 'dokumentasi') {
+        const docs = await safeLoad(`/student/documentations${student.id ? `?student_id=${student.id}` : ''}`, []);
+        html = renderDokumentasi(docs);
+      } else if (pageKey === 'profile') {
+        html = renderProfile(dashboard, profile);
+      } else if (pageKey === 'bantuan') {
+        html = renderBantuan(dashboard);
+      } else {
+        html = renderProgress(dashboard);
+      }
+
+      if (contentWrap) {
+        contentWrap.innerHTML = html;
+      }
+
+      bindHelpForm();
+
+      setApiStatus('Connected', 'success');
+
+    } catch (err) {
+      console.error('Student page error:', err);
+      setApiStatus('Disconnected', 'error');
+
+      if (contentWrap) {
+        contentWrap.innerHTML = emptyState('Gagal memuat data.', 'Cek koneksi Laravel API atau buka Console untuk melihat error.');
+      }
+    }
+  }
+
+  async function safeLoad(path, fallback) {
+    try {
+      return await apiGet(path);
+    } catch (err) {
+      console.warn('safeLoad gagal:', path, err.message);
+      return fallback;
+    }
+  }
+
+  function bindHelpForm() {
+    const form = document.getElementById('helpForm');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const result = document.getElementById('helpResult');
+
+      try {
+        const studentId = document.getElementById('helpStudentId')?.value || null;
+        const subject = document.getElementById('helpSubject')?.value || '';
+        const category = document.getElementById('helpCategory')?.value || 'Umum';
+        const message = document.getElementById('helpMessage')?.value || '';
+
+        await apiPost('/help-tickets', {
+          student_id: studentId,
+          subject,
+          category,
+          message,
+          status: 'Open'
+        });
+
+        if (result) {
+          result.className = 'mt-4 rounded-2xl bg-green-100 p-4 text-sm font-bold text-green-700 dark:bg-green-950 dark:text-green-300';
+          result.innerText = 'Pesan bantuan berhasil dikirim ke admin TECH-C.';
+          result.classList.remove('hidden');
+        }
+
+        form.reset();
+
+      } catch (err) {
+        if (result) {
+          result.className = 'mt-4 rounded-2xl bg-red-100 p-4 text-sm font-bold text-red-700 dark:bg-red-950 dark:text-red-300';
+          result.innerText = 'Gagal mengirim bantuan: ' + err.message;
+          result.classList.remove('hidden');
+        }
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadPartials();
+    await loadHeaderUser();
+    await loadPage();
+  });
+  </script>
+
+</body>
+</html>

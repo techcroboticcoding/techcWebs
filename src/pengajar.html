@@ -347,505 +347,376 @@ if (!token) {
   <!-- SCRIPT -->
   <script>
   const API_BASE = localStorage.getItem('api_base') || 'http://127.0.0.1:8000/api';
-  let allTeachers = [];
 
-  const dummyTeachers = [
-    {
-      id: 1,
-      name: "Adam Rizki",
-      specialization: "Robotic, Arduino, ESP32",
-      phone: "08123456789",
-      email: "adam@gmail.com",
-      status: "Aktif",
-      total_sekolah: 5,
-      total_jadwal: 12,
-      photo: "https://ui-avatars.com/api/?name=Adam+Rizki&background=2563eb&color=fff&bold=true"
-    },
-    {
-      id: 2,
-      name: "Rizki Rahayu Pratama",
-      specialization: "Scratch & Basic Coding",
-      phone: "081200000001",
+let allTeachers = [];
 
-      status: "Aktif",
-      total_sekolah: 3,
-      total_jadwal: 8,
-      photo: "https://ui-avatars.com/api/?name=Aldi+Pratama&background=06b6d4&color=fff&bold=true"
-    },
-    {
-      id: 3,
-      name: "Hashina Qiamu Mumtaziah , S.Pd",
-      specialization: "Scratch, Game Design, IoT",
-      phone: "081200000002",
+const dummyTeachers = [
+  {
+    id: 1,
+    name: "Adam Rizki",
+    specialization: "Robotic, Arduino, ESP32, AI",
+    phone: "08123456789",
+    email: "adam@gmail.com",
+    status: "Aktif",
+    total_sekolah: 5,
+    total_jadwal: 12,
+    photo: "https://ui-avatars.com/api/?name=Adam+Rizki&background=2563eb&color=fff&bold=true"
+  },
+  {
+    id: 2,
+    name: "Rizki Rahayu Pratama",
+    specialization: "Scratch & Basic Coding",
+    phone: "081200000001",
+    email: "rizki.private@techc.local",
+    status: "Aktif",
+    total_sekolah: 3,
+    total_jadwal: 8,
+    photo: "https://ui-avatars.com/api/?name=Rizki+Rahayu&background=06b6d4&color=fff&bold=true"
+  },
+  {
+    id: 3,
+    name: "Hashina Qiamu Mumtaziah, S.Pd",
+    specialization: "Scratch, Game Design, Coding Dasar",
+    phone: "081200000002",
+    email: "hashina.private@techc.local",
+    status: "Aktif",
+    total_sekolah: 4,
+    total_jadwal: 10,
+    photo: "https://ui-avatars.com/api/?name=Hashina+Qiamu&background=7c3aed&color=fff&bold=true"
+  },
+  {
+    id: 4,
+    name: "Akbar Marzuqi, S.Kom",
+    specialization: "IoT, Electronics, Arduino, ESP32",
+    phone: "081200000003",
+    email: "akbar.private@techc.local",
+    status: "Aktif",
+    total_sekolah: 2,
+    total_jadwal: 6,
+    photo: "https://ui-avatars.com/api/?name=Akbar+Marzuqi&background=16a34a&color=fff&bold=true"
+  },
+  {
+    id: 5,
+    name: "Dinda Sri Rejeki",
+    specialization: "Scratch, Game Design, Private Class",
+    phone: "081200000004",
+    email: "dinda.private@techc.local",
+    status: "Aktif",
+    total_sekolah: 2,
+    total_jadwal: 5,
+    photo: "https://ui-avatars.com/api/?name=Dinda+Sri&background=ea580c&color=fff&bold=true"
+  }
+];
 
-      status: "Aktif",
-      total_sekolah: 4,
-      total_jadwal: 10,
-      photo: "https://ui-avatars.com/api/?name=Naufal+Ramadhan&background=7c3aed&color=fff&bold=true"
-    },
-    {
-      id: 4,
-      name: "Akbar Marzuqi, S.Kom",
-      specialization: "IoT & Electronics",
-      phone: "081200000003",
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.innerText = value;
+}
 
-      status: "Aktif",
-      total_sekolah: 2,
-      total_jadwal: 6,
-      photo: "https://ui-avatars.com/api/?name=Rizky+Maulana&background=16a34a&color=fff&bold=true"
-    },
-    {
-      id: 5,
-      name: "Dinda Sri Rejeki",
-      specialization: "Scratch, Game Design",
-      phone: "081200000004",
-      status: "Aktif",
-      total_sekolah: 2,
-      total_jadwal: 5,
-      photo: "https://ui-avatars.com/api/?name=Dinda+Putri&background=ea580c&color=fff&bold=true"
-    },
-  ];
+function setApiStatus(text, type = "success") {
+  const el = document.getElementById("apiStatus");
+  if (!el) return;
 
-  function setText(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.innerText = value;
+  el.innerText = text;
+  el.className = "mt-1 text-sm font-black";
+
+  if (type === "success") {
+    el.classList.add("text-green-500");
+  } else if (type === "error") {
+    el.classList.add("text-red-500");
+  } else {
+    el.classList.add("text-yellow-500");
+  }
+}
+
+function updateLastUpdate() {
+  const now = new Date();
+
+  setText("lastUpdate", now.toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit"
+  }));
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function getTeacherName(teacher) {
+  return teacher.name || teacher.nama || teacher.full_name || "Tanpa Nama";
+}
+
+function getTeacherStatus(teacher) {
+  return teacher.status || teacher.status_pengajar || "Aktif";
+}
+
+function getTeacherSpecialization(teacher) {
+  return teacher.specialization ||
+    teacher.spesialisasi ||
+    teacher.keahlian ||
+    teacher.mapel ||
+    teacher.bidang ||
+    "Robotic & Coding";
+}
+
+function getTeacherEmail(teacher) {
+  return teacher.email || teacher.email_pengajar || "-";
+}
+
+function getTeacherPhone(teacher) {
+  return teacher.phone || teacher.no_hp || teacher.telepon || teacher.nomor_hp || "-";
+}
+
+function getTeacherSchoolCount(teacher) {
+  return teacher.total_sekolah ||
+    teacher.schools_count ||
+    teacher.sekolah_count ||
+    teacher.jumlah_sekolah ||
+    0;
+}
+
+function getTeacherScheduleCount(teacher) {
+  return teacher.total_jadwal ||
+    teacher.schedules_count ||
+    teacher.jadwal_count ||
+    teacher.jumlah_jadwal ||
+    0;
+}
+
+function getTeacherPhoto(teacher) {
+  const name = getTeacherName(teacher);
+
+  if (teacher.photo_url) return teacher.photo_url;
+  if (teacher.foto_url) return teacher.foto_url;
+
+  if (teacher.photo) {
+    if (String(teacher.photo).startsWith("http")) return teacher.photo;
+    return `http://127.0.0.1:8000/storage/${teacher.photo}`;
   }
 
-  function setApiStatus(text, type = 'loading') {
-    const el = document.getElementById('apiStatus');
-    if (!el) return;
-
-    el.innerText = text;
-    el.className = 'mt-1 text-sm font-black';
-
-    if (type === 'success') {
-      el.classList.add('text-green-500');
-    } else if (type === 'error') {
-      el.classList.add('text-red-500');
-    } else {
-      el.classList.add('text-yellow-500');
-    }
+  if (teacher.foto) {
+    if (String(teacher.foto).startsWith("http")) return teacher.foto;
+    return `http://127.0.0.1:8000/storage/${teacher.foto}`;
   }
 
-  function updateLastUpdate() {
-    const now = new Date();
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+}
 
-    setText('lastUpdate', now.toLocaleTimeString('id-ID', {
-      hour: '2-digit',
-      minute: '2-digit'
-    }));
+function updateStats(teachers, shownTeachers) {
+  const total = teachers.length;
+  const aktif = teachers.filter(t => String(getTeacherStatus(t)).toLowerCase() !== "nonaktif").length;
+  const shown = shownTeachers.length;
+
+  setText("statTotal", total);
+  setText("statAktif", aktif);
+  setText("statShown", shown);
+  setText("totalPengajarHero", total);
+  setText("totalPengajarCard", total);
+  setText("activeTeacherText", `${aktif} pengajar`);
+  setText("sourceStatus", "Dummy");
+
+  const bar = document.getElementById("activeTeacherBar");
+
+  if (bar) {
+    const percent = total > 0 ? Math.round((aktif / total) * 100) : 0;
+    bar.style.width = `${percent}%`;
+  }
+}
+
+function renderPengajar(teachers) {
+  const container = document.getElementById("pengajarList");
+  const emptyState = document.getElementById("emptyState");
+
+  if (!container) return;
+
+  updateStats(allTeachers, teachers);
+
+  if (!teachers.length) {
+    container.innerHTML = "";
+    if (emptyState) emptyState.classList.remove("hidden");
+    return;
   }
 
-  function escapeHtml(value) {
-    return String(value ?? '')
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
-  }
+  if (emptyState) emptyState.classList.add("hidden");
 
-  function getTeacherName(teacher) {
-    return teacher.name || teacher.nama || teacher.full_name || 'Tanpa Nama';
-  }
-
-  function getTeacherStatus(teacher) {
-    return teacher.status || teacher.status_pengajar || 'Aktif';
-  }
-
-  function getTeacherSpecialization(teacher) {
-    return teacher.specialization || teacher.spesialisasi || teacher.keahlian || teacher.mapel || teacher.bidang || 'Robotic & Coding';
-  }
-
-  function getTeacherEmail(teacher) {
-    return teacher.email || teacher.email_pengajar || '-';
-  }
-
-  function getTeacherPhone(teacher) {
-    return teacher.phone || teacher.no_hp || teacher.telepon || teacher.nomor_hp || '-';
-  }
-
-  function getTeacherSchoolCount(teacher) {
-    return teacher.total_sekolah || teacher.schools_count || teacher.sekolah_count || teacher.jumlah_sekolah || 0;
-  }
-
-  function getTeacherScheduleCount(teacher) {
-    return teacher.total_jadwal || teacher.schedules_count || teacher.jadwal_count || teacher.jumlah_jadwal || 0;
-  }
-
-  function getTeacherPhoto(teacher) {
+  container.innerHTML = teachers.map(teacher => {
+    const id = teacher.id;
     const name = getTeacherName(teacher);
+    const status = getTeacherStatus(teacher);
+    const specialization = getTeacherSpecialization(teacher);
+    const email = getTeacherEmail(teacher);
+    const phone = getTeacherPhone(teacher);
+    const photo = getTeacherPhoto(teacher);
+    const schoolCount = getTeacherSchoolCount(teacher);
+    const scheduleCount = getTeacherScheduleCount(teacher);
 
-    if (teacher.photo_url) {
-      return teacher.photo_url;
-    }
+    const safeName = escapeHtml(name);
+    const safeStatus = escapeHtml(status);
+    const safeSpecialization = escapeHtml(specialization);
+    const safeEmail = escapeHtml(email);
+    const safePhone = escapeHtml(phone);
 
-    if (teacher.foto_url) {
-      return teacher.foto_url;
-    }
+    const statusClass = String(status).toLowerCase() === "nonaktif"
+      ? "bg-red-500/20 text-white"
+      : "bg-white/20 text-white";
 
-    if (teacher.photo) {
-      if (String(teacher.photo).startsWith('http')) {
-        return teacher.photo;
-      }
+    return `
+      <div
+        onclick="pilihPengajar(${id}, '${encodeURIComponent(name)}')"
+        class="teacher-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
+      >
+        <div class="relative h-24 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.35),transparent_35%)]"></div>
 
-      return `http://127.0.0.1:8000/storage/${teacher.photo}`;
-    }
-
-    if (teacher.foto) {
-      if (String(teacher.foto).startsWith('http')) {
-        return teacher.foto;
-      }
-
-      return `http://127.0.0.1:8000/storage/${teacher.foto}`;
-    }
-
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
-  }
-
-  function showSkeleton() {
-    const container = document.getElementById('pengajarList');
-
-    if (!container) return;
-
-    container.innerHTML = Array.from({ length: 8 }).map(() => `
-      <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 dark:border-slate-800 dark:bg-slate-900/90">
-        <div class="animate-pulse">
-          <div class="mx-auto h-24 w-24 rounded-full bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mx-auto mt-5 h-5 w-40 rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mx-auto mt-3 h-4 w-48 rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mt-5 grid grid-cols-2 gap-3">
-            <div class="h-14 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
-            <div class="h-14 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
+          <div class="absolute right-4 top-4 rounded-full ${statusClass} px-3 py-1 text-xs font-black backdrop-blur">
+            ${safeStatus}
           </div>
+        </div>
+
+        <div class="relative px-5 pb-5">
+          <div class="-mt-12 flex justify-center">
+            <img
+              src="${photo}"
+              onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true'"
+              class="h-24 w-24 rounded-full border-4 border-white object-cover shadow-xl dark:border-slate-900"
+              alt="${safeName}"
+            />
+          </div>
+
+          <div class="mt-4 text-center">
+            <h2 class="line-clamp-1 text-lg font-black text-slate-900 dark:text-white">
+              ${safeName}
+            </h2>
+
+            <p class="mt-1 line-clamp-1 text-sm font-semibold text-blue-500">
+              ${safeSpecialization}
+            </p>
+          </div>
+
+          <div class="mt-5 grid grid-cols-2 gap-3">
+            <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
+              <p class="text-xs font-semibold text-slate-400">Sekolah</p>
+              <p class="mt-1 text-sm font-black text-blue-500">${schoolCount}</p>
+            </div>
+
+            <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
+              <p class="text-xs font-semibold text-slate-400">Jadwal</p>
+              <p class="mt-1 text-sm font-black text-cyan-500">${scheduleCount}</p>
+            </div>
+          </div>
+
+          <div class="mt-5 space-y-2 rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>📧</span>
+              <span class="line-clamp-1">${safeEmail}</span>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>📱</span>
+              <span class="line-clamp-1">${safePhone}</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="mt-5 w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-950 dark:text-slate-300"
+          >
+            Lihat Detail Pengajar
+          </button>
         </div>
       </div>
-    `).join('');
-  }
-
-  function updateStats(teachers, shownTeachers) {
-    const total = teachers.length;
-    const aktif = teachers.filter(t => String(getTeacherStatus(t)).toLowerCase() !== 'nonaktif').length;
-    const shown = shownTeachers.length;
-
-    setText('statTotal', total);
-    setText('statAktif', aktif);
-    setText('statShown', shown);
-    setText('totalPengajarHero', total);
-    setText('totalPengajarCard', total);
-    setText('activeTeacherText', `${aktif} pengajar`);
-
-    const bar = document.getElementById('activeTeacherBar');
-    if (bar) {
-      const percent = total > 0 ? Math.round((aktif / total) * 100) : 0;
-      bar.style.width = `${percent}%`;
-    }
-  }
-
-  function renderPengajar(teachers) {
-    const container = document.getElementById('pengajarList');
-    const emptyState = document.getElementById('emptyState');
-
-    if (!container) return;
-
-    updateStats(allTeachers, teachers);
-
-    if (!teachers.length) {
-      container.innerHTML = "";
-      if (emptyState) emptyState.classList.remove('hidden');
-      return;
-    }
-
-    if (emptyState) emptyState.classList.add('hidden');
-
-    container.innerHTML = teachers.map(teacher => {
-      const id = teacher.id;
-      const name = getTeacherName(teacher);
-      const status = getTeacherStatus(teacher);
-      const specialization = getTeacherSpecialization(teacher);
-      const email = getTeacherEmail(teacher);
-      const phone = getTeacherPhone(teacher);
-      const photo = getTeacherPhoto(teacher);
-      const schoolCount = getTeacherSchoolCount(teacher);
-      const scheduleCount = getTeacherScheduleCount(teacher);
-
-      const safeName = escapeHtml(name);
-      const safeStatus = escapeHtml(status);
-      const safeSpecialization = escapeHtml(specialization);
-      const safeEmail = escapeHtml(email);
-      const safePhone = escapeHtml(phone);
-
-      const statusClass = String(status).toLowerCase() === 'nonaktif'
-        ? 'bg-red-500/20 text-white'
-        : 'bg-white/20 text-white';
-
-      return `
-        <div
-          onclick="pilihPengajar(${id}, '${encodeURIComponent(name)}')"
-          class="teacher-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
-        >
-          <div class="relative h-24 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.35),transparent_35%)]"></div>
-
-            <div class="absolute right-4 top-4 rounded-full ${statusClass} px-3 py-1 text-xs font-black backdrop-blur">
-              ${safeStatus}
-            </div>
-          </div>
-
-          <div class="relative px-5 pb-5">
-            <div class="-mt-12 flex justify-center">
-              <img
-                src="${photo}"
-                onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true'"
-                class="h-24 w-24 rounded-full border-4 border-white object-cover shadow-xl dark:border-slate-900"
-                alt="${safeName}"
-              />
-            </div>
-
-            <div class="mt-4 text-center">
-              <h2 class="line-clamp-1 text-lg font-black text-slate-900 dark:text-white">
-                ${safeName}
-              </h2>
-
-              <p class="mt-1 line-clamp-1 text-sm font-semibold text-blue-500">
-                ${safeSpecialization}
-              </p>
-            </div>
-
-            <div class="mt-5 grid grid-cols-2 gap-3">
-              <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
-                <p class="text-xs font-semibold text-slate-400">Sekolah</p>
-                <p class="mt-1 text-sm font-black text-blue-500">${schoolCount}</p>
-              </div>
-
-              <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
-                <p class="text-xs font-semibold text-slate-400">Jadwal</p>
-                <p class="mt-1 text-sm font-black text-cyan-500">${scheduleCount}</p>
-              </div>
-            </div>
-
-            <div class="mt-5 space-y-2 rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
-              <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                <span>📧</span>
-                <span class="line-clamp-1">${safeEmail}</span>
-              </div>
-
-              <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                <span>📱</span>
-                <span class="line-clamp-1">${safePhone}</span>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              class="mt-5 w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-950 dark:text-slate-300"
-            >
-              Lihat Detail Pengajar
-            </button>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  function applyFilter() {
-    const search = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
-    const sort = document.getElementById('sortInput')?.value || 'az';
-
-    let filtered = allTeachers.filter(teacher => {
-      const target = [
-        getTeacherName(teacher),
-        getTeacherStatus(teacher),
-        getTeacherSpecialization(teacher),
-        getTeacherEmail(teacher),
-        getTeacherPhone(teacher)
-      ].join(' ').toLowerCase();
-
-      return target.includes(search);
-    });
-
-    filtered.sort((a, b) => {
-      const nameA = getTeacherName(a).toLowerCase();
-      const nameB = getTeacherName(b).toLowerCase();
-
-      if (sort === 'az') return nameA.localeCompare(nameB);
-      if (sort === 'za') return nameB.localeCompare(nameA);
-      if (sort === 'newest') return Number(b.id || 0) - Number(a.id || 0);
-      if (sort === 'oldest') return Number(a.id || 0) - Number(b.id || 0);
-
-      return 0;
-    });
-
-    renderPengajar(filtered);
-  }
-
-  async function apiGetTeachers() {
-    const endpoints = [`${API_BASE}/teachers`, `${API_BASE}/pengajar`];
-
-    let lastError = null;
-
-    for (const url of endpoints) {
-      try {
-        const res = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-
-        if (res.status === 401) {
-          localStorage.clear();
-          window.location.href = './login.html';
-          return [];
-        }
-
-        const raw = await res.text();
-
-        let data;
-
-        try {
-          data = JSON.parse(raw);
-        } catch (err) {
-          throw new Error("Response bukan JSON");
-        }
-
-        if (!res.ok) {
-          throw new Error(data.message || `HTTP Error ${res.status}`);
-        }
-
-        if (Array.isArray(data)) return data;
-        if (Array.isArray(data.data)) return data.data;
-        if (Array.isArray(data.teachers)) return data.teachers;
-        if (Array.isArray(data.pengajar)) return data.pengajar;
-
-        return [];
-      } catch (err) {
-        lastError = err;
-      }
-    }
-
-    throw lastError || new Error("API pengajar belum tersedia");
-  }
-
-  async function loadHeaderUser() {
-    try {
-      const res = await fetch(`${API_BASE}/profile`, {
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (!res.ok) return;
-
-      const data = await res.json();
-
-      const name = data.name || localStorage.getItem('name') || 'Admin';
-      const email = data.email || localStorage.getItem('email') || '';
-
-      setText('header_name', name);
-      setText('dropdown_name', name);
-      setText('dropdown_email', email);
-
-      const avatar = document.getElementById('header_avatar');
-
-      if (avatar) {
-        avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
-      }
-
-    } catch (err) {
-      console.warn("Header profile gagal:", err);
-    }
-  }
-
-  async function loadPengajar() {
-    try {
-      setApiStatus('Loading...', 'loading');
-      showSkeleton();
-
-      let data = [];
-
-      try {
-        data = await apiGetTeachers();
-
-        if (data.length) {
-          setText('sourceStatus', 'Laravel');
-        } else {
-          data = dummyTeachers;
-          setText('sourceStatus', 'Dummy');
-        }
-
-      } catch (apiErr) {
-        console.warn("API pengajar belum siap, pakai dummy:", apiErr.message);
-        data = dummyTeachers;
-        setText('sourceStatus', 'Dummy');
-      }
-
-      allTeachers = data;
-      applyFilter();
-
-      setApiStatus('Connected', 'success');
-      updateLastUpdate();
-
-    } catch (err) {
-      console.error("Error load pengajar:", err);
-
-      setApiStatus('Disconnected', 'error');
-
-      const container = document.getElementById('pengajarList');
-      if (container) {
-        container.innerHTML = `
-          <div class="col-span-full rounded-[2rem] border border-red-200 bg-red-50 p-8 text-center shadow-xl shadow-red-100 dark:border-red-900 dark:bg-red-950/40 dark:shadow-black/20">
-            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-100 text-3xl dark:bg-red-950">
-              ⚠️
-            </div>
-
-            <h3 class="text-xl font-black text-red-600 dark:text-red-300">
-              Gagal mengambil data pengajar
-            </h3>
-
-            <p class="mt-2 text-sm font-semibold text-red-500 dark:text-red-300">
-              ${escapeHtml(err.message || 'Cek Laravel API /api/teachers atau /api/pengajar')}
-            </p>
-
-            <button
-              onclick="loadPengajar()"
-              class="mt-5 rounded-2xl bg-red-600 px-5 py-3 text-sm font-black text-white transition hover:bg-red-700"
-            >
-              Coba Lagi
-            </button>
-          </div>
-        `;
-      }
-    }
-  }
-
-  function pilihPengajar(id, encodedName) {
-    const name = decodeURIComponent(encodedName || '');
-
-    localStorage.setItem('teacher_id', id);
-    localStorage.setItem('teacher_name', name);
-
-    window.location.href = "detailPengajar.html";
-  }
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    await loadPartials();
-    await loadHeaderUser();
-    await loadPengajar();
-
-    const searchInput = document.getElementById('searchInput');
-    const sortInput = document.getElementById('sortInput');
-
-    if (searchInput) {
-      searchInput.addEventListener('input', applyFilter);
-    }
-
-    if (sortInput) {
-      sortInput.addEventListener('change', applyFilter);
-    }
+    `;
+  }).join("");
+}
+
+function applyFilter() {
+  const search = document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
+  const sort = document.getElementById("sortInput")?.value || "az";
+
+  let filtered = allTeachers.filter(teacher => {
+    const target = [
+      getTeacherName(teacher),
+      getTeacherStatus(teacher),
+      getTeacherSpecialization(teacher),
+      getTeacherEmail(teacher),
+      getTeacherPhone(teacher)
+    ].join(" ").toLowerCase();
+
+    return target.includes(search);
   });
+
+  filtered.sort((a, b) => {
+    const nameA = getTeacherName(a).toLowerCase();
+    const nameB = getTeacherName(b).toLowerCase();
+
+    if (sort === "az") return nameA.localeCompare(nameB);
+    if (sort === "za") return nameB.localeCompare(nameA);
+    if (sort === "newest") return Number(b.id || 0) - Number(a.id || 0);
+    if (sort === "oldest") return Number(a.id || 0) - Number(b.id || 0);
+
+    return 0;
+  });
+
+  renderPengajar(filtered);
+}
+
+async function loadHeaderUser() {
+  const name = localStorage.getItem("name") || "Admin TECH-C";
+  const email = localStorage.getItem("email") || "";
+
+  setText("header_name", name);
+  setText("dropdown_name", name);
+  setText("dropdown_email", email);
+
+  const avatar = document.getElementById("header_avatar");
+
+  if (avatar) {
+    avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+  }
+}
+
+async function loadPengajar() {
+  setApiStatus("Dummy Local", "success");
+
+  allTeachers = dummyTeachers;
+
+  applyFilter();
+  updateLastUpdate();
+}
+
+function pilihPengajar(id, encodedName) {
+  const name = decodeURIComponent(encodedName || "");
+
+  localStorage.setItem("teacher_id", id);
+  localStorage.setItem("teacher_name", name);
+
+  alert("Detail pengajar: " + name);
+
+  // Nanti kalau halaman detail sudah ada, pakai ini:
+  // window.location.href = "detailPengajar.html";
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadPartials();
+  await loadHeaderUser();
+  await loadPengajar();
+
+  const searchInput = document.getElementById("searchInput");
+  const sortInput = document.getElementById("sortInput");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", applyFilter);
+  }
+
+  if (sortInput) {
+    sortInput.addEventListener("change", applyFilter);
+  }
+});
   </script>
 
 </body>
