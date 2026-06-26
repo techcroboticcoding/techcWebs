@@ -31,12 +31,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Models\StudentDocumentation;
-
 if (!function_exists('techc_user_from_request')) {
-    function techc_user_from_request(\Illuminate\Http\Request $request)
+    function techc_user_from_request(Request $request)
     {
-        $user = null;
-
         // 1. Ambil dari Authorization: Bearer dummy-token-USER_ID
         $authorization = $request->header('Authorization');
 
@@ -44,7 +41,7 @@ if (!function_exists('techc_user_from_request')) {
             $userId = trim(str_replace('Bearer dummy-token-', '', $authorization));
 
             if (is_numeric($userId)) {
-                $user = \App\Models\User::find((int) $userId);
+                $user = User::find((int) $userId);
                 if ($user) return $user;
             }
         }
@@ -55,7 +52,7 @@ if (!function_exists('techc_user_from_request')) {
             ?? $request->input('user_id');
 
         if ($userId && is_numeric($userId)) {
-            $user = \App\Models\User::find((int) $userId);
+            $user = User::find((int) $userId);
             if ($user) return $user;
         }
 
@@ -65,27 +62,18 @@ if (!function_exists('techc_user_from_request')) {
             ?? $request->input('email');
 
         if ($email) {
-            $user = \App\Models\User::where('email', $email)->first();
+            $user = User::where('email', $email)->first();
             if ($user) return $user;
         }
 
         return null;
     }
 }
+
 if (!function_exists('techc_storage_url')) {
     function techc_storage_url($path)
     {
         if (!$path) return null;
-        if (str_starts_with($path, 'http')) return $path;
-        return asset('storage/' . $path);
-    }
-}
-if (!function_exists('techc_photo_url')) {
-    function techc_photo_url($path)
-    {
-        if (!$path) {
-            return null;
-        }
 
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
             return $path;
@@ -104,51 +92,13 @@ if (!function_exists('techc_photo_url')) {
         return asset('storage/' . $path);
     }
 }
-if (!function_exists('techc_user_from_request')) {
-    function techc_user_from_request(Request $request)
-    {
-        $email = $request->header('X-User-Email')
-            ?? $request->query('email')
-            ?? $request->input('email');
-
-        if ($email) {
-            $user = User::where('email', $email)->first();
-            if ($user) return $user;
-        }
-
-        $authorization = $request->header('Authorization');
-
-        if ($authorization && str_contains($authorization, 'dummy-token-')) {
-            $userId = trim(str_replace('Bearer dummy-token-', '', $authorization));
-
-            if (is_numeric($userId)) {
-                $user = User::find((int) $userId);
-                if ($user) return $user;
-            }
-        }
-
-        $userId = $request->header('X-User-Id')
-            ?? $request->query('user_id')
-            ?? $request->input('user_id');
-
-        if ($userId) {
-            $user = User::find($userId);
-            if ($user) return $user;
-        }
-
-        return User::first();
-    }
-}
 
 if (!function_exists('techc_photo_url')) {
     function techc_photo_url($path)
     {
-        if (!$path) return null;
-        if (str_starts_with($path, 'http')) return $path;
-        return asset('storage/' . $path);
+        return techc_storage_url($path);
     }
 }
-
 /*
 |--------------------------------------------------------------------------
 | AUTH
@@ -939,8 +889,7 @@ Route::delete('/admin/documentations/{documentation}', function (StudentDocument
     return response()->json([
         'message' => 'Dokumentasi berhasil dihapus.',
     ]);
-});
-Route::get('/student/documentations', function (\Illuminate\Http\Request $request) {
+});Route::get('/student/documentations', function (Request $request) {
     try {
         $studentId = $request->header('X-Student-Id')
             ?? $request->query('student_id')
@@ -949,14 +898,14 @@ Route::get('/student/documentations', function (\Illuminate\Http\Request $reques
         $student = null;
 
         if ($studentId) {
-            $student = \App\Models\Student::find($studentId);
+            $student = Student::find($studentId);
         }
 
         if (!$student) {
             $user = techc_user_from_request($request);
 
             if ($user) {
-                $student = \App\Models\Student::where('user_id', $user->id)->first();
+                $student = Student::where('user_id', $user->id)->first();
             }
         }
 
@@ -964,10 +913,15 @@ Route::get('/student/documentations', function (\Illuminate\Http\Request $reques
             return response()->json([]);
         }
 
-        return \App\Models\StudentDocumentation::where('student_id', $student->id)
+        return StudentDocumentation::where('student_id', $student->id)
             ->where('status', 'Published')
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($doc) {
+                $doc->image_url = techc_storage_url($doc->image_path);
+                $doc->uploaded_at = $doc->created_at?->format('Y-m-d H:i:s');
+                return $doc;
+            });
 
     } catch (\Throwable $e) {
         return response()->json([
