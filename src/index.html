@@ -7,6 +7,38 @@
   <title>TECH-C Admin Dashboard</title>
 
   <style>
+
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #pageScroller {
+    height: 100vh;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  #pageScroller::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  #pageScroller::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #pageScroller::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, .55);
+    border-radius: 999px;
+  }
+
+  #pageScroller::-webkit-scrollbar-thumb:hover {
+    background: rgba(37, 99, 235, .75);
+  }
+
     * {
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
@@ -94,7 +126,7 @@ if (!token) {
     <include src="./partials/sidebar.html"></include>
 
     <!-- Content -->
-    <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto no-scrollbar">
+    <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
 
       <include src="./partials/overlay.html"></include>
 
@@ -102,7 +134,7 @@ if (!token) {
       <include src="./partials/header.html"></include>
 
       <!-- MAIN -->
-      <main class="admin-grid-bg relative min-h-screen overflow-hidden p-4 sm:p-6 lg:p-8">
+      <main class="admin-grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
 
         <!-- Background Decoration -->
         <div class="pointer-events-none absolute inset-0 overflow-hidden">
