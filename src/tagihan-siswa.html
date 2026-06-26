@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Tagihan Siswa - TECH-C</title>
+
+  <style>
+    * {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #pageScroller {
+      height: 100vh;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    #pageScroller::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #pageScroller::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, .55);
+      border-radius: 999px;
+    }
+
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .dark .grid-bg {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+
+    .invoice-mini-paper {
+      width: 820px;
+      min-height: 1160px;
+      background: white;
+      color: #111827;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .invoice-card {
+      transition: .25s ease;
+    }
+
+    .invoice-card:hover {
+      transform: translateY(-6px);
+    }
+  </style>
+</head>
+
+<script>
+const token = localStorage.getItem('token');
+const role = localStorage.getItem('role');
+
+if (!token) {
+  window.location.href = './login.html';
+} else if (role !== 'siswa') {
+  window.location.href = './index.html';
+}
+</script>
+
+<body
+  x-data="{ page: 'tagihan-siswa', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
+    $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+  "
+  :class="{'dark bg-slate-950': darkMode === true}"
+  class="bg-slate-50"
+>
+
+  <include src="./partials/preloader.html"></include>
+
+  <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+
+    <include src="./partials/sidebarSiswa.html"></include>
+
+    <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
+
+      <include src="./partials/overlay.html"></include>
+      <include src="./partials/header.html"></include>
+
+      <main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
+
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <div class="absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full bg-blue-500/10 blur-3xl"></div>
+          <div class="absolute left-[-150px] top-72 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-3xl"></div>
+          <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
+        </div>
+
+        <section class="relative z-10 mx-auto max-w-7xl">
+
+          <!-- HERO -->
+          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="relative p-6 sm:p-7 lg:p-8">
+
+              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-blue-600/15 via-cyan-500/5 to-transparent lg:block"></div>
+
+              <div class="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+
+                <div>
+                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
+                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
+                    Student Billing
+                  </div>
+
+                  <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                    Tagihan & Invoice Saya
+                  </h1>
+
+                  <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+                    Lihat tagihan kelas robotic & coding, status pembayaran, detail invoice, dan download invoice dari TECH-C.
+                  </p>
+
+                  <div class="mt-6 flex flex-wrap gap-3">
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Status API</p>
+                      <p id="apiStatus" class="mt-1 text-sm font-black text-yellow-500">Checking...</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Total Invoice</p>
+                      <p id="totalInvoiceHero" class="mt-1 text-sm font-black text-slate-900 dark:text-white">0</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Update Terakhir</p>
+                      <p id="lastUpdate" class="mt-1 text-sm font-black text-slate-900 dark:text-white">-</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="relative shrink-0">
+                  <div class="absolute -inset-4 rounded-[2.5rem] bg-blue-500/20 blur-2xl"></div>
+
+                  <div class="relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[360px]">
+                    <div class="flex items-center justify-between gap-4">
+                      <div>
+                        <p class="text-sm font-bold text-white/80">Total Belum Dibayar</p>
+                        <h2 id="totalUnpaidCard" class="mt-2 text-4xl font-black">Rp 0</h2>
+                        <p id="invoiceCountText" class="mt-1 text-xs font-semibold text-white/70">0 invoice aktif</p>
+                      </div>
+
+                      <div class="flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-white/20 text-4xl backdrop-blur">
+                        🧾
+                      </div>
+                    </div>
+
+                    <div class="mt-5 rounded-2xl bg-white/15 p-4 backdrop-blur">
+                      <div class="flex items-center justify-between text-xs font-bold text-white/80">
+                        <span>Status pembayaran</span>
+                        <span id="paidRatioText">0%</span>
+                      </div>
+
+                      <div class="mt-3 h-3 overflow-hidden rounded-full bg-white/20">
+                        <div id="paidRatioBar" class="h-full w-0 rounded-full bg-white transition-all duration-700"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- STATS -->
+          <div class="mb-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+
+            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-blue-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Semua Invoice</p>
+                  <h2 id="statTotal" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Total tagihan</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl dark:bg-blue-950">🧾</div>
+              </div>
+            </div>
+
+            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-red-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Belum Dibayar</p>
+                  <h2 id="statUnpaid" class="mt-3 text-4xl font-black text-red-500">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Perlu dibayar</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-2xl dark:bg-red-950">⚠️</div>
+              </div>
+            </div>
+
+            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-green-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Lunas</p>
+                  <h2 id="statPaid" class="mt-3 text-4xl font-black text-green-500">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Sudah dibayar</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-2xl dark:bg-green-950">✅</div>
+              </div>
+            </div>
+
+            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-violet-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Total Tagihan</p>
+                  <h2 id="statNominal" class="mt-3 text-2xl font-black text-violet-500">Rp 0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Nominal semua</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-2xl dark:bg-violet-950">💰</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TOOLBAR -->
+          <div class="mb-6 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+              <div class="flex flex-1 flex-col gap-3 sm:flex-row">
+
+                <div class="relative flex-1">
+                  <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    🔎
+                  </div>
+
+                  <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Cari invoice, bulan, paket, nominal..."
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
+                  />
+                </div>
+
+                <select
+                  id="statusInput"
+                  class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                >
+                  <option value="all">Semua Status</option>
+                  <option value="Belum Dibayar">Belum Dibayar</option>
+                  <option value="Lunas">Lunas</option>
+                  <option value="Pending">Pending</option>
+                </select>
+
+                <select
+                  id="sortInput"
+                  class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                >
+                  <option value="newest">Terbaru</option>
+                  <option value="oldest">Terlama</option>
+                  <option value="highest">Nominal Tertinggi</option>
+                  <option value="lowest">Nominal Terendah</option>
+                </select>
+
+              </div>
+
+              <button
+                onclick="loadInvoices()"
+                class="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5"
+              >
+                Refresh
+              </button>
+
+            </div>
+          </div>
+
+          <!-- NOTIFICATION -->
+          <div id="invoiceNotification" class="mb-6 hidden rounded-[1.7rem] border border-yellow-200 bg-yellow-50 p-5 shadow-xl shadow-yellow-100 dark:border-yellow-900 dark:bg-yellow-950/40 dark:shadow-black/20">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 class="text-lg font-black text-yellow-700 dark:text-yellow-300">Ada tagihan yang belum dibayar</h3>
+                <p id="notificationText" class="mt-1 text-sm font-semibold text-yellow-600 dark:text-yellow-300">-</p>
+              </div>
+
+              <button
+                onclick="filterUnpaidOnly()"
+                class="rounded-2xl bg-yellow-500 px-5 py-3 text-sm font-black text-white transition hover:bg-yellow-600"
+              >
+                Lihat Tagihan
+              </button>
+            </div>
+          </div>
+
+          <!-- INVOICE LIST -->
+          <div id="invoiceList" class="grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:grid-cols-3">
+            <!-- JS RENDER -->
+          </div>
+
+          <!-- EMPTY STATE -->
+          <div id="emptyState" class="hidden rounded-[2rem] border border-white/70 bg-white/90 p-10 text-center shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-blue-50 text-4xl dark:bg-blue-950">
+              🧾
+            </div>
+
+            <h3 class="text-xl font-black text-slate-900 dark:text-white">
+              Belum ada invoice
+            </h3>
+
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              Invoice dari admin TECH-C akan tampil di halaman ini.
+            </p>
+          </div>
+
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL DETAIL INVOICE -->
+  <div
+    id="invoiceModal"
+    class="fixed inset-0 z-[999999] hidden items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm"
+  >
+    <div class="max-h-[95vh] w-full max-w-6xl overflow-y-auto rounded-[2rem] bg-white p-4 shadow-2xl dark:bg-slate-900">
+
+      <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 class="text-xl font-black text-slate-900 dark:text-white">Detail Invoice</h2>
+          <p id="modalInvoiceNoText" class="text-sm font-semibold text-slate-500 dark:text-slate-400">-</p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <button
+            onclick="downloadModalInvoicePNG()"
+            class="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white transition hover:bg-blue-700"
+          >
+            Download PNG
+          </button>
+
+          <button
+            onclick="closeInvoiceModal()"
+            class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+
+      <div class="w-full overflow-x-auto rounded-2xl bg-slate-100 p-4 dark:bg-slate-950">
+        <div id="modalInvoicePreview" class="invoice-mini-paper mx-auto shadow-2xl">
+
+          <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-[90px] bg-blue-500"></div>
+
+          <div class="px-14 py-14">
+
+            <div class="flex items-start justify-between">
+              <div>
+                <img src="./images/logo.png" class="h-20 object-contain" alt="TECH-C Logo" />
+
+                <div class="mt-10">
+                  <h3 class="text-2xl font-black text-slate-800">Office Address</h3>
+                  <p class="mt-4 max-w-xs text-base font-medium leading-6 text-slate-600">
+                    Taman Krakatau Blok J8 No. 24, Kab. Serang, Banten, 42453
+                  </p>
+                  <p class="mt-7 text-base font-black text-slate-700">
+                    0877-1020-8101
+                  </p>
+                </div>
+              </div>
+
+              <div class="w-[330px] pt-8">
+                <h1 class="text-5xl font-black tracking-wide text-black">INVOICE</h1>
+
+                <div class="mt-10 space-y-3 text-lg">
+                  <p>
+                    <span class="font-medium tracking-widest text-slate-700">DATE:</span>
+                    <span id="modalPreviewDate" class="ml-3 font-semibold">-</span>
+                  </p>
+
+                  <p>
+                    <span class="font-black text-slate-800">To:</span>
+                    <span id="modalPreviewStudent" class="ml-2 font-semibold text-slate-700">-</span>
+                  </p>
+
+                  <p id="modalPreviewClass" class="text-base font-semibold text-slate-500">-</p>
+
+                  <p class="text-base font-black text-blue-600">
+                    No: <span id="modalPreviewInvoiceNo">-</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-12">
+              <div class="grid grid-cols-12 bg-blue-500 px-5 py-5 text-lg font-black text-white">
+                <div class="col-span-5">DESCRIPTION</div>
+                <div class="col-span-2 text-center">PRICE</div>
+                <div class="col-span-2 text-center">QTY</div>
+                <div class="col-span-3 text-right">TOTAL</div>
+              </div>
+
+              <div id="modalPreviewItems" class="text-base font-semibold text-slate-800"></div>
+            </div>
+
+            <div class="mt-8 flex justify-end">
+              <div class="w-[360px]">
+                <div class="space-y-4 text-xl font-black">
+                  <div class="flex justify-between">
+                    <span>Sub-total:</span>
+                    <span id="modalPreviewSubtotal">Rp 0</span>
+                  </div>
+
+                  <div class="flex justify-between">
+                    <span>Etc:</span>
+                    <span id="modalPreviewExtra">Rp 0</span>
+                  </div>
+
+                  <div class="my-5 h-[3px] bg-slate-900"></div>
+
+                  <div class="flex justify-between text-2xl">
+                    <span>Total:</span>
+                    <span id="modalPreviewTotal">Rp 0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-14 min-h-[80px]">
+              <p class="text-lg font-black text-blue-800">Note:</p>
+              <p id="modalPreviewNote" class="mt-2 max-w-2xl text-base font-medium leading-6 text-slate-600">
+                -
+              </p>
+            </div>
+
+            <div class="mt-28">
+              <p class="text-lg font-black text-blue-800">Thank You.</p>
+
+              <div class="mt-10 h-[3px] bg-lime-300"></div>
+
+              <div class="mt-10 grid grid-cols-3 gap-10">
+                <div>
+                  <h4 class="font-black text-blue-800">Questions?</h4>
+                  <div class="mt-5 text-sm leading-5 text-slate-800">
+                    <p>Call Us: <b>0877-1020-8101</b></p>
+                    <p>Write us: <b>robotictechc@gmail.com</b></p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 class="font-black text-blue-800">Payment Method:</h4>
+                  <div class="mt-2 text-base leading-5 font-black text-blue-800">
+                    <p>BCA 6521157701 A.N</p>
+                    <p>Rizki Rahayu Pratama</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 class="font-black text-blue-800">Terms & Conditions:</h4>
+                  <p class="mt-5 text-sm leading-5 text-slate-700">
+                    Invoice ini merupakan dokumen tagihan resmi TECH-C Robotic And Coding.
+                    Pembayaran dilakukan sesuai nominal total yang tertera.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FLOAT CHAT -->
+  <button
+    onclick="toggleChatBox()"
+    class="fixed bottom-6 right-6 z-[99999] flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-3xl text-white shadow-2xl shadow-blue-500/30 transition hover:-translate-y-1"
+  >
+    💬
+  </button>
+
+  <div
+    id="chatBox"
+    class="fixed bottom-24 right-6 z-[99999] hidden w-[340px] overflow-hidden rounded-[1.7rem] border border-white/70 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-900"
+  >
+    <div class="bg-gradient-to-r from-blue-600 to-cyan-500 p-4 text-white">
+      <h3 class="font-black">Chat Admin TECH-C</h3>
+      <p class="text-xs font-semibold text-white/75">Tanyakan tagihan / invoice kamu.</p>
+    </div>
+
+    <div id="chatMessages" class="h-72 space-y-3 overflow-y-auto bg-slate-50 p-4 text-sm dark:bg-slate-950">
+      <div class="rounded-2xl bg-white p-3 font-semibold text-slate-600 shadow dark:bg-slate-900 dark:text-slate-300">
+        Halo 👋 Ada yang ingin ditanyakan soal tagihan?
+      </div>
+    </div>
+
+    <div class="flex gap-2 border-t border-slate-200 p-3 dark:border-slate-800">
+      <input
+        id="chatInput"
+        type="text"
+        placeholder="Tulis pesan..."
+        class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+      />
+
+      <button
+        onclick="sendChatMessage()"
+        class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-black text-white"
+      >
+        Kirim
+      </button>
+    </div>
+  </div>
+
+  <script>
+  async function loadPartials() {
+    const includes = document.querySelectorAll('include');
+
+    for (let el of includes) {
+      const file = el.getAttribute('src');
+
+      try {
+        const res = await fetch(file);
+        const html = await res.text();
+        el.outerHTML = html;
+      } catch (err) {
+        console.error("Gagal load partial:", file, err);
+      }
+    }
+  }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <script>
+  const API_BASE = localStorage.getItem('api_base') || 'http://127.0.0.1:8000/api';
+
+  let allInvoices = [];
+  let activeInvoice = null;
+
+  const dummyInvoices = [
+    {
+      id: 1,
+      invoice_no: "INV-TECHC-20260511-1001",
+      date: "2026-05-11",
+      student_id: localStorage.getItem('student_id') || 1,
+      student_name: localStorage.getItem('name') || "Siswa TECH-C",
+      student_class: "Junior A",
+      student_school: "SDIT Al-Khairiyah",
+      package_name: "Kelas Robotic & Coding",
+      meeting_count: 4,
+      price_per_meeting: 150000,
+      main_total: 600000,
+      extra_fee: 0,
+      subtotal: 600000,
+      total: 600000,
+      status: "Belum Dibayar",
+      note: "Pembayaran dapat dilakukan melalui rekening yang tercantum pada invoice.",
+      extra_items: []
+    }
+  ];
+
+  function rupiah(value) {
+    const number = Number(value || 0);
+
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0
+    }).format(number);
+  }
+
+  function numberOnly(value) {
+    const number = Number(value || 0);
+    return Number.isFinite(number) ? number : 0;
+  }
+
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = value;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function setApiStatus(text, type = 'loading') {
+    const el = document.getElementById('apiStatus');
+    if (!el) return;
+
+    el.innerText = text;
+    el.className = 'mt-1 text-sm font-black';
+
+    if (type === 'success') {
+      el.classList.add('text-green-500');
+    } else if (type === 'error') {
+      el.classList.add('text-red-500');
+    } else {
+      el.classList.add('text-yellow-500');
+    }
+  }
+
+  function formatDate(dateValue) {
+    if (!dateValue) return '-';
+
+    const date = new Date(dateValue + 'T00:00:00');
+
+    return date.toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+
+  function getInvoiceStatus(invoice) {
+    return invoice.status || invoice.payment_status || 'Belum Dibayar';
+  }
+
+  function normalizeInvoice(invoice, index) {
+    const meetingCount = numberOnly(invoice.meeting_count ?? invoice.pertemuan ?? invoice.qty ?? 0);
+    const pricePerMeeting = numberOnly(invoice.price_per_meeting ?? invoice.harga_pertemuan ?? invoice.price ?? 0);
+    const mainTotal = numberOnly(invoice.main_total ?? meetingCount * pricePerMeeting);
+    const extraFee = numberOnly(invoice.extra_fee ?? invoice.etc ?? 0);
+
+    let extraItems = invoice.extra_items || invoice.items || [];
+
+    if (typeof extraItems === 'string') {
+      try {
+        extraItems = JSON.parse(extraItems);
+      } catch {
+        extraItems = [];
+      }
+    }
+
+    if (!Array.isArray(extraItems)) extraItems = [];
+
+    const extraItemsTotal = extraItems.reduce((sum, item) => {
+      return sum + numberOnly(item.total ?? numberOnly(item.price) * numberOnly(item.qty || 1));
+    }, 0);
+
+    const subtotal = numberOnly(invoice.subtotal ?? mainTotal + extraItemsTotal);
+    const total = numberOnly(invoice.total ?? subtotal + extraFee);
+
+    return {
+      id: invoice.id ?? index + 1,
+      invoice_no: invoice.invoice_no || invoice.nomor_invoice || `INV-TECHC-${index + 1}`,
+      date: invoice.date || invoice.tanggal || invoice.created_at?.slice(0, 10) || '',
+      student_id: invoice.student_id || null,
+      student_name: invoice.student_name || invoice.nama_siswa || invoice.student?.name || localStorage.getItem('name') || 'Siswa TECH-C',
+      student_class: invoice.student_class || invoice.kelas || invoice.student?.kelas || '-',
+      student_school: invoice.student_school || invoice.sekolah || invoice.student?.sekolah || '-',
+      package_name: invoice.package_name || invoice.keterangan || invoice.description || 'Kelas Robotic & Coding',
+      meeting_count: meetingCount,
+      price_per_meeting: pricePerMeeting,
+      main_total: mainTotal,
+      extra_fee: extraFee,
+      subtotal,
+      total,
+      status: getInvoiceStatus(invoice),
+      note: invoice.note || invoice.catatan || 'Pembayaran dapat dilakukan melalui rekening yang tercantum pada invoice.',
+      extra_items: extraItems
+    };
+  }
+
+  async function apiGetInvoices() {
+    const studentId = localStorage.getItem('student_id') || localStorage.getItem('user_id') || '';
+
+    const endpoints = [
+      `${API_BASE}/student/invoices`,
+      studentId ? `${API_BASE}/students/${studentId}/invoices` : null,
+      `${API_BASE}/invoices`
+    ].filter(Boolean);
+
+    let lastError = null;
+
+    for (const url of endpoints) {
+      try {
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (res.status === 401) {
+          localStorage.clear();
+          window.location.href = './login.html';
+          return [];
+        }
+
+        const raw = await res.text();
+
+        let data;
+
+        try {
+          data = JSON.parse(raw);
+        } catch {
+          throw new Error("Response invoice bukan JSON");
+        }
+
+        if (!res.ok) {
+          throw new Error(data.message || `HTTP Error ${res.status}`);
+        }
+
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data.data)) return data.data;
+        if (Array.isArray(data.invoices)) return data.invoices;
+
+        return [];
+      } catch (err) {
+        lastError = err;
+      }
+    }
+
+    throw lastError || new Error("API invoice belum tersedia");
+  }
+
+  function getLocalInvoices() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('techc_invoices') || '[]');
+
+      if (!Array.isArray(saved)) return [];
+
+      return saved;
+    } catch {
+      return [];
+    }
+  }
+
+  async function loadInvoices() {
+    try {
+      setApiStatus('Loading...', 'loading');
+
+      let data = [];
+
+      try {
+        data = await apiGetInvoices();
+      } catch (apiErr) {
+        console.warn("API invoice belum siap, pakai local/dummy:", apiErr.message);
+
+        const local = getLocalInvoices();
+
+        if (local.length) {
+          data = local;
+        } else {
+          data = dummyInvoices;
+        }
+      }
+
+      allInvoices = data.map(normalizeInvoice);
+
+      applyFilter();
+
+      setApiStatus('Connected', 'success');
+
+      setText('lastUpdate', new Date().toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+      }));
+
+    } catch (err) {
+      console.error("Load invoice error:", err);
+      setApiStatus('Disconnected', 'error');
+      renderInvoices([]);
+    }
+  }
+
+  function updateStats(invoices) {
+    const total = allInvoices.length;
+
+    const unpaid = allInvoices.filter(item => {
+      const status = getInvoiceStatus(item).toLowerCase();
+      return status.includes('belum') || status.includes('pending');
+    });
+
+    const paid = allInvoices.filter(item => {
+      const status = getInvoiceStatus(item).toLowerCase();
+      return status.includes('lunas') || status.includes('paid');
+    });
+
+    const totalNominal = allInvoices.reduce((sum, item) => sum + numberOnly(item.total), 0);
+    const totalUnpaid = unpaid.reduce((sum, item) => sum + numberOnly(item.total), 0);
+
+    setText('statTotal', total);
+    setText('statUnpaid', unpaid.length);
+    setText('statPaid', paid.length);
+    setText('statNominal', rupiah(totalNominal));
+    setText('totalInvoiceHero', total);
+    setText('totalUnpaidCard', rupiah(totalUnpaid));
+    setText('invoiceCountText', `${unpaid.length} invoice aktif`);
+
+    const percent = total > 0 ? Math.round((paid.length / total) * 100) : 0;
+
+    setText('paidRatioText', `${percent}%`);
+
+    const bar = document.getElementById('paidRatioBar');
+    if (bar) bar.style.width = `${percent}%`;
+
+    const notification = document.getElementById('invoiceNotification');
+
+    if (notification) {
+      if (unpaid.length > 0) {
+        notification.classList.remove('hidden');
+        setText('notificationText', `Kamu punya ${unpaid.length} tagihan belum dibayar dengan total ${rupiah(totalUnpaid)}.`);
+      } else {
+        notification.classList.add('hidden');
+      }
+    }
+  }
+
+  function renderInvoices(invoices) {
+    const container = document.getElementById('invoiceList');
+    const emptyState = document.getElementById('emptyState');
+
+    if (!container) return;
+
+    updateStats(invoices);
+
+    if (!invoices.length) {
+      container.innerHTML = "";
+      if (emptyState) emptyState.classList.remove('hidden');
+      return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+
+    container.innerHTML = invoices.map(invoice => {
+      const status = getInvoiceStatus(invoice);
+      const statusLower = status.toLowerCase();
+
+      const statusClass = statusLower.includes('lunas') || statusLower.includes('paid')
+        ? 'bg-green-50 text-green-600 dark:bg-green-950 dark:text-green-300'
+        : statusLower.includes('pending')
+          ? 'bg-yellow-50 text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300'
+          : 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-300';
+
+      return `
+        <div
+          class="invoice-card overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
+        >
+          <div class="relative bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-5 text-white">
+            <div class="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-white/15"></div>
+
+            <div class="relative">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-xs font-bold text-white/70">Nomor Invoice</p>
+                  <h3 class="mt-1 text-lg font-black">${escapeHtml(invoice.invoice_no)}</h3>
+                </div>
+
+                <span class="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
+                  ${escapeHtml(status)}
+                </span>
+              </div>
+
+              <p class="mt-5 text-3xl font-black">${rupiah(invoice.total)}</p>
+              <p class="mt-1 text-xs font-semibold text-white/75">${formatDate(invoice.date)}</p>
+            </div>
+          </div>
+
+          <div class="p-5">
+            <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+              <p class="text-xs font-black text-slate-400">Keterangan</p>
+              <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">
+                ${escapeHtml(invoice.package_name)}
+              </p>
+
+              <div class="mt-4 grid grid-cols-2 gap-3">
+                <div>
+                  <p class="text-xs font-semibold text-slate-400">Pertemuan</p>
+                  <p class="mt-1 text-sm font-black text-blue-500">${invoice.meeting_count}x</p>
+                </div>
+
+                <div>
+                  <p class="text-xs font-semibold text-slate-400">Harga / Pertemuan</p>
+                  <p class="mt-1 text-sm font-black text-blue-500">${rupiah(invoice.price_per_meeting)}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between rounded-2xl p-4 ${statusClass}">
+              <span class="text-sm font-black">Status</span>
+              <span class="text-sm font-black">${escapeHtml(status)}</span>
+            </div>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <button
+                onclick="openInvoiceModal(${invoice.id})"
+                class="rounded-2xl bg-blue-600 px-4 py-3 text-sm font-black text-white transition hover:bg-blue-700"
+              >
+                Lihat Invoice
+              </button>
+
+              <button
+                onclick="chatAboutInvoice('${escapeHtml(invoice.invoice_no)}')"
+                class="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition hover:bg-slate-200 dark:bg-slate-950 dark:text-slate-300"
+              >
+                Chat Admin
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function applyFilter() {
+    const search = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
+    const status = document.getElementById('statusInput')?.value || 'all';
+    const sort = document.getElementById('sortInput')?.value || 'newest';
+
+    let filtered = allInvoices.filter(invoice => {
+      const invoiceStatus = getInvoiceStatus(invoice);
+
+      const matchStatus = status === 'all' || invoiceStatus === status;
+
+      const target = [
+        invoice.invoice_no,
+        invoice.date,
+        invoice.student_name,
+        invoice.student_class,
+        invoice.student_school,
+        invoice.package_name,
+        invoiceStatus,
+        invoice.total
+      ].join(' ').toLowerCase();
+
+      return matchStatus && target.includes(search);
+    });
+
+    filtered.sort((a, b) => {
+      if (sort === 'newest') return Number(b.id || 0) - Number(a.id || 0);
+      if (sort === 'oldest') return Number(a.id || 0) - Number(b.id || 0);
+      if (sort === 'highest') return numberOnly(b.total) - numberOnly(a.total);
+      if (sort === 'lowest') return numberOnly(a.total) - numberOnly(b.total);
+      return 0;
+    });
+
+    renderInvoices(filtered);
+  }
+
+  function filterUnpaidOnly() {
+    const statusInput = document.getElementById('statusInput');
+    if (statusInput) {
+      statusInput.value = 'Belum Dibayar';
+    }
+
+    applyFilter();
+
+    document.getElementById('invoiceList')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+
+  function openInvoiceModal(id) {
+    const invoice = allInvoices.find(item => Number(item.id) === Number(id));
+    if (!invoice) return;
+
+    activeInvoice = invoice;
+
+    renderModalInvoice(invoice);
+
+    const modal = document.getElementById('invoiceModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeInvoiceModal() {
+    const modal = document.getElementById('invoiceModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function renderModalInvoice(invoice) {
+    setText('modalInvoiceNoText', invoice.invoice_no);
+    setText('modalPreviewDate', formatDate(invoice.date));
+    setText('modalPreviewStudent', invoice.student_name || '-');
+    setText('modalPreviewClass', `${invoice.student_class || '-'} • ${invoice.student_school || '-'}`);
+    setText('modalPreviewInvoiceNo', invoice.invoice_no);
+    setText('modalPreviewSubtotal', rupiah(invoice.subtotal));
+    setText('modalPreviewExtra', rupiah(invoice.extra_fee));
+    setText('modalPreviewTotal', rupiah(invoice.total));
+    setText('modalPreviewNote', invoice.note || '-');
+
+    const items = [
+      {
+        description: `${invoice.package_name} (${invoice.meeting_count} Pertemuan)`,
+        price: invoice.price_per_meeting,
+        qty: invoice.meeting_count,
+        total: invoice.main_total
+      },
+      ...invoice.extra_items.map(item => ({
+        description: item.description || 'Item tambahan',
+        price: numberOnly(item.price),
+        qty: numberOnly(item.qty || 1),
+        total: numberOnly(item.total ?? numberOnly(item.price) * numberOnly(item.qty || 1))
+      }))
+    ];
+
+    const wrapper = document.getElementById('modalPreviewItems');
+
+    wrapper.innerHTML = items.map(item => `
+      <div class="grid grid-cols-12 border-b-[3px] border-slate-900 px-5 py-5">
+        <div class="col-span-5 pr-3">${escapeHtml(item.description)}</div>
+        <div class="col-span-2 text-center">${rupiah(item.price)}</div>
+        <div class="col-span-2 text-center">${item.qty}</div>
+        <div class="col-span-3 text-right">${rupiah(item.total)}</div>
+      </div>
+    `).join('');
+
+    const minRows = Math.max(0, 4 - items.length);
+
+    for (let i = 0; i < minRows; i++) {
+      wrapper.innerHTML += `
+        <div class="grid grid-cols-12 border-b-[3px] border-slate-900 px-5 py-5">
+          <div class="col-span-5">&nbsp;</div>
+          <div class="col-span-2">&nbsp;</div>
+          <div class="col-span-2">&nbsp;</div>
+          <div class="col-span-3">&nbsp;</div>
+        </div>
+      `;
+    }
+  }
+
+  async function downloadModalInvoicePNG() {
+    if (!activeInvoice) return;
+
+    const invoice = document.getElementById('modalInvoicePreview');
+
+    const canvas = await html2canvas(invoice, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      useCORS: true
+    });
+
+    const link = document.createElement('a');
+    link.download = `${activeInvoice.invoice_no || 'invoice-techc'}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  function toggleChatBox() {
+    const box = document.getElementById('chatBox');
+    box.classList.toggle('hidden');
+  }
+
+  function addChatBubble(message, side = 'user') {
+    const messages = document.getElementById('chatMessages');
+
+    const bubbleClass = side === 'user'
+      ? 'ml-auto bg-blue-600 text-white'
+      : 'bg-white text-slate-600 shadow dark:bg-slate-900 dark:text-slate-300';
+
+    messages.innerHTML += `
+      <div class="max-w-[85%] rounded-2xl p-3 font-semibold ${bubbleClass}">
+        ${escapeHtml(message)}
+      </div>
+    `;
+
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    addChatBubble(text, 'user');
+    input.value = '';
+
+    setTimeout(() => {
+      addChatBubble('Pesan kamu sudah dicatat. Nanti admin TECH-C akan menghubungi kamu terkait invoice/tagihan ini.', 'admin');
+    }, 500);
+
+    const savedChats = JSON.parse(localStorage.getItem('techc_student_chats') || '[]');
+
+    savedChats.push({
+      message: text,
+      time: new Date().toISOString()
+    });
+
+    localStorage.setItem('techc_student_chats', JSON.stringify(savedChats));
+  }
+
+  function chatAboutInvoice(invoiceNo) {
+    const box = document.getElementById('chatBox');
+    box.classList.remove('hidden');
+
+    const message = `Halo admin, saya mau tanya tentang invoice ${invoiceNo}.`;
+    addChatBubble(message, 'user');
+
+    setTimeout(() => {
+      addChatBubble('Baik, invoice tersebut akan dicek oleh admin TECH-C.', 'admin');
+    }, 500);
+  }
+
+  async function loadHeaderUser() {
+    try {
+      const res = await fetch(`${API_BASE}/profile`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!res.ok) return;
+
+      const data = await res.json();
+
+      const name = data.name || localStorage.getItem('name') || 'Siswa';
+      const email = data.email || localStorage.getItem('email') || '';
+
+      setText('header_name', name);
+      setText('dropdown_name', name);
+      setText('dropdown_email', email);
+
+      const avatar = document.getElementById('header_avatar');
+
+      if (avatar) {
+        avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+      }
+
+    } catch (err) {
+      console.warn("Header profile gagal:", err);
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeInvoiceModal();
+    }
+
+    if (e.key === 'Enter' && document.activeElement?.id === 'chatInput') {
+      sendChatMessage();
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadPartials();
+    await loadHeaderUser();
+    await loadInvoices();
+
+    const searchInput = document.getElementById('searchInput');
+    const statusInput = document.getElementById('statusInput');
+    const sortInput = document.getElementById('sortInput');
+
+    if (searchInput) searchInput.addEventListener('input', applyFilter);
+    if (statusInput) statusInput.addEventListener('change', applyFilter);
+    if (sortInput) sortInput.addEventListener('change', applyFilter);
+  });
+  </script>
+
+</body>
+</html>

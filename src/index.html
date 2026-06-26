@@ -7,37 +7,36 @@
   <title>TECH-C Admin Dashboard</title>
 
   <style>
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
 
-  html,
-  body {
-    height: 100%;
-    overflow: hidden;
-  }
+    #pageScroller {
+      height: 100vh;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
 
-  #pageScroller {
-    height: 100vh;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-  }
+    #pageScroller::-webkit-scrollbar {
+      width: 8px;
+    }
 
-  #pageScroller::-webkit-scrollbar {
-    width: 8px;
-  }
+    #pageScroller::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-  #pageScroller::-webkit-scrollbar-track {
-    background: transparent;
-  }
+    #pageScroller::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, .55);
+      border-radius: 999px;
+    }
 
-  #pageScroller::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, .55);
-    border-radius: 999px;
-  }
-
-  #pageScroller::-webkit-scrollbar-thumb:hover {
-    background: rgba(37, 99, 235, .75);
-  }
+    #pageScroller::-webkit-scrollbar-thumb:hover {
+      background: rgba(37, 99, 235, .75);
+    }
 
     * {
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -73,6 +72,7 @@
       0%, 100% {
         transform: translateY(0);
       }
+
       50% {
         transform: translateY(-8px);
       }
@@ -86,6 +86,7 @@
       0%, 100% {
         box-shadow: 0 0 0 0 rgba(37, 99, 235, .28);
       }
+
       50% {
         box-shadow: 0 0 0 12px rgba(37, 99, 235, 0);
       }
@@ -117,26 +118,19 @@ if (!token) {
   class="bg-slate-50"
 >
 
-  <!-- Preloader -->
   <include src="./partials/preloader.html"></include>
 
   <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
 
-    <!-- Sidebar -->
     <include src="./partials/sidebar.html"></include>
 
-    <!-- Content -->
     <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
 
       <include src="./partials/overlay.html"></include>
-
-      <!-- Header -->
       <include src="./partials/header.html"></include>
 
-      <!-- MAIN -->
       <main class="admin-grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
 
-        <!-- Background Decoration -->
         <div class="pointer-events-none absolute inset-0 overflow-hidden">
           <div class="absolute -right-40 -top-40 h-[480px] w-[480px] rounded-full bg-blue-500/10 blur-3xl"></div>
           <div class="absolute left-[-160px] top-80 h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-3xl"></div>
@@ -153,7 +147,6 @@ if (!token) {
 
               <div class="relative flex flex-col gap-7 xl:flex-row xl:items-center xl:justify-between">
 
-                <!-- Hero Text -->
                 <div class="max-w-3xl">
                   <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
                     <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
@@ -165,7 +158,7 @@ if (!token) {
                   </h1>
 
                   <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
-                    Pantau pelajar, sekolah, kelas, pendaftaran, tagihan, inventaris, dan keuangan TECH-C dalam satu dashboard modern.
+                    Pantau pelajar, sekolah, pengajar, pelajaran, invoice, tagihan, dan operasional TECH-C dari satu halaman dashboard.
                   </p>
 
                   <div class="mt-6 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
@@ -188,17 +181,16 @@ if (!token) {
                   </div>
                 </div>
 
-                <!-- Admin Pulse Card -->
                 <div class="relative shrink-0">
                   <div class="absolute -inset-4 rounded-[2.5rem] bg-blue-500/20 blur-2xl"></div>
 
-                  <div class="float-soft relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[360px]">
+                  <div class="float-soft relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[370px]">
 
                     <div class="mb-5 flex items-start justify-between gap-4">
                       <div>
-                        <p class="text-sm font-bold text-white/80">TECH-C Operations</p>
+                        <p class="text-sm font-bold text-white/80">Total Invoice Terdata</p>
                         <h2 id="heroIncome" class="mt-2 text-3xl font-black">Rp 0</h2>
-                        <p class="mt-1 text-xs font-semibold text-white/70">Pendapatan terdata</p>
+                        <p class="mt-1 text-xs font-semibold text-white/70">Semua invoice di database</p>
                       </div>
 
                       <div class="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white/20 text-3xl backdrop-blur">
@@ -213,13 +205,13 @@ if (!token) {
                       </div>
 
                       <div class="rounded-2xl bg-white/15 p-3 backdrop-blur">
-                        <p id="miniLessons" class="text-xl font-black">0</p>
-                        <p class="mt-1 text-[11px] font-semibold text-white/70">Pelajaran</p>
+                        <p id="miniSchools" class="text-xl font-black">0</p>
+                        <p class="mt-1 text-[11px] font-semibold text-white/70">Sekolah</p>
                       </div>
 
                       <div class="rounded-2xl bg-white/15 p-3 backdrop-blur">
-                        <p id="miniOrders" class="text-xl font-black">0</p>
-                        <p class="mt-1 text-[11px] font-semibold text-white/70">Order</p>
+                        <p id="miniTeachers" class="text-xl font-black">0</p>
+                        <p class="mt-1 text-[11px] font-semibold text-white/70">Pengajar</p>
                       </div>
                     </div>
 
@@ -230,10 +222,9 @@ if (!token) {
             </div>
           </div>
 
-          <!-- TOP STAT CARDS -->
+          <!-- STAT CARDS -->
           <div class="mb-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
-            <!-- Total Pelajar -->
             <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
               <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-blue-500/10"></div>
 
@@ -244,32 +235,46 @@ if (!token) {
                   <p class="mt-2 text-xs font-semibold text-slate-400">Siswa aktif TECH-C</p>
                 </div>
 
-                <div class="pulse-glow flex h-13 w-13 items-center justify-center rounded-2xl bg-blue-100 text-2xl text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+                <div class="pulse-glow flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl text-blue-600 dark:bg-blue-950 dark:text-blue-300">
                   👨‍🎓
                 </div>
               </div>
             </div>
 
-            <!-- Pendaftaran -->
             <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
               <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-cyan-500/10"></div>
 
               <div class="relative flex items-start justify-between">
                 <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Pendaftaran</p>
-                  <h2 id="pendaftaran" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Pemesanan siswa</p>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Total Sekolah</p>
+                  <h2 id="sekolah" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Mitra dan sekolah</p>
                 </div>
 
-                <div class="flex h-13 w-13 items-center justify-center rounded-2xl bg-cyan-100 text-2xl text-cyan-600 dark:bg-cyan-950 dark:text-cyan-300">
-                  📝
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-2xl text-cyan-600 dark:bg-cyan-950 dark:text-cyan-300">
+                  🏫
                 </div>
               </div>
             </div>
 
-            <!-- Pelajaran -->
             <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
               <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-violet-500/10"></div>
+
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Pengajar</p>
+                  <h2 id="pengajar" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Tutor aktif</p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-2xl text-violet-600 dark:bg-violet-950 dark:text-violet-300">
+                  👨‍🏫
+                </div>
+              </div>
+            </div>
+
+            <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-orange-500/10"></div>
 
               <div class="relative flex items-start justify-between">
                 <div>
@@ -278,24 +283,54 @@ if (!token) {
                   <p class="mt-2 text-xs font-semibold text-slate-400">Program aktif</p>
                 </div>
 
-                <div class="flex h-13 w-13 items-center justify-center rounded-2xl bg-violet-100 text-2xl text-violet-600 dark:bg-violet-950 dark:text-violet-300">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100 text-2xl text-orange-600 dark:bg-orange-950 dark:text-orange-300">
                   📚
                 </div>
               </div>
             </div>
 
-            <!-- Pendapatan -->
-            <div class="group relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-green-500/10"></div>
+          </div>
 
-              <div class="relative flex items-start justify-between">
+          <!-- FINANCE CARDS -->
+          <div class="mb-7 grid grid-cols-1 gap-5 md:grid-cols-3">
+
+            <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="flex items-start justify-between">
                 <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Pendapatan</p>
-                  <h2 id="pendapatan" class="mt-3 text-2xl font-black text-green-500">Rp 0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Total pemasukan</p>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Total Invoice</p>
+                  <h2 id="totalInvoice" class="mt-3 text-2xl font-black text-blue-600 dark:text-blue-300">Rp 0</h2>
+                  <p id="invoiceCount" class="mt-2 text-xs font-semibold text-slate-400">0 invoice</p>
                 </div>
 
-                <div class="flex h-13 w-13 items-center justify-center rounded-2xl bg-green-100 text-2xl text-green-600 dark:bg-green-950 dark:text-green-300">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl dark:bg-blue-950">
+                  🧾
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Belum Dibayar</p>
+                  <h2 id="tagihanTop" class="mt-3 text-2xl font-black text-red-500">Rp 0</h2>
+                  <p id="invoiceUnpaidCount" class="mt-2 text-xs font-semibold text-slate-400">0 invoice</p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-2xl dark:bg-red-950">
+                  ⚠️
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Pendapatan Lunas</p>
+                  <h2 id="pendapatan" class="mt-3 text-2xl font-black text-green-500">Rp 0</h2>
+                  <p id="invoicePaidCount" class="mt-2 text-xs font-semibold text-slate-400">0 invoice lunas</p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-2xl dark:bg-green-950">
                   💰
                 </div>
               </div>
@@ -324,16 +359,16 @@ if (!token) {
               <p class="mt-1 text-xs font-semibold text-slate-400">Tutor</p>
             </a>
 
+            <a href="pelajaran.html" class="group rounded-[1.5rem] border border-white/70 bg-white/90 p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50 text-xl dark:bg-orange-950/60">📚</div>
+              <p class="text-sm font-black text-slate-900 dark:text-white">Pelajaran</p>
+              <p class="mt-1 text-xs font-semibold text-slate-400">Kurikulum</p>
+            </a>
+
             <a href="invoice.html" class="group rounded-[1.5rem] border border-white/70 bg-white/90 p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
               <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-green-50 text-xl dark:bg-green-950/60">🧾</div>
               <p class="text-sm font-black text-slate-900 dark:text-white">Invoice</p>
               <p class="mt-1 text-xs font-semibold text-slate-400">Tagihan</p>
-            </a>
-
-            <a href="inventaris.html" class="group rounded-[1.5rem] border border-white/70 bg-white/90 p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50 text-xl dark:bg-orange-950/60">🤖</div>
-              <p class="text-sm font-black text-slate-900 dark:text-white">Inventaris</p>
-              <p class="mt-1 text-xs font-semibold text-slate-400">Robotik</p>
             </a>
 
             <a href="laporan.html" class="group rounded-[1.5rem] border border-white/70 bg-white/90 p-4 shadow-lg shadow-slate-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
@@ -347,7 +382,6 @@ if (!token) {
           <!-- CONTENT GRID -->
           <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
-            <!-- LEFT -->
             <div class="space-y-6 xl:col-span-2">
 
               <!-- Chart -->
@@ -356,7 +390,7 @@ if (!token) {
                 <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h3 class="text-lg font-black text-slate-900 dark:text-white">Grafik Perkembangan Pelajar</h3>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">Monitoring perkembangan data siswa dan pendaftaran TECH-C.</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Monitoring perkembangan data siswa TECH-C.</p>
                   </div>
 
                   <div class="flex items-center gap-2">
@@ -379,43 +413,23 @@ if (!token) {
 
               </div>
 
-              <!-- Operational Cards -->
+              <!-- Latest Data -->
               <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 
                 <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
                   <div class="mb-5 flex items-center justify-between">
                     <div>
-                      <h3 class="text-lg font-black text-slate-900 dark:text-white">Operasional Hari Ini</h3>
-                      <p class="text-sm text-slate-500 dark:text-slate-400">Ringkasan aktivitas kantor.</p>
+                      <h3 class="text-lg font-black text-slate-900 dark:text-white">Pelajar Terbaru</h3>
+                      <p class="text-sm text-slate-500 dark:text-slate-400">Data siswa terakhir.</p>
                     </div>
-                    <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-100 text-xl dark:bg-blue-950">
-                      ⚡
-                    </div>
+                    <a href="pelajar.html" class="rounded-full bg-blue-50 px-3 py-2 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+                      Lihat
+                    </a>
                   </div>
 
-                  <div class="space-y-3">
-                    <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
-                      <div>
-                        <p class="text-sm font-black text-slate-900 dark:text-white">Follow up pembayaran</p>
-                        <p class="text-xs font-semibold text-slate-400">Tagihan belum dibayar</p>
-                      </div>
-                      <span id="tagihan" class="rounded-full bg-red-100 px-3 py-1 text-sm font-black text-red-600 dark:bg-red-950 dark:text-red-300">0</span>
-                    </div>
-
-                    <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
-                      <div>
-                        <p class="text-sm font-black text-slate-900 dark:text-white">Request penggantian</p>
-                        <p class="text-xs font-semibold text-slate-400">Butuh approval admin</p>
-                      </div>
-                      <span id="penggantian" class="rounded-full bg-yellow-100 px-3 py-1 text-sm font-black text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">0</span>
-                    </div>
-
-                    <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
-                      <div>
-                        <p class="text-sm font-black text-slate-900 dark:text-white">Pemesanan siswa</p>
-                        <p class="text-xs font-semibold text-slate-400">Lead / daftar baru</p>
-                      </div>
-                      <span id="pemesanan" class="rounded-full bg-blue-100 px-3 py-1 text-sm font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">0</span>
+                  <div id="latestStudentsList" class="space-y-3">
+                    <div class="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-400 dark:bg-slate-950">
+                      Loading...
                     </div>
                   </div>
                 </div>
@@ -423,34 +437,18 @@ if (!token) {
                 <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
                   <div class="mb-5 flex items-center justify-between">
                     <div>
-                      <h3 class="text-lg font-black text-slate-900 dark:text-white">Fokus Admin</h3>
-                      <p class="text-sm text-slate-500 dark:text-slate-400">Shortcut pekerjaan penting.</p>
+                      <h3 class="text-lg font-black text-slate-900 dark:text-white">Invoice Terbaru</h3>
+                      <p class="text-sm text-slate-500 dark:text-slate-400">Tagihan terakhir dibuat.</p>
                     </div>
-                    <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-100 text-xl dark:bg-cyan-950">
-                      🎯
-                    </div>
+                    <a href="invoice.html" class="rounded-full bg-green-50 px-3 py-2 text-xs font-black text-green-600 dark:bg-green-950 dark:text-green-300">
+                      Lihat
+                    </a>
                   </div>
 
-                  <div class="grid grid-cols-2 gap-3">
-                    <a href="jadwal-ekskul.html" class="rounded-2xl bg-blue-50 p-4 transition hover:-translate-y-1 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-950">
-                      <p class="text-sm font-black text-blue-600 dark:text-blue-300">Jadwal</p>
-                      <p class="mt-1 text-xs font-semibold text-slate-500">Kelas ekskul</p>
-                    </a>
-
-                    <a href="keuangan.html" class="rounded-2xl bg-green-50 p-4 transition hover:-translate-y-1 hover:bg-green-100 dark:bg-green-950/50 dark:hover:bg-green-950">
-                      <p class="text-sm font-black text-green-600 dark:text-green-300">Keuangan</p>
-                      <p class="mt-1 text-xs font-semibold text-slate-500">Cashflow</p>
-                    </a>
-
-                    <a href="pengumuman.html" class="rounded-2xl bg-yellow-50 p-4 transition hover:-translate-y-1 hover:bg-yellow-100 dark:bg-yellow-950/50 dark:hover:bg-yellow-950">
-                      <p class="text-sm font-black text-yellow-600 dark:text-yellow-300">Info</p>
-                      <p class="mt-1 text-xs font-semibold text-slate-500">Pengumuman</p>
-                    </a>
-
-                    <a href="pengaturan.html" class="rounded-2xl bg-violet-50 p-4 transition hover:-translate-y-1 hover:bg-violet-100 dark:bg-violet-950/50 dark:hover:bg-violet-950">
-                      <p class="text-sm font-black text-violet-600 dark:text-violet-300">Sistem</p>
-                      <p class="mt-1 text-xs font-semibold text-slate-500">Pengaturan</p>
-                    </a>
+                  <div id="latestInvoicesList" class="space-y-3">
+                    <div class="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-400 dark:bg-slate-950">
+                      Loading...
+                    </div>
                   </div>
                 </div>
 
@@ -458,24 +456,39 @@ if (!token) {
 
             </div>
 
-            <!-- RIGHT -->
             <div class="space-y-6">
 
-              <!-- Summary Panel -->
+              <!-- Summary -->
               <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
                 <div class="mb-5">
-                  <h3 class="text-lg font-black text-slate-900 dark:text-white">Ringkasan Cepat</h3>
+                  <h3 class="text-lg font-black text-slate-900 dark:text-white">Ringkasan Operasional</h3>
                   <p class="text-sm text-slate-500 dark:text-slate-400">Status penting dashboard.</p>
                 </div>
 
                 <div class="space-y-4">
 
-                  <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
-                    <div class="mb-2 flex items-center justify-between">
-                      <p class="text-sm font-black text-slate-900 dark:text-white">Pengumuman</p>
-                      <span id="pengumuman" class="rounded-full bg-green-100 px-3 py-1 text-sm font-black text-green-600 dark:bg-green-950 dark:text-green-300">0</span>
+                  <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                    <div>
+                      <p class="text-sm font-black text-slate-900 dark:text-white">Pemesanan siswa</p>
+                      <p class="text-xs font-semibold text-slate-400">Lead atau daftar baru</p>
                     </div>
-                    <p class="text-xs font-semibold text-slate-400">Informasi aktif untuk siswa / orang tua.</p>
+                    <span id="pemesanan" class="rounded-full bg-blue-100 px-3 py-1 text-sm font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">0</span>
+                  </div>
+
+                  <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                    <div>
+                      <p class="text-sm font-black text-slate-900 dark:text-white">Request penggantian</p>
+                      <p class="text-xs font-semibold text-slate-400">Butuh approval admin</p>
+                    </div>
+                    <span id="penggantian" class="rounded-full bg-yellow-100 px-3 py-1 text-sm font-black text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">0</span>
+                  </div>
+
+                  <div class="flex items-center justify-between rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+                    <div>
+                      <p class="text-sm font-black text-slate-900 dark:text-white">Pengumuman</p>
+                      <p class="text-xs font-semibold text-slate-400">Informasi aktif</p>
+                    </div>
+                    <span id="pengumuman" class="rounded-full bg-green-100 px-3 py-1 text-sm font-black text-green-600 dark:bg-green-950 dark:text-green-300">0</span>
                   </div>
 
                   <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
@@ -497,11 +510,11 @@ if (!token) {
                 </div>
               </div>
 
-              <!-- Progress Admin -->
+              <!-- Progress -->
               <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
                 <div class="mb-5">
                   <h3 class="text-lg font-black text-slate-900 dark:text-white">Komposisi Data</h3>
-                  <p class="text-sm text-slate-500 dark:text-slate-400">Rasio pendaftaran terhadap pelajar.</p>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">Rasio invoice belum dibayar.</p>
                 </div>
 
                 <div class="flex justify-center">
@@ -533,20 +546,20 @@ if (!token) {
 
                     <div class="absolute inset-0 flex flex-col items-center justify-center">
                       <p id="adminCircleText" class="text-4xl font-black text-slate-900 dark:text-white">0%</p>
-                      <p class="text-xs font-bold text-slate-400">Ratio</p>
+                      <p class="text-xs font-bold text-slate-400">Unpaid</p>
                     </div>
                   </div>
                 </div>
 
                 <div class="mt-5 grid grid-cols-2 gap-3">
                   <div class="rounded-2xl bg-slate-50 p-4 text-center dark:bg-slate-950">
-                    <p class="text-xs font-semibold text-slate-500">Pelajar</p>
-                    <p id="rightStudents" class="mt-1 text-sm font-black text-blue-500">0</p>
+                    <p class="text-xs font-semibold text-slate-500">Total Invoice</p>
+                    <p id="rightInvoice" class="mt-1 text-sm font-black text-blue-500">Rp 0</p>
                   </div>
 
                   <div class="rounded-2xl bg-slate-50 p-4 text-center dark:bg-slate-950">
-                    <p class="text-xs font-semibold text-slate-500">Order</p>
-                    <p id="rightOrders" class="mt-1 text-sm font-black text-cyan-500">0</p>
+                    <p class="text-xs font-semibold text-slate-500">Belum Dibayar</p>
+                    <p id="rightUnpaid" class="mt-1 text-sm font-black text-red-500">Rp 0</p>
                   </div>
                 </div>
               </div>
@@ -578,10 +591,8 @@ if (!token) {
   }
   </script>
 
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- DASHBOARD SCRIPT -->
   <script>
   const API_BASE = localStorage.getItem('api_base') || 'http://127.0.0.1:8000/api';
   let chart = null;
@@ -605,6 +616,15 @@ if (!token) {
       currency: 'IDR',
       maximumFractionDigits: 0
     }).format(number);
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
   }
 
   function updateLastUpdate() {
@@ -654,7 +674,9 @@ if (!token) {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'X-User-Email': localStorage.getItem('email') || '',
+        'X-User-Role': localStorage.getItem('role') || 'admin'
       }
     });
 
@@ -685,21 +707,35 @@ if (!token) {
   function normalizeDashboardData(data) {
     return {
       totalPelajar: getNumber(data.totalPelajar ?? data.total_pelajar ?? data.students ?? data.jumlah_siswa ?? 0),
-      totalPendaftaran: getNumber(data.totalPendaftaran ?? data.pemesananSiswa ?? data.total_pendaftaran ?? data.orders ?? 0),
+      totalSekolah: getNumber(data.totalSekolah ?? data.total_sekolah ?? data.schools ?? 0),
+      totalPengajar: getNumber(data.totalPengajar ?? data.total_pengajar ?? data.teachers ?? 0),
       totalPelajaran: getNumber(data.totalPelajaran ?? data.total_pelajaran ?? data.lessons ?? 0),
-      pendapatan: getNumber(data.pendapatan ?? data.totalPendapatan ?? data.revenue ?? 0),
-      tagihanBelumDibayar: getNumber(data.tagihanBelumDibayar ?? data.tagihan_belum_dibayar ?? data.tagihan ?? 0),
-      permintaanPenggantian: getNumber(data.permintaanPenggantian ?? data.permintaan_penggantian ?? data.penggantian ?? 0),
+
+      totalPendaftaran: getNumber(data.totalPendaftaran ?? data.pemesananSiswa ?? data.total_pendaftaran ?? data.orders ?? 0),
       pemesananSiswa: getNumber(data.pemesananSiswa ?? data.pemesanan_siswa ?? data.totalPendaftaran ?? 0),
+
+      pendapatan: getNumber(data.pendapatan ?? data.totalPendapatan ?? data.revenue ?? 0),
+      totalInvoice: getNumber(data.totalInvoice ?? data.total_invoice ?? 0),
+      tagihanBelumDibayar: getNumber(data.tagihanBelumDibayar ?? data.tagihan_belum_dibayar ?? data.tagihan ?? 0),
+
+      invoiceCount: getNumber(data.invoiceCount ?? data.invoice_count ?? 0),
+      invoiceLunasCount: getNumber(data.invoiceLunasCount ?? data.invoice_lunas_count ?? 0),
+      invoiceBelumDibayarCount: getNumber(data.invoiceBelumDibayarCount ?? data.invoice_belum_dibayar_count ?? 0),
+
+      permintaanPenggantian: getNumber(data.permintaanPenggantian ?? data.permintaan_penggantian ?? data.penggantian ?? 0),
       pengumuman: getNumber(data.pengumuman ?? data.pengumumanBaru ?? data.announcement ?? 0),
+
+      latestStudents: Array.isArray(data.latest_students) ? data.latest_students : [],
+      latestInvoices: Array.isArray(data.latest_invoices) ? data.latest_invoices : [],
+
       chartLabels: data.chart?.labels || data.studentChart?.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
       chartData: data.chart?.data || data.studentChart?.data || []
     };
   }
 
-  function setAdminCircle(totalPelajar, totalPendaftaran) {
-    const max = Math.max(totalPelajar, totalPendaftaran, 1);
-    const percent = Math.min(100, Math.round((totalPendaftaran / max) * 100));
+  function setAdminCircle(totalInvoice, unpaidInvoice) {
+    const max = Math.max(totalInvoice, unpaidInvoice, 1);
+    const percent = Math.min(100, Math.round((unpaidInvoice / max) * 100));
 
     const circle = document.getElementById('adminCircle');
 
@@ -712,9 +748,9 @@ if (!token) {
     setText('adminCircleText', `${percent}%`);
   }
 
-  function renderChart(rawData, clean) {
+  function renderChart(clean) {
     const canvas = document.getElementById('studentChart');
-    if (!canvas) return;
+    if (!canvas || typeof Chart === 'undefined') return;
 
     const ctx = canvas.getContext('2d');
 
@@ -814,12 +850,89 @@ if (!token) {
     });
   }
 
+  function renderLatestStudents(students) {
+    const wrap = document.getElementById('latestStudentsList');
+    if (!wrap) return;
+
+    if (!students.length) {
+      wrap.innerHTML = `
+        <div class="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-400 dark:bg-slate-950">
+          Belum ada data pelajar.
+        </div>
+      `;
+      return;
+    }
+
+    wrap.innerHTML = students.slice(0, 5).map(student => {
+      const name = student.name || student.nama || 'Tanpa Nama';
+      const kelas = student.kelas || student.kategori_level || '-';
+      const school = student.school?.nama || student.school_name || student.asal_sekolah || '-';
+      const progress = getNumber(student.progress_belajar, 0);
+
+      return `
+        <div class="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+          <div class="min-w-0">
+            <p class="truncate text-sm font-black text-slate-900 dark:text-white">${escapeHtml(name)}</p>
+            <p class="mt-1 truncate text-xs font-semibold text-slate-400">${escapeHtml(kelas)} • ${escapeHtml(school)}</p>
+          </div>
+          <span class="shrink-0 rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+            ${progress}%
+          </span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderLatestInvoices(invoices) {
+    const wrap = document.getElementById('latestInvoicesList');
+    if (!wrap) return;
+
+    if (!invoices.length) {
+      wrap.innerHTML = `
+        <div class="rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-400 dark:bg-slate-950">
+          Belum ada invoice.
+        </div>
+      `;
+      return;
+    }
+
+    wrap.innerHTML = invoices.slice(0, 5).map(invoice => {
+      const no = invoice.invoice_no || 'INV';
+      const name = invoice.student_name || invoice.student?.name || 'Siswa';
+      const total = formatRupiah(invoice.total || 0);
+      const status = invoice.status || '-';
+
+      const statusClass = status === 'Lunas'
+        ? 'bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-300'
+        : status === 'Pending'
+          ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300'
+          : 'bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-300';
+
+      return `
+        <div class="rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="truncate text-sm font-black text-slate-900 dark:text-white">${escapeHtml(no)}</p>
+              <p class="mt-1 truncate text-xs font-semibold text-slate-400">${escapeHtml(name)}</p>
+            </div>
+            <span class="shrink-0 rounded-full px-3 py-1 text-xs font-black ${statusClass}">
+              ${escapeHtml(status)}
+            </span>
+          </div>
+          <p class="mt-3 text-sm font-black text-blue-600 dark:text-blue-300">${total}</p>
+        </div>
+      `;
+    }).join('');
+  }
+
   async function loadHeaderUser() {
     try {
       const res = await fetch(`${API_BASE}/profile`, {
         headers: {
           'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'X-User-Email': localStorage.getItem('email') || '',
+          'X-User-Role': localStorage.getItem('role') || 'admin'
         }
       });
 
@@ -837,7 +950,7 @@ if (!token) {
       const avatar = document.getElementById('header_avatar');
 
       if (avatar) {
-        avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
+        avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
       }
 
     } catch (err) {
@@ -857,25 +970,34 @@ if (!token) {
       const clean = normalizeDashboardData(data);
 
       setText('pelajar', clean.totalPelajar);
-      setText('pendaftaran', clean.totalPendaftaran);
+      setText('sekolah', clean.totalSekolah);
+      setText('pengajar', clean.totalPengajar);
       setText('pelajaran', clean.totalPelajaran);
+
+      setText('totalInvoice', formatRupiah(clean.totalInvoice));
+      setText('tagihanTop', formatRupiah(clean.tagihanBelumDibayar));
       setText('pendapatan', formatRupiah(clean.pendapatan));
 
-      setText('heroIncome', formatRupiah(clean.pendapatan));
-      setText('miniStudents', clean.totalPelajar);
-      setText('miniLessons', clean.totalPelajaran);
-      setText('miniOrders', clean.totalPendaftaran);
+      setText('invoiceCount', `${clean.invoiceCount} invoice`);
+      setText('invoiceUnpaidCount', `${clean.invoiceBelumDibayarCount} invoice belum dibayar`);
+      setText('invoicePaidCount', `${clean.invoiceLunasCount} invoice lunas`);
 
-      setText('tagihan', clean.tagihanBelumDibayar);
-      setText('penggantian', clean.permintaanPenggantian);
+      setText('heroIncome', formatRupiah(clean.totalInvoice));
+      setText('miniStudents', clean.totalPelajar);
+      setText('miniSchools', clean.totalSekolah);
+      setText('miniTeachers', clean.totalPengajar);
+
       setText('pemesanan', clean.pemesananSiswa);
+      setText('penggantian', clean.permintaanPenggantian);
       setText('pengumuman', clean.pengumuman);
 
-      setText('rightStudents', clean.totalPelajar);
-      setText('rightOrders', clean.totalPendaftaran);
+      setText('rightInvoice', formatRupiah(clean.totalInvoice));
+      setText('rightUnpaid', formatRupiah(clean.tagihanBelumDibayar));
 
-      setAdminCircle(clean.totalPelajar, clean.totalPendaftaran);
-      renderChart(data, clean);
+      setAdminCircle(clean.totalInvoice, clean.tagihanBelumDibayar);
+      renderChart(clean);
+      renderLatestStudents(clean.latestStudents);
+      renderLatestInvoices(clean.latestInvoices);
 
       setApiStatus('Connected', 'success');
       updateLastUpdate();

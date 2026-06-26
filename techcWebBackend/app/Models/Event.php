@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class Event extends Model
 {
-    protected $fillable = ['total'];
+    protected $guarded = [];
 }
