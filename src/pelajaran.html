@@ -453,7 +453,37 @@ if (!token) {
 
   <!-- SCRIPT -->
   <script>
-  const API_BASE = localStorage.getItem('api_base') || 'http://127.0.0.1:8000/api';
+const PRODUCTION_API_BASE = 'https://techcwebs-production.up.railway.app/api';
+const LOCAL_API_BASE = 'http://127.0.0.1:8000/api';
+
+function isLocalFrontend() {
+  return (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === ''
+  );
+}
+
+function getApiBase() {
+  const saved = localStorage.getItem('api_base');
+
+  if (isLocalFrontend()) {
+    return saved || LOCAL_API_BASE;
+  }
+
+  if (
+    saved &&
+    !saved.includes('127.0.0.1') &&
+    !saved.includes('localhost')
+  ) {
+    return saved;
+  }
+
+  localStorage.setItem('api_base', PRODUCTION_API_BASE);
+  return PRODUCTION_API_BASE;
+}
+
+const API_BASE = getApiBase();
 
   let allLessons = [];
   let activeCategory = 'Semua';
