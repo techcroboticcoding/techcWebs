@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Daftar Pelajar - TECH-C</title>
+  <title>Daftar Pengajar - TECH-C</title>
 
   <style>
     * {
@@ -33,15 +33,16 @@
         linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
     }
 
-    .student-card {
+    .teacher-card {
       transition: .25s ease;
     }
 
-    .student-card:hover {
+    .teacher-card:hover {
       transform: translateY(-6px);
     }
   </style>
 </head>
+
 <script>
 const token = localStorage.getItem('token');
 const role = localStorage.getItem('role');
@@ -57,7 +58,7 @@ if (!token) {
 </script>
 
 <body
-  x-data="{ page: 'pelajar', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-data="{ page: 'pengajar', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
   x-init="
     darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
     $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
@@ -105,15 +106,15 @@ if (!token) {
                 <div>
                   <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
                     <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
-                    Student Management
+                    Teacher Management
                   </div>
 
                   <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-                    Daftar Pelajar TECH-C
+                    Daftar Pengajar TECH-C
                   </h1>
 
                   <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
-                    Kelola data pelajar robotic & coding, lihat profil siswa, kelas, sekolah, dan status belajar dalam satu halaman.
+                    Kelola data pengajar robotic & coding, jadwal mengajar, sekolah binaan, spesialisasi materi, dan status keaktifan tutor.
                   </p>
 
                   <div class="mt-6 flex flex-wrap gap-3">
@@ -123,8 +124,8 @@ if (!token) {
                     </div>
 
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
-                      <p class="text-xs font-semibold text-slate-500">Total Pelajar</p>
-                      <p id="totalPelajarHero" class="mt-1 text-sm font-black text-slate-900 dark:text-white">0</p>
+                      <p class="text-xs font-semibold text-slate-500">Total Pengajar</p>
+                      <p id="totalPengajarHero" class="mt-1 text-sm font-black text-slate-900 dark:text-white">0</p>
                     </div>
 
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
@@ -134,29 +135,31 @@ if (!token) {
                   </div>
                 </div>
 
+                <!-- HERO CARD -->
                 <div class="relative shrink-0">
                   <div class="absolute -inset-4 rounded-[2.5rem] bg-blue-500/20 blur-2xl"></div>
 
-                  <div class="relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[330px]">
+                  <div class="relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[350px]">
                     <div class="flex items-center justify-between gap-4">
                       <div>
-                        <p class="text-sm font-bold text-white/80">TECH-C Students</p>
-                        <h2 id="totalPelajarCard" class="mt-2 text-5xl font-black">0</h2>
-                        <p class="mt-1 text-xs font-semibold text-white/70">Pelajar terdaftar</p>
+                        <p class="text-sm font-bold text-white/80">TECH-C Teachers</p>
+                        <h2 id="totalPengajarCard" class="mt-2 text-5xl font-black">0</h2>
+                        <p class="mt-1 text-xs font-semibold text-white/70">Pengajar terdaftar</p>
                       </div>
 
                       <div class="flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-white/20 text-4xl backdrop-blur">
-                        👨‍🎓
+                        👨‍🏫
                       </div>
                     </div>
 
                     <div class="mt-5 rounded-2xl bg-white/15 p-4 backdrop-blur">
                       <div class="flex items-center justify-between text-xs font-bold text-white/80">
-                        <span>Data aktif</span>
-                        <span id="activeStudentText">0 siswa</span>
+                        <span>Pengajar aktif</span>
+                        <span id="activeTeacherText">0 pengajar</span>
                       </div>
+
                       <div class="mt-3 h-3 overflow-hidden rounded-full bg-white/20">
-                        <div id="activeStudentBar" class="h-full w-0 rounded-full bg-white transition-all duration-700"></div>
+                        <div id="activeTeacherBar" class="h-full w-0 rounded-full bg-white transition-all duration-700"></div>
                       </div>
                     </div>
                   </div>
@@ -173,11 +176,11 @@ if (!token) {
               <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-blue-500/10"></div>
               <div class="relative flex items-start justify-between">
                 <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Semua Pelajar</p>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Semua Pengajar</p>
                   <h2 id="statTotal" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Data dari database</p>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Data pengajar</p>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl dark:bg-blue-950">👨‍🎓</div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl dark:bg-blue-950">👨‍🏫</div>
               </div>
             </div>
 
@@ -187,7 +190,7 @@ if (!token) {
                 <div>
                   <p class="text-sm font-black text-slate-500 dark:text-slate-400">Aktif</p>
                   <h2 id="statAktif" class="mt-3 text-4xl font-black text-green-500">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Status aktif</p>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Masih mengajar</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-2xl dark:bg-green-950">✅</div>
               </div>
@@ -210,8 +213,8 @@ if (!token) {
               <div class="relative flex items-start justify-between">
                 <div>
                   <p class="text-sm font-black text-slate-500 dark:text-slate-400">Sumber</p>
-                  <h2 class="mt-3 text-2xl font-black text-violet-500">Laravel</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">API students</p>
+                  <h2 id="sourceStatus" class="mt-3 text-2xl font-black text-violet-500">Dummy</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">API / fallback</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-2xl dark:bg-violet-950">⚡</div>
               </div>
@@ -233,7 +236,7 @@ if (!token) {
                   <input
                     id="searchInput"
                     type="text"
-                    placeholder="Cari nama pelajar, sekolah, kelas..."
+                    placeholder="Cari nama pengajar, spesialisasi, sekolah..."
                     class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
                   />
                 </div>
@@ -252,25 +255,25 @@ if (!token) {
 
               <div class="flex gap-3">
                 <button
-                  onclick="loadPelajar()"
+                  onclick="loadPengajar()"
                   class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:-translate-y-0.5 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
                 >
                   Refresh
                 </button>
 
                 <a
-                  href="tambah-pelajar.html"
+                  href="tambah-pengajar.html"
                   class="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5 hover:shadow-2xl"
                 >
-                  + Tambah Pelajar
+                  + Tambah Pengajar
                 </a>
               </div>
 
             </div>
           </div>
 
-          <!-- GRID PELAJAR -->
-          <div id="pelajarList" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+          <!-- GRID PENGAJAR -->
+          <div id="pengajarList" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             <!-- JS RENDER -->
           </div>
 
@@ -281,11 +284,11 @@ if (!token) {
             </div>
 
             <h3 class="text-xl font-black text-slate-900 dark:text-white">
-              Data pelajar tidak ditemukan
+              Data pengajar tidak ditemukan
             </h3>
 
             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Coba ubah kata pencarian atau refresh data dari Laravel.
+              Coba ubah kata pencarian atau refresh data.
             </p>
           </div>
 
@@ -316,7 +319,64 @@ if (!token) {
   <!-- SCRIPT -->
   <script>
   const API_BASE = localStorage.getItem('api_base') || 'http://127.0.0.1:8000/api';
-  let allStudents = [];
+  let allTeachers = [];
+
+  const dummyTeachers = [
+    {
+      id: 1,
+      name: "Adam Rizki",
+      specialization: "Robotic, Arduino, ESP32",
+      phone: "08123456789",
+      email: "adam@gmail.com",
+      status: "Aktif",
+      total_sekolah: 5,
+      total_jadwal: 12,
+      photo: "https://ui-avatars.com/api/?name=Adam+Rizki&background=2563eb&color=fff&bold=true"
+    },
+    {
+      id: 2,
+      name: "Rizki Rahayu Pratama",
+      specialization: "Scratch & Basic Coding",
+      phone: "081200000001",
+
+      status: "Aktif",
+      total_sekolah: 3,
+      total_jadwal: 8,
+      photo: "https://ui-avatars.com/api/?name=Aldi+Pratama&background=06b6d4&color=fff&bold=true"
+    },
+    {
+      id: 3,
+      name: "Hashina Qiamu Mumtaziah , S.Pd",
+      specialization: "Scratch, Game Design, IoT",
+      phone: "081200000002",
+
+      status: "Aktif",
+      total_sekolah: 4,
+      total_jadwal: 10,
+      photo: "https://ui-avatars.com/api/?name=Naufal+Ramadhan&background=7c3aed&color=fff&bold=true"
+    },
+    {
+      id: 4,
+      name: "Akbar Marzuqi, S.Kom",
+      specialization: "IoT & Electronics",
+      phone: "081200000003",
+
+      status: "Aktif",
+      total_sekolah: 2,
+      total_jadwal: 6,
+      photo: "https://ui-avatars.com/api/?name=Rizky+Maulana&background=16a34a&color=fff&bold=true"
+    },
+    {
+      id: 5,
+      name: "Dinda Sri Rejeki",
+      specialization: "Scratch, Game Design",
+      phone: "081200000004",
+      status: "Aktif",
+      total_sekolah: 2,
+      total_jadwal: 5,
+      photo: "https://ui-avatars.com/api/?name=Dinda+Putri&background=ea580c&color=fff&bold=true"
+    },
+  ];
 
   function setText(id, value) {
     const el = document.getElementById(id);
@@ -348,53 +408,6 @@ if (!token) {
     }));
   }
 
-  function getStudentName(student) {
-    return student.name || student.nama || student.full_name || 'Tanpa Nama';
-  }
-
-  function getStudentPhoto(student) {
-    const name = getStudentName(student);
-
-    if (student.photo_url) {
-      return student.photo_url;
-    }
-
-    if (student.photo) {
-      if (String(student.photo).startsWith('http')) {
-        return student.photo;
-      }
-
-      return `http://127.0.0.1:8000/storage/${student.photo}`;
-    }
-
-    if (student.logo) {
-      if (String(student.logo).startsWith('http')) {
-        return student.logo;
-      }
-
-      return `http://127.0.0.1:8000/storage/${student.logo}`;
-    }
-
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
-  }
-
-  function getStudentSchool(student) {
-    return student.school_name || student.sekolah || student.asal_sekolah || student.school?.nama || student.school?.name || '-';
-  }
-
-  function getStudentClass(student) {
-    return student.kelas || student.class || student.level || student.kategori || '-';
-  }
-
-  function getStudentStatus(student) {
-    return student.status || student.status_belajar || 'Aktif';
-  }
-
-  function getStudentProgress(student) {
-    const value = Number(student.progress || student.progress_belajar || student.progressBelajar || 0);
-    return Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
-  }
-
   function escapeHtml(value) {
     return String(value ?? '')
       .replaceAll('&', '&amp;')
@@ -404,15 +417,75 @@ if (!token) {
       .replaceAll("'", '&#039;');
   }
 
+  function getTeacherName(teacher) {
+    return teacher.name || teacher.nama || teacher.full_name || 'Tanpa Nama';
+  }
+
+  function getTeacherStatus(teacher) {
+    return teacher.status || teacher.status_pengajar || 'Aktif';
+  }
+
+  function getTeacherSpecialization(teacher) {
+    return teacher.specialization || teacher.spesialisasi || teacher.keahlian || teacher.mapel || teacher.bidang || 'Robotic & Coding';
+  }
+
+  function getTeacherEmail(teacher) {
+    return teacher.email || teacher.email_pengajar || '-';
+  }
+
+  function getTeacherPhone(teacher) {
+    return teacher.phone || teacher.no_hp || teacher.telepon || teacher.nomor_hp || '-';
+  }
+
+  function getTeacherSchoolCount(teacher) {
+    return teacher.total_sekolah || teacher.schools_count || teacher.sekolah_count || teacher.jumlah_sekolah || 0;
+  }
+
+  function getTeacherScheduleCount(teacher) {
+    return teacher.total_jadwal || teacher.schedules_count || teacher.jadwal_count || teacher.jumlah_jadwal || 0;
+  }
+
+  function getTeacherPhoto(teacher) {
+    const name = getTeacherName(teacher);
+
+    if (teacher.photo_url) {
+      return teacher.photo_url;
+    }
+
+    if (teacher.foto_url) {
+      return teacher.foto_url;
+    }
+
+    if (teacher.photo) {
+      if (String(teacher.photo).startsWith('http')) {
+        return teacher.photo;
+      }
+
+      return `http://127.0.0.1:8000/storage/${teacher.photo}`;
+    }
+
+    if (teacher.foto) {
+      if (String(teacher.foto).startsWith('http')) {
+        return teacher.foto;
+      }
+
+      return `http://127.0.0.1:8000/storage/${teacher.foto}`;
+    }
+
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+  }
+
   function showSkeleton() {
-    const container = document.getElementById('pelajarList');
+    const container = document.getElementById('pengajarList');
+
+    if (!container) return;
 
     container.innerHTML = Array.from({ length: 8 }).map(() => `
       <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 dark:border-slate-800 dark:bg-slate-900/90">
         <div class="animate-pulse">
           <div class="mx-auto h-24 w-24 rounded-full bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mx-auto mt-5 h-5 w-32 rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mx-auto mt-3 h-4 w-44 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="mx-auto mt-5 h-5 w-40 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="mx-auto mt-3 h-4 w-48 rounded bg-slate-200 dark:bg-slate-800"></div>
           <div class="mt-5 grid grid-cols-2 gap-3">
             <div class="h-14 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
             <div class="h-14 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
@@ -422,34 +495,34 @@ if (!token) {
     `).join('');
   }
 
-  function updateStats(students, shownStudents) {
-    const total = students.length;
-    const aktif = students.filter(s => String(getStudentStatus(s)).toLowerCase() !== 'nonaktif').length;
-    const shown = shownStudents.length;
+  function updateStats(teachers, shownTeachers) {
+    const total = teachers.length;
+    const aktif = teachers.filter(t => String(getTeacherStatus(t)).toLowerCase() !== 'nonaktif').length;
+    const shown = shownTeachers.length;
 
     setText('statTotal', total);
     setText('statAktif', aktif);
     setText('statShown', shown);
-    setText('totalPelajarHero', total);
-    setText('totalPelajarCard', total);
-    setText('activeStudentText', `${aktif} siswa`);
+    setText('totalPengajarHero', total);
+    setText('totalPengajarCard', total);
+    setText('activeTeacherText', `${aktif} pengajar`);
 
-    const bar = document.getElementById('activeStudentBar');
+    const bar = document.getElementById('activeTeacherBar');
     if (bar) {
       const percent = total > 0 ? Math.round((aktif / total) * 100) : 0;
       bar.style.width = `${percent}%`;
     }
   }
 
-  function renderPelajar(students) {
-    const container = document.getElementById('pelajarList');
+  function renderPengajar(teachers) {
+    const container = document.getElementById('pengajarList');
     const emptyState = document.getElementById('emptyState');
 
     if (!container) return;
 
-    updateStats(allStudents, students);
+    updateStats(allTeachers, teachers);
 
-    if (!students.length) {
+    if (!teachers.length) {
       container.innerHTML = "";
       if (emptyState) emptyState.classList.remove('hidden');
       return;
@@ -457,29 +530,36 @@ if (!token) {
 
     if (emptyState) emptyState.classList.add('hidden');
 
-    container.innerHTML = students.map(student => {
-      const id = student.id;
-      const name = getStudentName(student);
-      const photo = getStudentPhoto(student);
-      const school = getStudentSchool(student);
-      const kelas = getStudentClass(student);
-      const status = getStudentStatus(student);
-      const progress = getStudentProgress(student);
+    container.innerHTML = teachers.map(teacher => {
+      const id = teacher.id;
+      const name = getTeacherName(teacher);
+      const status = getTeacherStatus(teacher);
+      const specialization = getTeacherSpecialization(teacher);
+      const email = getTeacherEmail(teacher);
+      const phone = getTeacherPhone(teacher);
+      const photo = getTeacherPhoto(teacher);
+      const schoolCount = getTeacherSchoolCount(teacher);
+      const scheduleCount = getTeacherScheduleCount(teacher);
 
       const safeName = escapeHtml(name);
-      const safeSchool = escapeHtml(school);
-      const safeClass = escapeHtml(kelas);
       const safeStatus = escapeHtml(status);
+      const safeSpecialization = escapeHtml(specialization);
+      const safeEmail = escapeHtml(email);
+      const safePhone = escapeHtml(phone);
+
+      const statusClass = String(status).toLowerCase() === 'nonaktif'
+        ? 'bg-red-500/20 text-white'
+        : 'bg-white/20 text-white';
 
       return `
         <div
-          onclick="pilihPelajar(${id})"
-          class="student-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
+          onclick="pilihPengajar(${id}, '${encodeURIComponent(name)}')"
+          class="teacher-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
         >
           <div class="relative h-24 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.35),transparent_35%)]"></div>
 
-            <div class="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-black text-white backdrop-blur">
+            <div class="absolute right-4 top-4 rounded-full ${statusClass} px-3 py-1 text-xs font-black backdrop-blur">
               ${safeStatus}
             </div>
           </div>
@@ -499,34 +579,32 @@ if (!token) {
                 ${safeName}
               </h2>
 
-              <p class="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
-                ${safeSchool}
+              <p class="mt-1 line-clamp-1 text-sm font-semibold text-blue-500">
+                ${safeSpecialization}
               </p>
             </div>
 
             <div class="mt-5 grid grid-cols-2 gap-3">
               <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
-                <p class="text-xs font-semibold text-slate-400">Kelas</p>
-                <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">${safeClass}</p>
+                <p class="text-xs font-semibold text-slate-400">Sekolah</p>
+                <p class="mt-1 text-sm font-black text-blue-500">${schoolCount}</p>
               </div>
 
               <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
-                <p class="text-xs font-semibold text-slate-400">Progress</p>
-                <p class="mt-1 text-sm font-black text-blue-500">${progress}%</p>
+                <p class="text-xs font-semibold text-slate-400">Jadwal</p>
+                <p class="mt-1 text-sm font-black text-cyan-500">${scheduleCount}</p>
               </div>
             </div>
 
-            <div class="mt-5">
-              <div class="mb-2 flex items-center justify-between text-xs font-bold text-slate-400">
-                <span>Progress belajar</span>
-                <span>${progress}%</span>
+            <div class="mt-5 space-y-2 rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
+              <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span>📧</span>
+                <span class="line-clamp-1">${safeEmail}</span>
               </div>
 
-              <div class="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                <div
-                  class="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-500"
-                  style="width: ${progress}%"
-                ></div>
+              <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span>📱</span>
+                <span class="line-clamp-1">${safePhone}</span>
               </div>
             </div>
 
@@ -534,7 +612,7 @@ if (!token) {
               type="button"
               class="mt-5 w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-950 dark:text-slate-300"
             >
-              Lihat Detail
+              Lihat Detail Pengajar
             </button>
           </div>
         </div>
@@ -546,20 +624,21 @@ if (!token) {
     const search = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
     const sort = document.getElementById('sortInput')?.value || 'az';
 
-    let filtered = allStudents.filter(student => {
+    let filtered = allTeachers.filter(teacher => {
       const target = [
-        getStudentName(student),
-        getStudentSchool(student),
-        getStudentClass(student),
-        getStudentStatus(student)
+        getTeacherName(teacher),
+        getTeacherStatus(teacher),
+        getTeacherSpecialization(teacher),
+        getTeacherEmail(teacher),
+        getTeacherPhone(teacher)
       ].join(' ').toLowerCase();
 
       return target.includes(search);
     });
 
     filtered.sort((a, b) => {
-      const nameA = getStudentName(a).toLowerCase();
-      const nameB = getStudentName(b).toLowerCase();
+      const nameA = getTeacherName(a).toLowerCase();
+      const nameB = getTeacherName(b).toLowerCase();
 
       if (sort === 'az') return nameA.localeCompare(nameB);
       if (sort === 'za') return nameB.localeCompare(nameA);
@@ -569,46 +648,56 @@ if (!token) {
       return 0;
     });
 
-    renderPelajar(filtered);
+    renderPengajar(filtered);
   }
 
-  async function apiGetStudents() {
-    const res = await fetch(`${API_BASE}/students`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+  async function apiGetTeachers() {
+    const endpoints = [`${API_BASE}/teachers`, `${API_BASE}/pengajar`];
+
+    let lastError = null;
+
+    for (const url of endpoints) {
+      try {
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (res.status === 401) {
+          localStorage.clear();
+          window.location.href = './login.html';
+          return [];
+        }
+
+        const raw = await res.text();
+
+        let data;
+
+        try {
+          data = JSON.parse(raw);
+        } catch (err) {
+          throw new Error("Response bukan JSON");
+        }
+
+        if (!res.ok) {
+          throw new Error(data.message || `HTTP Error ${res.status}`);
+        }
+
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data.data)) return data.data;
+        if (Array.isArray(data.teachers)) return data.teachers;
+        if (Array.isArray(data.pengajar)) return data.pengajar;
+
+        return [];
+      } catch (err) {
+        lastError = err;
       }
-    });
-
-    if (res.status === 401) {
-      localStorage.clear();
-      window.location.href = './login.html';
-      return [];
     }
 
-    const raw = await res.text();
-
-    let data;
-
-    try {
-      data = JSON.parse(raw);
-    } catch (err) {
-      console.error("Response bukan JSON:", raw);
-      throw new Error("API /students bukan JSON. Cek error Laravel.");
-    }
-
-    if (!res.ok) {
-      throw new Error(data.message || `HTTP Error ${res.status}`);
-    }
-
-    if (Array.isArray(data)) return data;
-
-    if (Array.isArray(data.data)) return data.data;
-
-    if (Array.isArray(data.students)) return data.students;
-
-    return [];
+    throw lastError || new Error("API pengajar belum tersedia");
   }
 
   async function loadHeaderUser() {
@@ -642,25 +731,41 @@ if (!token) {
     }
   }
 
-  async function loadPelajar() {
+  async function loadPengajar() {
     try {
       setApiStatus('Loading...', 'loading');
       showSkeleton();
 
-      const data = await apiGetStudents();
+      let data = [];
 
-      allStudents = data;
+      try {
+        data = await apiGetTeachers();
+
+        if (data.length) {
+          setText('sourceStatus', 'Laravel');
+        } else {
+          data = dummyTeachers;
+          setText('sourceStatus', 'Dummy');
+        }
+
+      } catch (apiErr) {
+        console.warn("API pengajar belum siap, pakai dummy:", apiErr.message);
+        data = dummyTeachers;
+        setText('sourceStatus', 'Dummy');
+      }
+
+      allTeachers = data;
       applyFilter();
 
       setApiStatus('Connected', 'success');
       updateLastUpdate();
 
     } catch (err) {
-      console.error("Error load pelajar:", err);
+      console.error("Error load pengajar:", err);
 
       setApiStatus('Disconnected', 'error');
 
-      const container = document.getElementById('pelajarList');
+      const container = document.getElementById('pengajarList');
       if (container) {
         container.innerHTML = `
           <div class="col-span-full rounded-[2rem] border border-red-200 bg-red-50 p-8 text-center shadow-xl shadow-red-100 dark:border-red-900 dark:bg-red-950/40 dark:shadow-black/20">
@@ -669,15 +774,15 @@ if (!token) {
             </div>
 
             <h3 class="text-xl font-black text-red-600 dark:text-red-300">
-              Gagal mengambil data pelajar
+              Gagal mengambil data pengajar
             </h3>
 
             <p class="mt-2 text-sm font-semibold text-red-500 dark:text-red-300">
-              ${escapeHtml(err.message || 'Cek Laravel API /api/students')}
+              ${escapeHtml(err.message || 'Cek Laravel API /api/teachers atau /api/pengajar')}
             </p>
 
             <button
-              onclick="loadPelajar()"
+              onclick="loadPengajar()"
               class="mt-5 rounded-2xl bg-red-600 px-5 py-3 text-sm font-black text-white transition hover:bg-red-700"
             >
               Coba Lagi
@@ -688,17 +793,19 @@ if (!token) {
     }
   }
 
-  function pilihPelajar(id) {
-    localStorage.setItem('student_id', id);
+  function pilihPengajar(id, encodedName) {
+    const name = decodeURIComponent(encodedName || '');
 
-    // Sengaja bukan profile.html biar nggak tabrakan sama profile admin
-    window.location.href = "detailPelajar.html";
+    localStorage.setItem('teacher_id', id);
+    localStorage.setItem('teacher_name', name);
+
+    window.location.href = "detailPengajar.html";
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
     await loadPartials();
     await loadHeaderUser();
-    await loadPelajar();
+    await loadPengajar();
 
     const searchInput = document.getElementById('searchInput');
     const sortInput = document.getElementById('sortInput');

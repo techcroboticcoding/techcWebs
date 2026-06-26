@@ -21,7 +21,7 @@
     </a>
   </div>
 
-  <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+  <div class="flex flex-1 flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
     <nav x-data="{selected: $persist('Dashboard')}">
 
       <!-- ================= DASHBOARD ================= -->
@@ -42,19 +42,61 @@
       <h3 class="mb-4 text-xs uppercase text-gray-400">MASTER</h3>
       <ul class="flex flex-col gap-2 mb-6">
 
-        <li><a href="sekolah.html" class="menu-item" :class="page==='sekolah' ? 'menu-item-active':'menu-item-inactive'">Sekolah</a></li>
+        <li>
+          <a href="sekolah.html"
+            class="menu-item"
+            :class="page==='sekolah' ? 'menu-item-active':'menu-item-inactive'">
+            Sekolah
+          </a>
+        </li>
 
-        <li><a href="pelajar.html" class="menu-item" :class="page==='pelajar' ? 'menu-item-active':'menu-item-inactive'">Pelajar</a></li>
+        <li>
+          <a href="pelajar.html"
+            class="menu-item"
+            :class="page==='pelajar' ? 'menu-item-active':'menu-item-inactive'">
+            Pelajar
+          </a>
+        </li>
 
-        <li><a href="pengajar.html" class="menu-item" :class="page==='pengajar' ? 'menu-item-active':'menu-item-inactive'">Pengajar</a></li>
+        <li>
+          <a href="pengajar.html"
+            class="menu-item"
+            :class="page==='pengajar' ? 'menu-item-active':'menu-item-inactive'">
+            Pengajar
+          </a>
+        </li>
 
-        <li><a href="pelajaran.html" class="menu-item" :class="page==='pelajaran' ? 'menu-item-active':'menu-item-inactive'">Pelajaran</a></li>
+        <li>
+          <a href="pelajaran.html"
+            class="menu-item"
+            :class="page==='pelajaran' ? 'menu-item-active':'menu-item-inactive'">
+            Pelajaran
+          </a>
+        </li>
 
-        <li><a href="tempat.html" class="menu-item" :class="page==='tempat' ? 'menu-item-active':'menu-item-inactive'">Tempat</a></li>
+        <li>
+          <a href="tempat.html"
+            class="menu-item"
+            :class="page==='tempat' ? 'menu-item-active':'menu-item-inactive'">
+            Tempat
+          </a>
+        </li>
 
-        <li><a href="paket.html" class="menu-item" :class="page==='paket' ? 'menu-item-active':'menu-item-inactive'">Paket</a></li>
+        <li>
+          <a href="paket.html"
+            class="menu-item"
+            :class="page==='paket' ? 'menu-item-active':'menu-item-inactive'">
+            Paket
+          </a>
+        </li>
 
-        <li><a href="personal.html" class="menu-item" :class="page==='personal' ? 'menu-item-active':'menu-item-inactive'">Personal</a></li>
+        <li>
+          <a href="personal.html"
+            class="menu-item"
+            :class="page==='personal' ? 'menu-item-active':'menu-item-inactive'">
+            Personal
+          </a>
+        </li>
 
       </ul>
 
@@ -62,11 +104,29 @@
       <h3 class="mb-4 text-xs uppercase text-gray-400">TRANSAKSI</h3>
       <ul class="flex flex-col gap-2 mb-6">
 
-        <li><a href="invoice.html" class="menu-item" :class="page==='invoice' ? 'menu-item-active':'menu-item-inactive'">Invoice</a></li>
+        <li>
+          <a href="invoice.html"
+            class="menu-item"
+            :class="page==='invoice' ? 'menu-item-active':'menu-item-inactive'">
+            Invoice
+          </a>
+        </li>
 
-        <li><a href="invoice-berulang.html" class="menu-item" :class="page==='invoice_berulang' ? 'menu-item-active':'menu-item-inactive'">Invoice Berulang</a></li>
+        <li>
+          <a href="invoice-berulang.html"
+            class="menu-item"
+            :class="page==='invoice_berulang' ? 'menu-item-active':'menu-item-inactive'">
+            Invoice Berulang
+          </a>
+        </li>
 
-        <li><a href="keuangan.html" class="menu-item" :class="page==='keuangan' ? 'menu-item-active':'menu-item-inactive'">Keuangan</a></li>
+        <li>
+          <a href="keuangan.html"
+            class="menu-item"
+            :class="page==='keuangan' ? 'menu-item-active':'menu-item-inactive'">
+            Keuangan
+          </a>
+        </li>
 
       </ul>
 
@@ -74,9 +134,21 @@
       <h3 class="mb-4 text-xs uppercase text-gray-400">MANAGEMENT</h3>
       <ul class="flex flex-col gap-2 mb-6">
 
-        <li><a href="penggajian.html" class="menu-item" :class="page==='penggajian' ? 'menu-item-active':'menu-item-inactive'">Penggajian</a></li>
+        <li>
+          <a href="penggajian.html"
+            class="menu-item"
+            :class="page==='penggajian' ? 'menu-item-active':'menu-item-inactive'">
+            Penggajian
+          </a>
+        </li>
 
-        <li><a href="pengajuan.html" class="menu-item" :class="page==='pengajuan' ? 'menu-item-active':'menu-item-inactive'">Pengajuan Penggantian</a></li>
+        <li>
+          <a href="pengajuan.html"
+            class="menu-item"
+            :class="page==='pengajuan' ? 'menu-item-active':'menu-item-inactive'">
+            Pengajuan Penggantian
+          </a>
+        </li>
 
       </ul>
 
@@ -84,10 +156,47 @@
       <h3 class="mb-4 text-xs uppercase text-gray-400">REPORT</h3>
       <ul class="flex flex-col gap-2 mb-6">
 
-        <li><a href="laporan.html" class="menu-item" :class="page==='laporan' ? 'menu-item-active':'menu-item-inactive'">Laporan</a></li>
+        <li>
+          <a href="laporan.html"
+            class="menu-item"
+            :class="page==='laporan' ? 'menu-item-active':'menu-item-inactive'">
+            Laporan
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- ================= AKUN ================= -->
+      <h3 class="mb-4 text-xs uppercase text-gray-400">AKUN</h3>
+      <ul class="flex flex-col gap-2 mb-6">
+
+        <li>
+          <a href="profile.html"
+            class="menu-item"
+            :class="page==='profile' ? 'menu-item-active':'menu-item-inactive'">
+            Profile Admin
+          </a>
+        </li>
+
+        <li>
+          <button
+            type="button"
+            onclick="logoutAdmin()"
+            class="menu-item menu-item-inactive w-full text-left text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:text-red-300"
+          >
+            Logout
+          </button>
+        </li>
 
       </ul>
 
     </nav>
   </div>
 </aside>
+
+<script>
+function logoutAdmin() {
+  localStorage.clear();
+  window.location.replace('./login.html');
+}
+</script>

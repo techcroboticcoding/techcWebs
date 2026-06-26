@@ -3,145 +3,726 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pilih Sekolah</title>
+
+  <title>Daftar Sekolah - TECH-C</title>
+
+  <style>
+    * {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .dark .grid-bg {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+
+    .school-card {
+      transition: .25s ease;
+    }
+
+    .school-card:hover {
+      transform: translateY(-6px);
+    }
+  </style>
 </head>
 
 <script>
-if (!localStorage.getItem('token')) {
+const token = localStorage.getItem('token');
+const role = localStorage.getItem('role');
+
+if (!token) {
+  window.location.href = './login.html';
+} else if (role === 'siswa') {
+  window.location.href = './dashboardSiswa.html';
+} else if (role !== 'admin') {
+  localStorage.clear();
   window.location.href = './login.html';
 }
 </script>
 
 <body
-  x-data="{ page: 'sekolah', darkMode: false }"
+  x-data="{ page: 'sekolah', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
   x-init="
-    darkMode = JSON.parse(localStorage.getItem('darkMode'));
+    darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
     $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
   "
-  :class="{'dark bg-gray-900': darkMode === true}"
+  :class="{'dark bg-slate-950': darkMode === true}"
+  class="bg-slate-50"
 >
 
-<!-- INCLUDE HEADER -->
-<include src="./partials/header.html"></include>
+  <!-- PRELOADER -->
+  <include src="./partials/preloader.html"></include>
 
-<!-- CONTENT -->
-<main class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+  <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
 
-  <!-- TITLE -->
-  <div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
-      Pilih Sekolah
-    </h1>
-    <p class="text-gray-500 text-sm">
-      Pilih sekolah untuk melihat data
-    </p>
-  </div>
+    <!-- SIDEBAR -->
+    <include src="./partials/sidebar.html"></include>
 
-  <!-- GRID SEKOLAH -->
-  <div id="schoolList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-    
-    <!-- LOADING -->
-    <p class="text-gray-500">Loading...</p>
+    <!-- CONTENT WRAPPER -->
+    <div class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto no-scrollbar">
 
-  </div>
+      <include src="./partials/overlay.html"></include>
 
-</main>
+      <!-- HEADER -->
+      <include src="./partials/header.html"></include>
 
-<!-- LOAD PARTIAL -->
-<script>
-async function loadPartials() {
-  const includes = document.querySelectorAll('include');
-  for (let el of includes) {
-    const file = el.getAttribute('src');
-    const res = await fetch(file);
-    const html = await res.text();
-    el.outerHTML = html;
-  }
-}
-loadPartials();
-</script>
+      <!-- MAIN -->
+      <main class="grid-bg relative min-h-screen overflow-hidden p-4 sm:p-6 lg:p-8">
 
-<!-- SCRIPT LOAD SEKOLAH -->
-<script>
-async function loadSekolah() {
-  try {
-    // 🔥 nanti ganti API Laravel kamu
-    // const res = await fetch('http://127.0.0.1:8000/api/sekolah');
-    // const data = await res.json();
+        <!-- BACKGROUND GLOW -->
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <div class="absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full bg-blue-500/10 blur-3xl"></div>
+          <div class="absolute left-[-150px] top-72 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-3xl"></div>
+          <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
+        </div>
 
-    // sementara dummy dulu
-const data = [
-  { id: 1, nama: "SD Daar El Latif", logo: "https://ui-avatars.com/api/?name=Daar+El+Latif" },
-  { id: 2, nama: "SDIT Al-Khairiyah", logo: "https://ui-avatars.com/api/?name=Al+Khairiyah" },
-  { id: 3, nama: "SDIT BIS", logo: "https://ui-avatars.com/api/?name=BIS" },
-  { id: 4, nama: "SDIT Al Hanif", logo: "https://ui-avatars.com/api/?name=Al+Hanif" },
-  { id: 5, nama: "MTsN 3 Cilegon", logo: "https://ui-avatars.com/api/?name=MTsN+3" },
-  { id: 6, nama: "SDIT CIS", logo: "https://ui-avatars.com/api/?name=CIS" },
-  { id: 7, nama: "SDIT Irsyadul Ibad 2", logo: "https://ui-avatars.com/api/?name=Irsyadul+Ibad" },
-  { id: 8, nama: "SDIT Al-Izzah 1", logo: "https://ui-avatars.com/api/?name=Al+Izzah" },
-  { id: 9, nama: "SDIT Al-Izzah 2", logo: "https://ui-avatars.com/api/?name=Al+Izzah" },
-  { id: 10, nama: "MIN 1 Cilegon", logo: "https://ui-avatars.com/api/?name=MIN+1" },
-  { id: 11, nama: "SD Peradaban", logo: "https://ui-avatars.com/api/?name=Peradaban" },
-  { id: 12, nama: "SMA Al Azhar", logo: "https://ui-avatars.com/api/?name=Al+Azhar" },
-  { id: 13, nama: "SD WR", logo: "https://ui-avatars.com/api/?name=SD+WR" },
-  { id: 14, nama: "MTsN 2 Cilegon", logo: "https://ui-avatars.com/api/?name=MTsN+2" },
-  { id: 15, nama: "SMP CIS", logo: "https://ui-avatars.com/api/?name=SMP+CIS" },
-  { id: 16, nama: "SIS", logo: "https://ui-avatars.com/api/?name=SIS" },
-  { id: 17, nama: "SMP Al Azhar", logo: "https://ui-avatars.com/api/?name=SMP+Al+Azhar" },
-  { id: 18, nama: "SD YPKS 2 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+2" },
-  { id: 19, nama: "SD YPKS 4 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+4" },
-  { id: 20, nama: "SD YPKS 5 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+5" },
-  { id: 21, nama: "TK Bosowa", logo: "https://ui-avatars.com/api/?name=Bosowa" },
-  { id: 22, nama: "SD Bosowa", logo: "https://ui-avatars.com/api/?name=Bosowa" },
-  { id: 23, nama: "SDIT Bina Insani", logo: "https://ui-avatars.com/api/?name=Bina+Insani" },
-  { id: 24, nama: "SDIT Bina Bangsa", logo: "https://ui-avatars.com/api/?name=Bina+Bangsa" },
-  { id: 25, nama: "MTsN 1 Kota Serang", logo: "https://ui-avatars.com/api/?name=MTsN+1" },
-  { id: 26, nama: "SMP Ibnu Syam", logo: "https://ui-avatars.com/api/?name=Ibnu+Syam" },
-  { id: 27, nama: "SMA Al Bayan", logo: "https://ui-avatars.com/api/?name=Al+Bayan" }
-];
+        <section class="relative z-10 mx-auto max-w-7xl">
 
-    const container = document.getElementById('schoolList');
-    container.innerHTML = "";
+          <!-- HERO -->
+          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="relative p-6 sm:p-7 lg:p-8">
 
-    data.forEach(sekolah => {
-      const card = `
-        <div onclick="pilihSekolah(${sekolah.id})"
-          class="cursor-pointer bg-white dark:bg-gray-800 p-5 rounded-xl shadow hover:shadow-lg transition">
+              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-blue-600/15 via-cyan-500/5 to-transparent lg:block"></div>
 
-          <div class="flex flex-col items-center text-center">
+              <div class="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
 
-            <img src="${sekolah.logo}"
-              class="w-20 h-20 rounded-full mb-4 object-cover border" />
+                <div>
+                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
+                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
+                    School Management
+                  </div>
 
-            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
-              ${sekolah.nama}
-            </h2>
+                  <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                    Daftar Sekolah TECH-C
+                  </h1>
 
-            <p class="text-sm text-gray-500">
-              Klik untuk masuk
+                  <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+                    Pilih sekolah untuk melihat data pelajar, jadwal ekskul, laporan, invoice, dan progress pembelajaran robotic & coding.
+                  </p>
+
+                  <div class="mt-6 flex flex-wrap gap-3">
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Status API</p>
+                      <p id="apiStatus" class="mt-1 text-sm font-black text-yellow-500">Checking...</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Total Sekolah</p>
+                      <p id="totalSekolahHero" class="mt-1 text-sm font-black text-slate-900 dark:text-white">0</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Update Terakhir</p>
+                      <p id="lastUpdate" class="mt-1 text-sm font-black text-slate-900 dark:text-white">-</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="relative shrink-0">
+                  <div class="absolute -inset-4 rounded-[2.5rem] bg-blue-500/20 blur-2xl"></div>
+
+                  <div class="relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[330px]">
+                    <div class="flex items-center justify-between gap-4">
+                      <div>
+                        <p class="text-sm font-bold text-white/80">TECH-C Schools</p>
+                        <h2 id="totalSekolahCard" class="mt-2 text-5xl font-black">0</h2>
+                        <p class="mt-1 text-xs font-semibold text-white/70">Sekolah terdaftar</p>
+                      </div>
+
+                      <div class="flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-white/20 text-4xl backdrop-blur">
+                        🏫
+                      </div>
+                    </div>
+
+                    <div class="mt-5 rounded-2xl bg-white/15 p-4 backdrop-blur">
+                      <div class="flex items-center justify-between text-xs font-bold text-white/80">
+                        <span>Mitra aktif</span>
+                        <span id="activeSchoolText">0 sekolah</span>
+                      </div>
+
+                      <div class="mt-3 h-3 overflow-hidden rounded-full bg-white/20">
+                        <div id="activeSchoolBar" class="h-full w-0 rounded-full bg-white transition-all duration-700"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- TOP STATS -->
+          <div class="mb-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+
+            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-blue-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Semua Sekolah</p>
+                  <h2 id="statTotal" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Data sekolah</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl dark:bg-blue-950">🏫</div>
+              </div>
+            </div>
+
+            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-green-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Aktif</p>
+                  <h2 id="statAktif" class="mt-3 text-4xl font-black text-green-500">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Mitra aktif</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-2xl dark:bg-green-950">✅</div>
+              </div>
+            </div>
+
+            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-cyan-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Ditampilkan</p>
+                  <h2 id="statShown" class="mt-3 text-4xl font-black text-cyan-500">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Hasil pencarian</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-2xl dark:bg-cyan-950">🔎</div>
+              </div>
+            </div>
+
+            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-violet-500/10"></div>
+              <div class="relative flex items-start justify-between">
+                <div>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Sumber</p>
+                  <h2 id="sourceStatus" class="mt-3 text-2xl font-black text-violet-500">Dummy</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">API / fallback</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-2xl dark:bg-violet-950">⚡</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TOOLBAR -->
+          <div class="mb-6 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+              <div class="flex flex-1 flex-col gap-3 sm:flex-row">
+
+                <div class="relative flex-1">
+                  <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    🔎
+                  </div>
+
+                  <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Cari nama sekolah..."
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
+                  />
+                </div>
+
+                <select
+                  id="sortInput"
+                  class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                >
+                  <option value="az">Nama A-Z</option>
+                  <option value="za">Nama Z-A</option>
+                  <option value="newest">Terbaru</option>
+                  <option value="oldest">Terlama</option>
+                </select>
+
+              </div>
+
+              <div class="flex gap-3">
+                <button
+                  onclick="loadSekolah()"
+                  class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:-translate-y-0.5 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                >
+                  Refresh
+                </button>
+
+                <a
+                  href="tambah-sekolah.html"
+                  class="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5 hover:shadow-2xl"
+                >
+                  + Tambah Sekolah
+                </a>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- GRID SEKOLAH -->
+          <div id="schoolList" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            <!-- JS RENDER -->
+          </div>
+
+          <!-- EMPTY STATE -->
+          <div id="emptyState" class="hidden rounded-[2rem] border border-white/70 bg-white/90 p-10 text-center shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-blue-50 text-4xl dark:bg-blue-950">
+              🔎
+            </div>
+
+            <h3 class="text-xl font-black text-slate-900 dark:text-white">
+              Data sekolah tidak ditemukan
+            </h3>
+
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              Coba ubah kata pencarian atau refresh data.
             </p>
+          </div>
 
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- LOAD PARTIAL -->
+  <script>
+  async function loadPartials() {
+    const includes = document.querySelectorAll('include');
+
+    for (let el of includes) {
+      const file = el.getAttribute('src');
+
+      try {
+        const res = await fetch(file);
+        const html = await res.text();
+        el.outerHTML = html;
+      } catch (err) {
+        console.error("Gagal load partial:", file, err);
+      }
+    }
+  }
+  </script>
+
+  <!-- SCRIPT -->
+  <script>
+  const API_BASE = localStorage.getItem('api_base') || 'http://127.0.0.1:8000/api';
+  let allSchools = [];
+
+  const dummySchools = [
+    { id: 1, nama: "SD Daar El Latif", logo: "https://ui-avatars.com/api/?name=Daar+El+Latif&background=2563eb&color=fff&bold=true", status: "Aktif" },
+    { id: 2, nama: "SDIT Al-Khairiyah", logo: "https://ui-avatars.com/api/?name=Al+Khairiyah&background=06b6d4&color=fff&bold=true", status: "Aktif" },
+    { id: 3, nama: "SDIT BIS", logo: "https://ui-avatars.com/api/?name=BIS&background=7c3aed&color=fff&bold=true", status: "Aktif" },
+    { id: 4, nama: "SDIT Al Hanif", logo: "https://ui-avatars.com/api/?name=Al+Hanif&background=2563eb&color=fff&bold=true", status: "Aktif" },
+    { id: 5, nama: "MTsN 3 Cilegon", logo: "https://ui-avatars.com/api/?name=MTsN+3&background=0f172a&color=fff&bold=true", status: "Aktif" },
+    { id: 6, nama: "SDIT CIS", logo: "https://ui-avatars.com/api/?name=CIS&background=0891b2&color=fff&bold=true", status: "Aktif" },
+    { id: 7, nama: "SDIT Irsyadul Ibad 2", logo: "https://ui-avatars.com/api/?name=Irsyadul+Ibad&background=16a34a&color=fff&bold=true", status: "Aktif" },
+    { id: 8, nama: "SDIT Al-Izzah 1", logo: "https://ui-avatars.com/api/?name=Al+Izzah+1&background=ea580c&color=fff&bold=true", status: "Aktif" },
+    { id: 9, nama: "SDIT Al-Izzah 2", logo: "https://ui-avatars.com/api/?name=Al+Izzah+2&background=dc2626&color=fff&bold=true", status: "Aktif" },
+    { id: 10, nama: "MIN 1 Cilegon", logo: "https://ui-avatars.com/api/?name=MIN+1&background=059669&color=fff&bold=true", status: "Aktif" },
+    { id: 11, nama: "SD Peradaban", logo: "https://ui-avatars.com/api/?name=Peradaban&background=2563eb&color=fff&bold=true", status: "Aktif" },
+    { id: 12, nama: "SMA Al Azhar", logo: "https://ui-avatars.com/api/?name=Al+Azhar&background=7c3aed&color=fff&bold=true", status: "Aktif" },
+    { id: 13, nama: "SD WR", logo: "https://ui-avatars.com/api/?name=SD+WR&background=06b6d4&color=fff&bold=true", status: "Aktif" },
+    { id: 14, nama: "MTsN 2 Cilegon", logo: "https://ui-avatars.com/api/?name=MTsN+2&background=334155&color=fff&bold=true", status: "Aktif" },
+    { id: 15, nama: "SMP CIS", logo: "https://ui-avatars.com/api/?name=SMP+CIS&background=0ea5e9&color=fff&bold=true", status: "Aktif" },
+    { id: 16, nama: "SIS", logo: "https://ui-avatars.com/api/?name=SIS&background=1d4ed8&color=fff&bold=true", status: "Aktif" },
+    { id: 17, nama: "SMP Al Azhar", logo: "https://ui-avatars.com/api/?name=SMP+Al+Azhar&background=9333ea&color=fff&bold=true", status: "Aktif" },
+    { id: 18, nama: "SD YPKS 2 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+2&background=0891b2&color=fff&bold=true", status: "Aktif" },
+    { id: 19, nama: "SD YPKS 4 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+4&background=2563eb&color=fff&bold=true", status: "Aktif" },
+    { id: 20, nama: "SD YPKS 5 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+5&background=16a34a&color=fff&bold=true", status: "Aktif" },
+    { id: 21, nama: "TK Bosowa", logo: "https://ui-avatars.com/api/?name=Bosowa&background=0f172a&color=fff&bold=true", status: "Aktif" },
+    { id: 22, nama: "SD Bosowa", logo: "https://ui-avatars.com/api/?name=Bosowa&background=2563eb&color=fff&bold=true", status: "Aktif" },
+    { id: 23, nama: "SDIT Bina Insani", logo: "https://ui-avatars.com/api/?name=Bina+Insani&background=0891b2&color=fff&bold=true", status: "Aktif" },
+    { id: 24, nama: "SDIT Bina Bangsa", logo: "https://ui-avatars.com/api/?name=Bina+Bangsa&background=7c3aed&color=fff&bold=true", status: "Aktif" },
+    { id: 25, nama: "MTsN 1 Kota Serang", logo: "https://ui-avatars.com/api/?name=MTsN+1&background=0f172a&color=fff&bold=true", status: "Aktif" },
+    { id: 26, nama: "SMP Ibnu Syam", logo: "https://ui-avatars.com/api/?name=Ibnu+Syam&background=06b6d4&color=fff&bold=true", status: "Aktif" },
+    { id: 27, nama: "SMA Al Bayan", logo: "https://ui-avatars.com/api/?name=Al+Bayan&background=2563eb&color=fff&bold=true", status: "Aktif" }
+  ];
+
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = value;
+  }
+
+  function setApiStatus(text, type = 'loading') {
+    const el = document.getElementById('apiStatus');
+    if (!el) return;
+
+    el.innerText = text;
+    el.className = 'mt-1 text-sm font-black';
+
+    if (type === 'success') {
+      el.classList.add('text-green-500');
+    } else if (type === 'error') {
+      el.classList.add('text-red-500');
+    } else {
+      el.classList.add('text-yellow-500');
+    }
+  }
+
+  function updateLastUpdate() {
+    const now = new Date();
+
+    setText('lastUpdate', now.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }));
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function getSchoolName(school) {
+    return school.nama || school.name || school.school_name || 'Tanpa Nama';
+  }
+
+  function getSchoolStatus(school) {
+    return school.status || school.status_sekolah || 'Aktif';
+  }
+
+  function getSchoolLogo(school) {
+    const name = getSchoolName(school);
+
+    if (school.logo_url) {
+      return school.logo_url;
+    }
+
+    if (school.logo) {
+      if (String(school.logo).startsWith('http')) {
+        return school.logo;
+      }
+
+      return `http://127.0.0.1:8000/storage/${school.logo}`;
+    }
+
+    if (school.photo) {
+      if (String(school.photo).startsWith('http')) {
+        return school.photo;
+      }
+
+      return `http://127.0.0.1:8000/storage/${school.photo}`;
+    }
+
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+  }
+
+  function showSkeleton() {
+    const container = document.getElementById('schoolList');
+
+    if (!container) return;
+
+    container.innerHTML = Array.from({ length: 8 }).map(() => `
+      <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 dark:border-slate-800 dark:bg-slate-900/90">
+        <div class="animate-pulse">
+          <div class="mx-auto h-24 w-24 rounded-full bg-slate-200 dark:bg-slate-800"></div>
+          <div class="mx-auto mt-5 h-5 w-40 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="mx-auto mt-3 h-4 w-48 rounded bg-slate-200 dark:bg-slate-800"></div>
+          <div class="mt-5 h-12 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function updateStats(schools, shownSchools) {
+    const total = schools.length;
+    const aktif = schools.filter(s => String(getSchoolStatus(s)).toLowerCase() !== 'nonaktif').length;
+    const shown = shownSchools.length;
+
+    setText('statTotal', total);
+    setText('statAktif', aktif);
+    setText('statShown', shown);
+    setText('totalSekolahHero', total);
+    setText('totalSekolahCard', total);
+    setText('activeSchoolText', `${aktif} sekolah`);
+
+    const bar = document.getElementById('activeSchoolBar');
+    if (bar) {
+      const percent = total > 0 ? Math.round((aktif / total) * 100) : 0;
+      bar.style.width = `${percent}%`;
+    }
+  }
+
+  function renderSekolah(schools) {
+    const container = document.getElementById('schoolList');
+    const emptyState = document.getElementById('emptyState');
+
+    if (!container) return;
+
+    updateStats(allSchools, schools);
+
+    if (!schools.length) {
+      container.innerHTML = "";
+      if (emptyState) emptyState.classList.remove('hidden');
+      return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+
+    container.innerHTML = schools.map(school => {
+      const id = school.id;
+      const name = getSchoolName(school);
+      const logo = getSchoolLogo(school);
+      const status = getSchoolStatus(school);
+      const totalSiswa = school.total_siswa || school.totalPelajar || school.students_count || 0;
+      const safeName = escapeHtml(name);
+      const safeStatus = escapeHtml(status);
+
+      return `
+        <div
+          onclick="pilihSekolah(${id}, '${encodeURIComponent(name)}')"
+          class="school-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
+        >
+          <div class="relative h-24 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.35),transparent_35%)]"></div>
+
+            <div class="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-black text-white backdrop-blur">
+              ${safeStatus}
+            </div>
+          </div>
+
+          <div class="relative px-5 pb-5">
+            <div class="-mt-12 flex justify-center">
+              <img
+                src="${logo}"
+                onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true'"
+                class="h-24 w-24 rounded-full border-4 border-white object-cover shadow-xl dark:border-slate-900"
+                alt="${safeName}"
+              />
+            </div>
+
+            <div class="mt-4 text-center">
+              <h2 class="line-clamp-2 min-h-[56px] text-lg font-black leading-7 text-slate-900 dark:text-white">
+                ${safeName}
+              </h2>
+
+              <p class="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
+                Mitra Robotic & Coding
+              </p>
+            </div>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
+                <p class="text-xs font-semibold text-slate-400">Pelajar</p>
+                <p class="mt-1 text-sm font-black text-blue-500">${totalSiswa}</p>
+              </div>
+
+              <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
+                <p class="text-xs font-semibold text-slate-400">Status</p>
+                <p class="mt-1 text-sm font-black text-green-500">${safeStatus}</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="mt-5 w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-950 dark:text-slate-300"
+            >
+              Masuk Sekolah
+            </button>
           </div>
         </div>
       `;
-      container.innerHTML += card;
+    }).join('');
+  }
+
+  function applyFilter() {
+    const search = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
+    const sort = document.getElementById('sortInput')?.value || 'az';
+
+    let filtered = allSchools.filter(school => {
+      const target = [
+        getSchoolName(school),
+        getSchoolStatus(school)
+      ].join(' ').toLowerCase();
+
+      return target.includes(search);
     });
 
-  } catch (err) {
-    console.error(err);
+    filtered.sort((a, b) => {
+      const nameA = getSchoolName(a).toLowerCase();
+      const nameB = getSchoolName(b).toLowerCase();
+
+      if (sort === 'az') return nameA.localeCompare(nameB);
+      if (sort === 'za') return nameB.localeCompare(nameA);
+      if (sort === 'newest') return Number(b.id || 0) - Number(a.id || 0);
+      if (sort === 'oldest') return Number(a.id || 0) - Number(b.id || 0);
+
+      return 0;
+    });
+
+    renderSekolah(filtered);
   }
-}
 
-function pilihSekolah(id) {
-  // simpan ke localStorage
-  localStorage.setItem('school_id', id);
+  async function apiGetSchools() {
+    const res = await fetch(`${API_BASE}/sekolah`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
 
-  // redirect (bebas mau kemana)
-  window.location.href = "index.html";
-}
+    const raw = await res.text();
 
-loadSekolah();
-</script>
+    let data;
+
+    try {
+      data = JSON.parse(raw);
+    } catch (err) {
+      throw new Error("API /sekolah bukan JSON");
+    }
+
+    if (!res.ok) {
+      throw new Error(data.message || `HTTP Error ${res.status}`);
+    }
+
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.data)) return data.data;
+    if (Array.isArray(data.schools)) return data.schools;
+    if (Array.isArray(data.sekolah)) return data.sekolah;
+
+    return [];
+  }
+
+  async function loadHeaderUser() {
+    try {
+      const res = await fetch(`${API_BASE}/profile`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!res.ok) return;
+
+      const data = await res.json();
+
+      const name = data.name || localStorage.getItem('name') || 'Admin';
+      const email = data.email || localStorage.getItem('email') || '';
+
+      setText('header_name', name);
+      setText('dropdown_name', name);
+      setText('dropdown_email', email);
+
+      const avatar = document.getElementById('header_avatar');
+
+      if (avatar) {
+        avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+      }
+
+    } catch (err) {
+      console.warn("Header profile gagal:", err);
+    }
+  }
+
+  async function loadSekolah() {
+    try {
+      setApiStatus('Loading...', 'loading');
+      showSkeleton();
+
+      let data = [];
+
+      try {
+        data = await apiGetSchools();
+
+        if (data.length) {
+          setText('sourceStatus', 'Laravel');
+        } else {
+          data = dummySchools;
+          setText('sourceStatus', 'Dummy');
+        }
+
+      } catch (apiErr) {
+        console.warn("API sekolah belum siap, pakai dummy:", apiErr.message);
+        data = dummySchools;
+        setText('sourceStatus', 'Dummy');
+      }
+
+      allSchools = data;
+      applyFilter();
+
+      setApiStatus('Connected', 'success');
+      updateLastUpdate();
+
+    } catch (err) {
+      console.error("Error load sekolah:", err);
+
+      setApiStatus('Disconnected', 'error');
+
+      const container = document.getElementById('schoolList');
+      if (container) {
+        container.innerHTML = `
+          <div class="col-span-full rounded-[2rem] border border-red-200 bg-red-50 p-8 text-center shadow-xl shadow-red-100 dark:border-red-900 dark:bg-red-950/40 dark:shadow-black/20">
+            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-100 text-3xl dark:bg-red-950">
+              ⚠️
+            </div>
+
+            <h3 class="text-xl font-black text-red-600 dark:text-red-300">
+              Gagal mengambil data sekolah
+            </h3>
+
+            <p class="mt-2 text-sm font-semibold text-red-500 dark:text-red-300">
+              ${escapeHtml(err.message || 'Cek Laravel API /api/sekolah')}
+            </p>
+
+            <button
+              onclick="loadSekolah()"
+              class="mt-5 rounded-2xl bg-red-600 px-5 py-3 text-sm font-black text-white transition hover:bg-red-700"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        `;
+      }
+    }
+  }
+
+  function pilihSekolah(id, encodedName) {
+    const name = decodeURIComponent(encodedName || '');
+
+    localStorage.setItem('school_id', id);
+    localStorage.setItem('school_name', name);
+
+    // Kalau mau setelah klik sekolah masuk ke halaman pelajar:
+    window.location.href = "pelajar.html";
+
+    // Kalau mau balik ke dashboard admin, ganti jadi:
+    // window.location.href = "index.html";
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadPartials();
+    await loadHeaderUser();
+    await loadSekolah();
+
+    const searchInput = document.getElementById('searchInput');
+    const sortInput = document.getElementById('sortInput');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilter);
+    }
+
+    if (sortInput) {
+      sortInput.addEventListener('change', applyFilter);
+    }
+  });
+  </script>
 
 </body>
 </html>
