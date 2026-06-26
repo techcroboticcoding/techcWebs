@@ -32,7 +32,46 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Models\StudentDocumentation;
 
+if (!function_exists('techc_user_from_request')) {
+    function techc_user_from_request(\Illuminate\Http\Request $request)
+    {
+        $user = null;
 
+        // 1. Ambil dari Authorization: Bearer dummy-token-USER_ID
+        $authorization = $request->header('Authorization');
+
+        if ($authorization && str_contains($authorization, 'dummy-token-')) {
+            $userId = trim(str_replace('Bearer dummy-token-', '', $authorization));
+
+            if (is_numeric($userId)) {
+                $user = \App\Models\User::find((int) $userId);
+                if ($user) return $user;
+            }
+        }
+
+        // 2. Ambil dari X-User-Id / query user_id / body user_id
+        $userId = $request->header('X-User-Id')
+            ?? $request->query('user_id')
+            ?? $request->input('user_id');
+
+        if ($userId && is_numeric($userId)) {
+            $user = \App\Models\User::find((int) $userId);
+            if ($user) return $user;
+        }
+
+        // 3. Ambil dari email
+        $email = $request->header('X-User-Email')
+            ?? $request->query('email')
+            ?? $request->input('email');
+
+        if ($email) {
+            $user = \App\Models\User::where('email', $email)->first();
+            if ($user) return $user;
+        }
+
+        return null;
+    }
+}
 if (!function_exists('techc_storage_url')) {
     function techc_storage_url($path)
     {
@@ -679,74 +718,71 @@ Route::post('/invoices/{invoice}/upload-proof-paid', function (Invoice $invoice,
 |--------------------------------------------------------------------------
 | STUDENT DASHBOARD
 |--------------------------------------------------------------------------
-*/
-Route::get('/student/dashboard', function (Request $request) {
-    $user = techc_user_from_request($request);
+*/Route::get('/student/dashboard', function (\Illuminate\Http\Request $request) {
+    try {
+        $user = techc_user_from_request($request);
 
-    $student = null;
+        $student = null;
 
-    $studentId = $request->header('X-Student-Id')
-        ?? $request->query('student_id');
+        $studentId = $request->header('X-Student-Id')
+            ?? $request->query('student_id')
+            ?? $request->input('student_id');
 
-    if ($studentId) {
-        $student = Student::with(['school', 'package'])
-            ->where('id', $studentId)
-            ->first();
-    }
+        if ($studentId) {
+            $student = \App\Models\Student::with(['school', 'package'])
+                ->where('id', $studentId)
+                ->first();
+        }
 
-    if (!$student && $user) {
-        $student = Student::with(['school', 'package'])
-            ->where('user_id', $user->id)
-            ->first();
-    }
+        if (!$student && $user) {
+            $student = \App\Models\Student::with(['school', 'package'])
+                ->where('user_id', $user->id)
+                ->first();
+        }
 
-    $userId = $request->header('X-User-Id')
-        ?? $request->query('user_id');
+        if (!$student) {
+            return response()->json([
+                'message' => 'Data siswa tidak ditemukan untuk user login ini.',
+                'debug' => [
+                    'user_id' => $request->query('user_id'),
+                    'student_id' => $request->query('student_id'),
+                    'x_user_id' => $request->header('X-User-Id'),
+                    'x_student_id' => $request->header('X-Student-Id'),
+                    'x_user_email' => $request->header('X-User-Email'),
+                ],
+            ], 404);
+        }
 
-    if (!$student && $userId) {
-        $student = Student::with(['school', 'package'])
-            ->where('user_id', $userId)
-            ->first();
-    }
+        $invoices = \App\Models\Invoice::with(['items', 'payments'])
+            ->where('student_id', $student->id)
+            ->latest()
+            ->get();
 
-    if (!$student) {
+        $unpaidTotal = $invoices
+            ->filter(fn ($invoice) => in_array($invoice->status, ['Belum Dibayar', 'Pending']))
+            ->sum('total');
+
         return response()->json([
-            'message' => 'Data siswa tidak ditemukan untuk user login ini.',
-            'debug' => [
-                'x_user_id' => $request->header('X-User-Id'),
-                'x_student_id' => $request->header('X-Student-Id'),
-                'x_user_email' => $request->header('X-User-Email'),
-                'authorization' => $request->header('Authorization'),
-            ],
-        ], 404);
+            'student' => $student,
+            'jumlah_anak' => 1,
+            'progress_belajar' => $student->progress_belajar ?? 0,
+            'tagihan' => $unpaidTotal,
+            'catatan' => $student->catatan,
+            'jadwal' => $student->jadwal ? json_decode($student->jadwal, true) : [],
+            'invoices' => $invoices,
+            'notifications' => class_exists(\App\Models\StudentNotification::class)
+                ? \App\Models\StudentNotification::where('student_id', $student->id)->latest()->take(10)->get()
+                : [],
+        ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Student dashboard API error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
     }
-
-    $invoices = Invoice::with('items')
-        ->where('student_id', $student->id)
-        ->latest()
-        ->get();
-
-    $unpaidTotal = $invoices
-        ->filter(fn ($invoice) => $invoice->status === 'Belum Dibayar')
-        ->sum('total');
-
-    return response()->json([
-        'student' => $student,
-        'jumlah_anak' => 1,
-        'progress_belajar' => $student->progress_belajar ?? 0,
-        'tagihan' => $unpaidTotal,
-        'pengumuman' => Announcement::whereIn('target_role', ['siswa', 'all'])
-            ->latest()
-            ->take(5)
-            ->get(),
-        'catatan' => $student->catatan,
-        'jadwal' => $student->jadwal ? json_decode($student->jadwal, true) : [],
-        'invoices' => $invoices,
-        'notifications' => StudentNotification::where('student_id', $student->id)
-            ->latest()
-            ->take(10)
-            ->get(),
-    ]);
 });
 
 Route::get('/student/invoices', function (Request $request) {
@@ -904,33 +940,43 @@ Route::delete('/admin/documentations/{documentation}', function (StudentDocument
         'message' => 'Dokumentasi berhasil dihapus.',
     ]);
 });
+Route::get('/student/documentations', function (\Illuminate\Http\Request $request) {
+    try {
+        $studentId = $request->header('X-Student-Id')
+            ?? $request->query('student_id')
+            ?? $request->input('student_id');
 
-Route::get('/student/documentations', function (Request $request) {
-    $studentId = $request->header('X-Student-Id')
-        ?? $request->query('student_id');
+        $student = null;
 
-    $student = null;
-
-    if ($studentId) {
-        $student = Student::find($studentId);
-    }
-
-    if (!$student && function_exists('techc_user_from_request')) {
-        $user = techc_user_from_request($request);
-
-        if ($user) {
-            $student = Student::where('user_id', $user->id)->first();
+        if ($studentId) {
+            $student = \App\Models\Student::find($studentId);
         }
-    }
 
-    if (!$student) {
-        return response()->json([]);
-    }
+        if (!$student) {
+            $user = techc_user_from_request($request);
 
-    return StudentDocumentation::where('student_id', $student->id)
-        ->where('status', 'Published')
-        ->latest()
-        ->get();
+            if ($user) {
+                $student = \App\Models\Student::where('user_id', $user->id)->first();
+            }
+        }
+
+        if (!$student) {
+            return response()->json([]);
+        }
+
+        return \App\Models\StudentDocumentation::where('student_id', $student->id)
+            ->where('status', 'Published')
+            ->latest()
+            ->get();
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Student documentations API error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
+    }
 });
 
 /*
