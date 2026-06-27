@@ -1051,8 +1051,122 @@ Route::get('/announcements', fn () => Announcement::latest()->get());
 Route::get('/pengumuman', fn () => Announcement::latest()->get());
 Route::get('/events', fn () => Event::latest()->get());
 Route::get('/help-tickets', fn () => HelpTicket::latest()->get());
-Route::get('/reports', fn () => Report::latest()->get());
-Route::get('/laporan', fn () => Report::latest()->get());
+/*
+|--------------------------------------------------------------------------
+| DAILY REPORTS
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/reports', function (Request $request) {
+    $query = Report::query()->latest();
+
+    if ($request->filled('partner_name')) {
+        $query->where('partner_name', $request->partner_name);
+    }
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    if ($request->filled('date')) {
+        $query->whereDate('report_date', $request->date);
+    }
+
+    if ($request->filled('search')) {
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+            $q->where('partner_name', 'like', "%{$search}%")
+              ->orWhere('title', 'like', "%{$search}%")
+              ->orWhere('category', 'like', "%{$search}%")
+              ->orWhere('content', 'like', "%{$search}%")
+              ->orWhere('status', 'like', "%{$search}%");
+        });
+    }
+
+    return response()->json($query->get());
+});
+
+Route::post('/reports', function (Request $request) {
+    $request->validate([
+        'report_date' => 'nullable|date',
+        'date' => 'nullable|date',
+        'partner_name' => 'required|string|max:255',
+        'title' => 'required|string|max:255',
+        'category' => 'nullable|string|max:255',
+        'content' => 'required|string',
+        'status' => 'nullable|string|max:255',
+        'reporter_name' => 'nullable|string|max:255',
+        'reporter_email' => 'nullable|string|max:255',
+    ]);
+
+    $report = Report::create([
+        'report_date' => $request->report_date
+            ?? $request->date
+            ?? now()->toDateString(),
+
+        'partner_name' => $request->partner_name
+            ?? $request->rekan
+            ?? $request->nama_rekan,
+
+        'title' => $request->title
+            ?? $request->judul
+            ?? 'Laporan Harian',
+
+        'category' => $request->category
+            ?? $request->kategori
+            ?? 'Kegiatan Harian',
+
+        'content' => $request->content
+            ?? $request->isi_laporan
+            ?? $request->description
+            ?? $request->deskripsi,
+
+        'status' => $request->status ?? 'Selesai',
+
+        'reporter_name' => $request->reporter_name
+            ?? $request->header('X-User-Name')
+            ?? 'Admin TECH-C',
+
+        'reporter_email' => $request->reporter_email
+            ?? $request->header('X-User-Email'),
+    ]);
+
+    return response()->json([
+        'message' => 'Laporan berhasil disimpan.',
+        'data' => $report,
+    ], 201);
+});
+
+Route::get('/reports/{report}', function (Report $report) {
+    return response()->json($report);
+});
+
+Route::put('/reports/{report}', function (Report $report, Request $request) {
+    $report->update([
+        'report_date' => $request->report_date ?? $request->date ?? $report->report_date,
+        'partner_name' => $request->partner_name ?? $report->partner_name,
+        'title' => $request->title ?? $report->title,
+        'category' => $request->category ?? $report->category,
+        'content' => $request->content ?? $report->content,
+        'status' => $request->status ?? $report->status,
+        'reporter_name' => $request->reporter_name ?? $report->reporter_name,
+        'reporter_email' => $request->reporter_email ?? $report->reporter_email,
+    ]);
+
+    return response()->json([
+        'message' => 'Laporan berhasil diperbarui.',
+        'data' => $report,
+    ]);
+});
+
+Route::delete('/reports/{report}', function (Report $report) {
+    $report->delete();
+
+    return response()->json([
+        'message' => 'Laporan berhasil dihapus.',
+    ]);
+});
 
 Route::post('/announcements', fn (Request $request) => response()->json(Announcement::create($request->all()), 201));
 Route::post('/events', fn (Request $request) => response()->json(Event::create($request->all()), 201));
