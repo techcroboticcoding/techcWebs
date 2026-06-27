@@ -28,19 +28,6 @@ function getApiBaseSync() {
   return PRODUCTION_API_BASE_SYNC;
 }
 
-function syncFixHttps(url) {
-  if (!url) return '';
-
-  if (
-    String(url).includes('127.0.0.1') ||
-    String(url).includes('localhost')
-  ) {
-    return String(url);
-  }
-
-  return String(url).replace('http://', 'https://');
-}
-
 function syncFallbackAvatar(name) {
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Admin TECH-C')}&background=2563eb&color=fff&bold=true`;
 }
@@ -50,14 +37,52 @@ function syncSetText(id, value) {
   if (el) el.innerText = value || '-';
 }
 
+function syncAdminPhotoUrl(raw, name) {
+  const API_BASE = getApiBaseSync();
+
+  if (!raw) {
+    return syncFallbackAvatar(name);
+  }
+
+  raw = String(raw).trim();
+
+  // Fix dari http jadi https
+  raw = raw.replace('http://techcwebs-production.up.railway.app', 'https://techcwebs-production.up.railway.app');
+
+  // Kalau masih URL lama /storage/admin-profiles, paksa ke route API file viewer
+  if (raw.includes('/storage/admin-profiles/')) {
+    const filename = raw.split('/storage/admin-profiles/').pop().split('?')[0];
+    return `${API_BASE}/files/admin-profiles/${filename}?v=${Date.now()}`;
+  }
+
+  // Kalau path mentah admin-profiles/namafile.jpg
+  if (raw.startsWith('admin-profiles/')) {
+    const filename = raw.split('/').pop();
+    return `${API_BASE}/files/admin-profiles/${filename}?v=${Date.now()}`;
+  }
+
+  // Kalau sudah route API benar
+  if (raw.includes('/api/files/admin-profiles/')) {
+    return raw.split('?')[0] + `?v=${Date.now()}`;
+  }
+
+  // Kalau URL image lain
+  if (raw.startsWith('http://') || raw.startsWith('https://')) {
+    return raw.split('?')[0] + `?v=${Date.now()}`;
+  }
+
+  // Fallback kalau cuma filename
+  const filename = raw.split('/').pop();
+  return `${API_BASE}/files/admin-profiles/${filename}?v=${Date.now()}`;
+}
+
 function syncSetAvatar(url, name) {
   const avatar = document.getElementById('header_avatar');
   if (!avatar) return;
 
-  const finalUrl = url || syncFallbackAvatar(name);
-
-  avatar.src = finalUrl;
+  avatar.src = url || syncFallbackAvatar(name);
   avatar.alt = name || 'Admin Profile';
+
   avatar.classList.add('h-full', 'w-full', 'object-cover');
 
   avatar.onerror = function () {
@@ -73,15 +98,14 @@ async function syncAdminProfileHeader() {
   const savedEmail = localStorage.getItem('email') || '';
   const savedPhoto = localStorage.getItem('photo_url') || '';
 
-  // tampilkan data localStorage dulu biar cepat
   syncSetText('header_name', savedName);
   syncSetText('dropdown_name', savedName);
   syncSetText('dropdown_email', savedEmail);
 
   if (savedPhoto) {
-    syncSetAvatar(syncFixHttps(savedPhoto), savedName);
+    syncSetAvatar(syncAdminPhotoUrl(savedPhoto, savedName), savedName);
   } else {
-    syncSetAvatar('', savedName);
+    syncSetAvatar(syncFallbackAvatar(savedName), savedName);
   }
 
   try {
@@ -113,14 +137,15 @@ async function syncAdminProfileHeader() {
 
     const name = profile.name || savedName;
     const email = profile.email || savedEmail;
-    const photoUrl = syncFixHttps(profile.photo_url || '');
+
+    const photoUrl = syncAdminPhotoUrl(
+      profile.photo_url || profile.photo || savedPhoto,
+      name
+    );
 
     localStorage.setItem('name', name);
     localStorage.setItem('email', email);
-
-    if (photoUrl) {
-      localStorage.setItem('photo_url', photoUrl);
-    }
+    localStorage.setItem('photo_url', photoUrl);
 
     const oldUser = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -131,7 +156,7 @@ async function syncAdminProfileHeader() {
       email,
       role: profile.role || oldUser.role || 'admin',
       photo: profile.photo || oldUser.photo || null,
-      photo_url: photoUrl || oldUser.photo_url || null,
+      photo_url: photoUrl,
     }));
 
     syncSetText('header_name', name);
