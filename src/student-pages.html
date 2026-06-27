@@ -321,33 +321,47 @@ const API_BASE = getApiBase();
     return Number.isFinite(number) ? number : fallback;
   }
 function getBackendBaseUrl() {
-  return API_BASE.replace('/api', '');
+  return API_BASE.replace('/api', '').replace('http://', 'https://');
 }
 
 function getDocumentationImageUrl(doc) {
   const backendBase = getBackendBaseUrl();
 
-  const raw =
+  let raw =
     doc.image_url ||
-    doc.photo_url ||
+    doc.url ||
+    doc.file_url ||
+    doc.file ||
     doc.image_path ||
     doc.image ||
-    doc.file_path ||
+    doc.photo ||
+    doc.path ||
     '';
 
   if (!raw) {
     return 'https://placehold.co/900x500/e2e8f0/64748b?text=Dokumentasi+TECH-C';
   }
 
-  if (String(raw).startsWith('http')) {
+  raw = String(raw);
+
+  // Paksa image dari Railway jadi HTTPS
+  if (raw.startsWith('http://techcwebs-production.up.railway.app')) {
+    return raw.replace('http://', 'https://');
+  }
+
+  if (raw.startsWith('https://')) {
     return raw;
   }
 
-  if (String(raw).startsWith('/storage/')) {
+  if (raw.startsWith('http://')) {
+    return raw.replace('http://', 'https://');
+  }
+
+  if (raw.startsWith('/storage/')) {
     return `${backendBase}${raw}`;
   }
 
-  if (String(raw).startsWith('storage/')) {
+  if (raw.startsWith('storage/')) {
     return `${backendBase}/${raw}`;
   }
 
