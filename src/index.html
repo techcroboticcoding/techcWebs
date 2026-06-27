@@ -1024,40 +1024,92 @@ const API_BASE = getApiBase();
       `;
     }).join('');
   }
+async function loadHeaderUser() {
+  try {
+    const res = await fetch(`${API_BASE}/admin/profile`, {
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+        'X-User-Id': localStorage.getItem('user_id') || '',
+        'X-User-Email': localStorage.getItem('email') || '',
+        'X-User-Role': localStorage.getItem('role') || 'admin'
+      }
+    });
 
-  async function loadHeaderUser() {
+    const raw = await res.text();
+
+    let data;
+
     try {
-      const res = await fetch(`${API_BASE}/profile`, {
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'X-User-Email': localStorage.getItem('email') || '',
-          'X-User-Role': localStorage.getItem('role') || 'admin'
-        }
-      });
+      data = JSON.parse(raw);
+    } catch {
+      throw new Error('Response profile bukan JSON: ' + raw);
+    }
 
-      if (!res.ok) return;
+    if (!res.ok) {
+      throw new Error(data.message || 'Gagal load profile admin');
+    }
 
-      const data = await res.json();
+    const name = data.name || localStorage.getItem('name') || 'Admin TECH-C';
+    const email = data.email || localStorage.getItem('email') || '';
 
-      const name = data.name || localStorage.getItem('name') || 'Admin';
-      const email = data.email || localStorage.getItem('email') || '';
+    let photoUrl = data.photo_url || '';
 
-      setText('header_name', name);
-      setText('dropdown_name', name);
-      setText('dropdown_email', email);
+    if (photoUrl) {
+      photoUrl = String(photoUrl)
+        .replace('http://techcwebs-production.up.railway.app', 'https://techcwebs-production.up.railway.app');
 
-      const avatar = document.getElementById('header_avatar');
-
-      if (avatar) {
-        avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+      if (photoUrl.includes('/storage/admin-profiles/')) {
+        const filename = photoUrl.split('/storage/admin-profiles/').pop().split('?')[0];
+        photoUrl = `${API_BASE}/files/admin-profiles/${filename}`;
       }
 
-    } catch (err) {
-      console.warn('Header profile gagal:', err);
+      photoUrl = photoUrl.split('?')[0] + `?v=${Date.now()}`;
+    } else {
+      photoUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+    }
+
+    localStorage.setItem('name', name);
+    localStorage.setItem('email', email);
+    localStorage.setItem('photo_url', photoUrl);
+
+    const headerName = document.getElementById('header_name');
+    const dropdownName = document.getElementById('dropdown_name');
+    const dropdownEmail = document.getElementById('dropdown_email');
+    const avatar = document.getElementById('header_avatar');
+
+    if (headerName) headerName.innerText = name;
+    if (dropdownName) dropdownName.innerText = name;
+    if (dropdownEmail) dropdownEmail.innerText = email;
+
+    if (avatar) {
+      avatar.src = photoUrl;
+      avatar.alt = name;
+      avatar.classList.add('h-full', 'w-full', 'object-cover');
+
+      avatar.onerror = function () {
+        this.onerror = null;
+        this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+      };
+    }
+
+  } catch (err) {
+    console.error('Header profile gagal:', err);
+
+    const name = localStorage.getItem('name') || 'Admin TECH-C';
+    const photoUrl = localStorage.getItem('photo_url') || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+
+    const avatar = document.getElementById('header_avatar');
+    const headerName = document.getElementById('header_name');
+
+    if (headerName) headerName.innerText = name;
+
+    if (avatar) {
+      avatar.src = photoUrl;
+      avatar.classList.add('h-full', 'w-full', 'object-cover');
     }
   }
-
+}
   async function loadDashboard() {
     try {
       setApiStatus('Loading...', 'loading');
@@ -1110,10 +1162,10 @@ const API_BASE = getApiBase();
 
   document.addEventListener('DOMContentLoaded', async () => {
     await loadPartials();
+        await loadHeaderUser();
 if (window.syncAdminProfileHeader) {
   await window.syncAdminProfileHeader();
 }
-    await loadHeaderUser();
     await loadDashboard();
 await loadDashboardUnpaidInvoices();
     if (dashboardInterval) {
