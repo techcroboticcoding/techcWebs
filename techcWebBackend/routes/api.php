@@ -168,6 +168,163 @@ Route::get('/profile', function (Request $request) {
         ], 500);
     }
 });
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN PROFILE / BIODATA
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/admin/profile', function (Request $request) {
+    try {
+        $user = techc_user_from_request($request);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User admin tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'photo' => $user->photo ?? null,
+            'photo_url' => techc_photo_url($user->photo ?? null),
+            'phone' => $user->phone ?? null,
+            'whatsapp' => $user->whatsapp ?? null,
+            'position' => $user->position ?? null,
+            'address' => $user->address ?? null,
+            'bio' => $user->bio ?? null,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+        ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Admin profile API error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
+    }
+});
+
+Route::post('/admin/profile', function (Request $request) {
+    try {
+        $user = techc_user_from_request($request);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User admin tidak ditemukan.',
+            ], 404);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'whatsapp' => 'nullable|string|max:50',
+            'position' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
+            'bio' => 'nullable|string',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $emailExists = User::where('email', $request->email)
+            ->where('id', '!=', $user->id)
+            ->exists();
+
+        if ($emailExists) {
+            return response()->json([
+                'message' => 'Email sudah digunakan admin lain.',
+            ], 422);
+        }
+
+        $payload = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'whatsapp' => $request->whatsapp,
+            'position' => $request->position,
+            'address' => $request->address,
+            'bio' => $request->bio,
+        ];
+
+        if ($request->filled('password')) {
+            $payload['password'] = Hash::make($request->password);
+        }
+
+        $user->update($payload);
+
+        return response()->json([
+            'message' => 'Profile admin berhasil diperbarui.',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->fresh()->name,
+                'email' => $user->fresh()->email,
+                'role' => $user->fresh()->role,
+                'photo' => $user->fresh()->photo,
+                'photo_url' => techc_photo_url($user->fresh()->photo),
+                'phone' => $user->fresh()->phone,
+                'whatsapp' => $user->fresh()->whatsapp,
+                'position' => $user->fresh()->position,
+                'address' => $user->fresh()->address,
+                'bio' => $user->fresh()->bio,
+            ],
+        ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Update profile admin error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
+    }
+});
+
+Route::post('/admin/profile/photo', function (Request $request) {
+    try {
+        $user = techc_user_from_request($request);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User admin tidak ditemukan.',
+            ], 404);
+        }
+
+        $request->validate([
+            'photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
+        ]);
+
+        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+            Storage::disk('public')->delete($user->photo);
+        }
+
+        $path = $request->file('photo')->store('admin-profiles', 'public');
+
+        $user->update([
+            'photo' => $path,
+        ]);
+
+        return response()->json([
+            'message' => 'Foto profile berhasil diperbarui.',
+            'photo' => $path,
+            'photo_url' => techc_photo_url($path),
+            'user' => $user->fresh(),
+        ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Upload foto profile error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
+    }
+});
 /*
 |--------------------------------------------------------------------------
 | DASHBOARD ADMIN

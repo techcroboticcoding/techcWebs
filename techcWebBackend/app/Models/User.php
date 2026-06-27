@@ -25,14 +25,13 @@ protected $fillable = [
     'name',
     'email',
     'password',
-    'phone',
-    'bio',
-    'country',
-    'city',
-    'postal_code',
-    'tax_id',
     'role',
-    'photo_profile'
+    'photo',
+    'phone',
+    'whatsapp',
+    'position',
+    'address',
+    'bio',
 ];
     /**
      * Get the attributes that should be cast.
