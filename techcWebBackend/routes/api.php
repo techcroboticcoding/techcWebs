@@ -198,61 +198,114 @@ $storeAttendance = function (array $payload) {
 
     return DB::table('attendances')->where('id', $id)->first();
 };
-
 Route::get('/attendances', function (Request $request) {
     try {
-        $query = Attendance::query()
-            ->orderByDesc('attendance_date')
-            ->orderByDesc('attendance_time')
+        $dateColumn = Schema::hasColumn('attendances', 'attendance_date')
+            ? 'attendance_date'
+            : 'tanggal';
+
+        $timeColumn = Schema::hasColumn('attendances', 'attendance_time')
+            ? 'attendance_time'
+            : 'jam';
+
+        $nameColumn = Schema::hasColumn('attendances', 'name')
+            ? 'name'
+            : 'nama';
+
+        $idColumn = Schema::hasColumn('attendances', 'member_id')
+            ? 'member_id'
+            : null;
+
+        $query = DB::table('attendances')
+            ->orderByDesc($dateColumn)
+            ->orderByDesc($timeColumn)
             ->orderByDesc('id');
 
         if ($request->filled('date')) {
-            $query->whereDate('attendance_date', $request->date);
+            $query->whereDate($dateColumn, $request->date);
         }
 
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        if ($request->filled('member_id')) {
-            $query->where('member_id', $request->member_id);
-        }
-
-        if ($request->filled('status')) {
+        if ($request->filled('status') && Schema::hasColumn('attendances', 'status')) {
             $query->where('status', strtoupper($request->status));
         }
 
-        if ($request->filled('source')) {
+        if ($request->filled('source') && Schema::hasColumn('attendances', 'source')) {
             $query->where('source', $request->source);
+        }
+
+        if ($request->filled('member_id') && $idColumn) {
+            $query->where($idColumn, $request->member_id);
+        }
+
+        if ($request->filled('name')) {
+            $query->where($nameColumn, 'like', '%' . $request->name . '%');
         }
 
         if ($request->filled('search')) {
             $search = $request->search;
 
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('member_id', 'like', "%{$search}%")
-                  ->orWhere('status', 'like', "%{$search}%")
-                  ->orWhere('source', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search, $nameColumn, $idColumn) {
+                $q->where($nameColumn, 'like', "%{$search}%");
+
+                if ($idColumn) {
+                    $q->orWhere($idColumn, 'like', "%{$search}%");
+                }
+
+                if (Schema::hasColumn('attendances', 'status')) {
+                    $q->orWhere('status', 'like', "%{$search}%");
+                }
+
+                if (Schema::hasColumn('attendances', 'source')) {
+                    $q->orWhere('source', 'like', "%{$search}%");
+                }
             });
         }
 
-        $limit = (int) $request->get('limit', 300);
+        $limit = (int) $request->get('limit', 500);
         $limit = max(1, min($limit, 1000));
 
-        $data = $query->limit($limit)->get();
+        $rows = $query->limit($limit)->get();
+
+        $data = $rows->map(function ($row) use ($dateColumn, $timeColumn, $nameColumn, $idColumn) {
+            return [
+                'id' => $row->id ?? null,
+                'attendance_date' => $row->{$dateColumn} ?? null,
+                'attendance_time' => $row->{$timeColumn} ?? null,
+                'member_id' => $idColumn ? ($row->{$idColumn} ?? null) : null,
+                'name' => $row->{$nameColumn} ?? null,
+                'status' => $row->status ?? 'HADIR',
+                'source' => $row->source ?? 'web',
+                'device_name' => $row->device_name ?? null,
+                'note' => $row->note ?? null,
+                'created_at' => $row->created_at ?? null,
+                'updated_at' => $row->updated_at ?? null,
+            ];
+        });
 
         $today = now('Asia/Jakarta')->toDateString();
+
+        $todayCount = DB::table('attendances')
+            ->whereDate($dateColumn, $today)
+            ->count();
+
+        $hadirToday = Schema::hasColumn('attendances', 'status')
+            ? DB::table('attendances')
+                ->whereDate($dateColumn, $today)
+                ->where('status', 'HADIR')
+                ->count()
+            : $todayCount;
+
+        $lastUpdate = Schema::hasColumn('attendances', 'updated_at')
+            ? DB::table('attendances')->latest('updated_at')->value('updated_at')
+            : null;
 
         return response()->json([
             'message' => 'Data absensi berhasil diambil.',
             'stats' => [
-                'total' => Attendance::count(),
-                'today' => Attendance::whereDate('attendance_date', $today)->count(),
-                'hadir_today' => Attendance::whereDate('attendance_date', $today)
-                    ->where('status', 'HADIR')
-                    ->count(),
-                'last_update' => Attendance::latest()->value('updated_at'),
+                'total' => DB::table('attendances')->count(),
+                'today' => $todayCount,
+                'hadir_today' => $hadirToday,
+                'last_update' => $lastUpdate,
             ],
             'data' => $data,
         ]);
