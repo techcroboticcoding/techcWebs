@@ -378,8 +378,7 @@ function getApiBase() {
 
 const API_BASE = getApiBase();
 
-let allTeachers = [];
-const dummyTeachers = [
+let allTeachers = [];const dummyTeachers = [
   {
     id: 1,
     name: "Adam Rizki",
@@ -389,7 +388,7 @@ const dummyTeachers = [
     status: "Aktif",
     total_sekolah: 5,
     total_jadwal: 12,
-    photo: "/src/images/rekan/adam.jpg"
+    photo: "./src/images/rekan/adam.jpg"
   },
   {
     id: 2,
@@ -400,7 +399,7 @@ const dummyTeachers = [
     status: "Aktif",
     total_sekolah: 3,
     total_jadwal: 8,
-    photo: "/src/images/rekan/rizki.jpg"
+    photo: "./src/images/rekan/rizki.jpg"
   },
   {
     id: 3,
@@ -411,7 +410,7 @@ const dummyTeachers = [
     status: "Aktif",
     total_sekolah: 4,
     total_jadwal: 10,
-    photo: "/src/images/rekan/hashina.png"
+    photo: "./src/images/rekan/hashina.png"
   },
   {
     id: 4,
@@ -422,7 +421,7 @@ const dummyTeachers = [
     status: "Aktif",
     total_sekolah: 2,
     total_jadwal: 6,
-    photo: "/src/images/rekan/akbar.jpeg"
+    photo: "./src/images/rekan/akbar.jpeg"
   },
   {
     id: 5,
@@ -433,7 +432,7 @@ const dummyTeachers = [
     status: "Aktif",
     total_sekolah: 2,
     total_jadwal: 5,
-    photo: "/src/images/rekan/dinda.jpg"
+    photo: "./src/images/rekan/dinda.jpg"
   }
 ];
 
@@ -516,24 +515,29 @@ function getTeacherScheduleCount(teacher) {
     teacher.jumlah_jadwal ||
     0;
 }
-
-function getTeacherPhoto(teacher) {
-  const name = getTeacherName(teacher);
-
-  if (teacher.photo_url) return teacher.photo_url;
-  if (teacher.foto_url) return teacher.foto_url;
-
-  if (teacher.photo) {
-    if (String(teacher.photo).startsWith("http")) return teacher.photo;
-    return `http://127.0.0.1:8000/storage/${teacher.photo}`;
+function getTeacherPhotoUrl(photo, name = 'TECH-C') {
+  if (!photo) {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
   }
 
-  if (teacher.foto) {
-    if (String(teacher.foto).startsWith("http")) return teacher.foto;
-    return `http://127.0.0.1:8000/storage/${teacher.foto}`;
+  photo = String(photo).trim();
+
+  // Kalau sudah URL internet
+  if (photo.startsWith('http://') || photo.startsWith('https://')) {
+    return photo.replace('http://', 'https://');
   }
 
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+  // Kalau file frontend lokal, jangan ditambah /storage
+  if (
+    photo.startsWith('./') ||
+    photo.startsWith('/') ||
+    photo.startsWith('src/') ||
+    photo.startsWith('images/')
+  ) {
+    return photo;
+  }
+
+  return `./${photo}`;
 }
 
 function updateStats(teachers, shownTeachers) {
@@ -609,12 +613,12 @@ function renderPengajar(teachers) {
 
         <div class="relative px-5 pb-5">
           <div class="-mt-12 flex justify-center">
-            <img
-              src="${photo}"
-              onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true'"
-              class="h-24 w-24 rounded-full border-4 border-white object-cover shadow-xl dark:border-slate-900"
-              alt="${safeName}"
-            />
+<img
+  src="${getTeacherPhotoUrl(teacher.photo, teacher.name)}"
+  alt="${teacher.name}"
+  class="h-20 w-20 rounded-2xl object-cover"
+  onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(teacher.name)}&background=2563eb&color=fff&bold=true';"
+/>
           </div>
 
           <div class="mt-4 text-center">
