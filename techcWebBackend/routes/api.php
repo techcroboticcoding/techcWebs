@@ -316,6 +316,8 @@ Route::post('/admin/profile', function (Request $request) {
         ], 500);
     }
 });
+
+
 Route::post('/admin/profile/photo', function (Request $request) {
     try {
         $user = techc_user_from_request($request);
@@ -330,10 +332,6 @@ Route::post('/admin/profile/photo', function (Request $request) {
             'photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
-            Storage::disk('public')->delete($user->photo);
-        }
-
         $path = $request->file('photo')->store('admin-profiles', 'public');
 
         $user->update([
@@ -341,26 +339,25 @@ Route::post('/admin/profile/photo', function (Request $request) {
         ]);
 
         $freshUser = $user->fresh();
-$freshUser = $user->fresh();
 
-return response()->json([
-    'message' => 'Foto profile berhasil diperbarui.',
-    'photo' => $path,
-    'photo_url' => techc_admin_photo_url($path),
-    'user' => [
-        'id' => $freshUser->id,
-        'name' => $freshUser->name,
-        'email' => $freshUser->email,
-        'role' => $freshUser->role,
-        'photo' => $freshUser->photo,
-        'photo_url' => techc_admin_photo_url($freshUser->photo),
-        'phone' => $freshUser->phone ?? null,
-        'whatsapp' => $freshUser->whatsapp ?? null,
-        'position' => $freshUser->position ?? null,
-        'address' => $freshUser->address ?? null,
-        'bio' => $freshUser->bio ?? null,
-    ],
-]);
+        return response()->json([
+            'message' => 'Foto profile berhasil diperbarui.',
+            'photo' => $path,
+            'photo_url' => techc_admin_photo_url($path),
+            'user' => [
+                'id' => $freshUser->id,
+                'name' => $freshUser->name,
+                'email' => $freshUser->email,
+                'role' => $freshUser->role,
+                'photo' => $freshUser->photo,
+                'photo_url' => techc_admin_photo_url($freshUser->photo),
+                'phone' => $freshUser->phone ?? null,
+                'whatsapp' => $freshUser->whatsapp ?? null,
+                'position' => $freshUser->position ?? null,
+                'address' => $freshUser->address ?? null,
+                'bio' => $freshUser->bio ?? null,
+            ],
+        ]);
 
     } catch (\Throwable $e) {
         return response()->json([

@@ -436,7 +436,55 @@ function getPhotoUrl(profile) {
 
   return `${API_BASE}/files/admin-profiles/${raw}?v=${Date.now()}`;
 }
+function updateLocalUser(profile) {
+  if (!profile) return;
 
+  const name = profile.name || 'Admin TECH-C';
+  const email = profile.email || '';
+  const photoUrl = getPhotoUrl(profile);
+
+  localStorage.setItem('name', name);
+  localStorage.setItem('email', email);
+  localStorage.setItem('photo_url', photoUrl);
+
+  let oldUser = {};
+
+  try {
+    oldUser = JSON.parse(localStorage.getItem('user') || '{}');
+  } catch {
+    oldUser = {};
+  }
+
+  localStorage.setItem('user', JSON.stringify({
+    ...oldUser,
+    id: profile.id || oldUser.id,
+    name,
+    email,
+    role: profile.role || oldUser.role || 'admin',
+    photo: profile.photo || oldUser.photo || null,
+    photo_url: photoUrl,
+  }));
+
+  const headerName = document.getElementById('header_name');
+  const dropdownName = document.getElementById('dropdown_name');
+  const dropdownEmail = document.getElementById('dropdown_email');
+  const avatar = document.getElementById('header_avatar');
+
+  if (headerName) headerName.innerText = name;
+  if (dropdownName) dropdownName.innerText = name;
+  if (dropdownEmail) dropdownEmail.innerText = email;
+
+  if (avatar) {
+    avatar.src = photoUrl;
+    avatar.alt = name;
+    avatar.classList.add('h-full', 'w-full', 'object-cover');
+
+    avatar.onerror = function () {
+      this.onerror = null;
+      this.src = getFallbackAvatar(name);
+    };
+  }
+}
   function fillProfile(profile) {
     currentProfile = profile;
 
