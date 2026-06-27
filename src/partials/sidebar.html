@@ -138,7 +138,16 @@
             Profile Admin
           </a>
         </li>
-
+<li>
+  <a
+    href="absensi.html"
+    class="menu-item group"
+    :class="page === 'absensi' ? 'menu-item-active' : 'menu-item-inactive'"
+  >
+    <span class="text-lg">🕒</span>
+    <span :class="sidebarToggle ? 'lg:hidden' : ''">Absensi</span>
+  </a>
+</li>
         <li>
           <button
             type="button"

@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Absensi - TECH-C</title>
+
+  <style>
+    * {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #pageScroller {
+      height: 100vh;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .dark .grid-bg {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+  </style>
+</head>
+
+<script>
+const token = localStorage.getItem('token');
+const role = localStorage.getItem('role');
+
+if (!token) {
+  window.location.href = './login.html';
+} else if (role === 'siswa') {
+  window.location.href = './dashboardSiswa.html';
+} else if (role !== 'admin') {
+  localStorage.clear();
+  window.location.href = './login.html';
+}
+</script>
+
+<body
+  x-data="{ page: 'absensi', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
+    $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+  "
+  :class="{'dark bg-slate-950': darkMode === true}"
+  class="bg-slate-50"
+>
+
+  <include src="./partials/preloader.html"></include>
+
+  <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <include src="./partials/sidebar.html"></include>
+
+    <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
+      <include src="./partials/overlay.html"></include>
+      <include src="./partials/header.html"></include>
+
+      <main class="grid-bg relative min-h-screen p-4 pb-16 sm:p-6 lg:p-8">
+        <section class="mx-auto max-w-7xl">
+
+          <div class="mb-7 rounded-[2rem] border border-white/70 bg-white/90 p-7 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90">
+            <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600">
+                  <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
+                  ESP32 Attendance System
+                </div>
+
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white">
+                  Absensi TECH-C
+                </h1>
+
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+                  Data absensi dari ESP32 / Google Sheet masuk ke Laravel API, disimpan ke database, lalu tampil realtime di halaman ini.
+                </p>
+              </div>
+
+              <div class="rounded-[2rem] bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25">
+                <p class="text-sm font-bold text-white/80">Absensi Hari Ini</p>
+                <h2 id="todayCount" class="mt-2 text-4xl font-black">0</h2>
+                <p id="lastUpdate" class="mt-1 text-xs font-semibold text-white/70">Update: -</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-7 grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div class="rounded-[1.5rem] bg-white p-5 shadow-lg dark:bg-slate-900">
+              <p class="text-xs font-bold text-slate-400">Total Data</p>
+              <p id="totalCount" class="mt-2 text-3xl font-black text-slate-900 dark:text-white">0</p>
+            </div>
+
+            <div class="rounded-[1.5rem] bg-white p-5 shadow-lg dark:bg-slate-900">
+              <p class="text-xs font-bold text-slate-400">Hadir Hari Ini</p>
+              <p id="hadirToday" class="mt-2 text-3xl font-black text-green-600">0</p>
+            </div>
+
+            <div class="rounded-[1.5rem] bg-white p-5 shadow-lg dark:bg-slate-900">
+              <p class="text-xs font-bold text-slate-400">Status API</p>
+              <p id="apiStatus" class="mt-2 text-sm font-black text-yellow-500">Checking...</p>
+            </div>
+
+            <div class="rounded-[1.5rem] bg-white p-5 shadow-lg dark:bg-slate-900">
+              <p class="text-xs font-bold text-slate-400">Auto Refresh</p>
+              <label class="mt-3 flex items-center gap-2 text-sm font-black text-slate-700 dark:text-white">
+                <input id="autoRefresh" type="checkbox" checked />
+                Aktif
+              </label>
+            </div>
+          </div>
+
+          <div class="mb-7 grid grid-cols-1 gap-6 xl:grid-cols-3">
+
+            <div class="rounded-[2rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 dark:border-slate-800 dark:bg-slate-900/90 xl:col-span-1">
+              <h2 class="text-xl font-black text-slate-900 dark:text-white">Tambah Absensi Manual</h2>
+
+              <form id="attendanceForm" class="mt-5 space-y-4">
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Tanggal</label>
+                  <input id="dateInput" type="date" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white" required />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Jam</label>
+                  <input id="timeInput" type="time" step="1" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white" required />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">ID</label>
+                  <input id="memberIdInput" type="text" placeholder="Contoh: 12" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white" />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Nama</label>
+                  <input id="nameInput" type="text" placeholder="Contoh: Hashina" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white" required />
+                </div>
+
+                <div>
+                  <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">Status</label>
+                  <select id="statusInput" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white">
+                    <option value="HADIR">HADIR</option>
+                    <option value="IZIN">IZIN</option>
+                    <option value="SAKIT">SAKIT</option>
+                    <option value="ALPA">ALPA</option>
+                  </select>
+                </div>
+
+                <button class="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-4 text-sm font-black text-white shadow-xl shadow-blue-500/25" type="submit">
+                  Simpan Absensi
+                </button>
+
+                <div id="formStatus" class="hidden rounded-2xl p-4 text-sm font-bold"></div>
+              </form>
+            </div>
+
+            <div class="rounded-[2rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 dark:border-slate-800 dark:bg-slate-900/90 xl:col-span-2">
+              <div class="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <h2 class="text-xl font-black text-slate-900 dark:text-white">Rekapan Absensi</h2>
+                  <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Data dari database Laravel.</p>
+                </div>
+
+                <button onclick="loadAttendances()" class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 dark:bg-slate-800 dark:text-white">
+                  Refresh
+                </button>
+              </div>
+
+              <div class="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+                <input id="searchInput" type="text" placeholder="Cari nama / ID / status" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white" />
+                <input id="filterDate" type="date" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white" />
+                <select id="filterStatus" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white">
+                  <option value="">Semua Status</option>
+                  <option value="HADIR">HADIR</option>
+                  <option value="IZIN">IZIN</option>
+                  <option value="SAKIT">SAKIT</option>
+                  <option value="ALPA">ALPA</option>
+                </select>
+              </div>
+
+              <div class="overflow-hidden rounded-[1.4rem] border border-slate-200 dark:border-slate-800">
+                <div class="max-h-[520px] overflow-auto">
+                  <table class="w-full min-w-[720px] text-left text-sm">
+                    <thead class="sticky top-0 bg-slate-100 text-xs uppercase text-slate-500 dark:bg-slate-950 dark:text-slate-400">
+                      <tr>
+                        <th class="px-4 py-3">Tanggal</th>
+                        <th class="px-4 py-3">Jam</th>
+                        <th class="px-4 py-3">ID</th>
+                        <th class="px-4 py-3">Nama</th>
+                        <th class="px-4 py-3">Status</th>
+                        <th class="px-4 py-3">Source</th>
+                      </tr>
+                    </thead>
+                    <tbody id="attendanceTable" class="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-900"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div id="emptyState" class="hidden rounded-2xl bg-slate-50 p-8 text-center text-sm font-bold text-slate-400 dark:bg-slate-950">
+                Belum ada data absensi.
+              </div>
+            </div>
+          </div>
+
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="./admin-profile-sync.js"></script>
+
+  <script>
+  async function loadPartials() {
+    const includes = document.querySelectorAll('include');
+
+    for (let el of includes) {
+      const file = el.getAttribute('src');
+
+      try {
+        const res = await fetch(file);
+        const html = await res.text();
+        el.outerHTML = html;
+      } catch (err) {
+        console.error("Gagal load partial:", file, err);
+      }
+    }
+  }
+
+  const PRODUCTION_API_BASE = 'https://techcwebs-production.up.railway.app/api';
+  const LOCAL_API_BASE = 'http://127.0.0.1:8000/api';
+
+  function isLocalFrontend() {
+    return location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '';
+  }
+
+  function getApiBase() {
+    const saved = localStorage.getItem('api_base');
+
+    if (isLocalFrontend()) return saved || LOCAL_API_BASE;
+
+    if (saved && !saved.includes('localhost') && !saved.includes('127.0.0.1')) {
+      return saved;
+    }
+
+    localStorage.setItem('api_base', PRODUCTION_API_BASE);
+    return PRODUCTION_API_BASE;
+  }
+
+  const API_BASE = getApiBase();
+
+  let allAttendances = [];
+  let refreshTimer = null;
+
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = value ?? '-';
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function showStatus(message, type = 'success') {
+    const box = document.getElementById('formStatus');
+    box.className = 'rounded-2xl p-4 text-sm font-bold';
+    box.classList.remove('hidden');
+    box.innerText = message;
+
+    if (type === 'success') {
+      box.classList.add('bg-green-50', 'text-green-600');
+    } else {
+      box.classList.add('bg-red-50', 'text-red-600');
+    }
+  }
+
+  function todayDate() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function currentTime() {
+    return new Date().toTimeString().slice(0, 8);
+  }
+
+  async function apiGet(path) {
+    const res = await fetch(`${API_BASE}${path}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+        'X-User-Id': localStorage.getItem('user_id') || '',
+        'X-User-Email': localStorage.getItem('email') || '',
+        'X-User-Role': localStorage.getItem('role') || 'admin'
+      }
+    });
+
+    const raw = await res.text();
+    const data = JSON.parse(raw);
+
+    if (!res.ok) throw new Error(data.message || 'API error');
+
+    return data;
+  }
+
+  async function apiPost(path, payload) {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+        'X-User-Id': localStorage.getItem('user_id') || '',
+        'X-User-Email': localStorage.getItem('email') || '',
+        'X-User-Role': localStorage.getItem('role') || 'admin'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const raw = await res.text();
+    const data = JSON.parse(raw);
+
+    if (!res.ok) throw new Error(data.error || data.message || 'API error');
+
+    return data;
+  }
+
+  async function loadAttendances() {
+    try {
+      const date = document.getElementById('filterDate')?.value || '';
+      const status = document.getElementById('filterStatus')?.value || '';
+      const search = document.getElementById('searchInput')?.value || '';
+
+      const params = new URLSearchParams();
+
+      if (date) params.set('date', date);
+      if (status) params.set('status', status);
+      if (search) params.set('search', search);
+      params.set('limit', '500');
+
+      const result = await apiGet(`/attendances?${params.toString()}`);
+
+      allAttendances = result.data || [];
+
+      setText('apiStatus', 'Connected');
+      document.getElementById('apiStatus').className = 'mt-2 text-sm font-black text-green-500';
+
+      setText('totalCount', result.stats?.total || allAttendances.length);
+      setText('todayCount', result.stats?.today || 0);
+      setText('hadirToday', result.stats?.hadir_today || 0);
+      setText('lastUpdate', 'Update: ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }));
+
+      renderTable(allAttendances);
+    } catch (err) {
+      console.error(err);
+      setText('apiStatus', 'Error');
+      document.getElementById('apiStatus').className = 'mt-2 text-sm font-black text-red-500';
+    }
+  }
+
+  function renderTable(rows) {
+    const tbody = document.getElementById('attendanceTable');
+    const empty = document.getElementById('emptyState');
+
+    if (!tbody) return;
+
+    if (!rows.length) {
+      tbody.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+
+    empty.classList.add('hidden');
+
+    tbody.innerHTML = rows.map(row => `
+      <tr class="hover:bg-slate-50 dark:hover:bg-slate-950">
+        <td class="px-4 py-3 font-bold text-slate-700 dark:text-slate-200">
+          ${escapeHtml(String(row.attendance_date || '').slice(0, 10))}
+        </td>
+        <td class="px-4 py-3 font-bold text-slate-700 dark:text-slate-200">
+          ${escapeHtml(row.attendance_time || '-')}
+        </td>
+        <td class="px-4 py-3 font-bold text-slate-500">
+          ${escapeHtml(row.member_id || '-')}
+        </td>
+        <td class="px-4 py-3 font-black text-slate-900 dark:text-white">
+          ${escapeHtml(row.name || '-')}
+        </td>
+        <td class="px-4 py-3">
+          <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-black text-green-600">
+            ${escapeHtml(row.status || '-')}
+          </span>
+        </td>
+        <td class="px-4 py-3 font-bold text-slate-500">
+          ${escapeHtml(row.source || '-')}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function saveAttendance(e) {
+    e.preventDefault();
+
+    const payload = {
+      attendance_date: document.getElementById('dateInput').value,
+      attendance_time: document.getElementById('timeInput').value,
+      member_id: document.getElementById('memberIdInput').value,
+      name: document.getElementById('nameInput').value,
+      status: document.getElementById('statusInput').value,
+      source: 'web'
+    };
+
+    try {
+      await apiPost('/attendances', payload);
+
+      showStatus('Absensi berhasil disimpan.', 'success');
+
+      document.getElementById('memberIdInput').value = '';
+      document.getElementById('nameInput').value = '';
+      document.getElementById('statusInput').value = 'HADIR';
+      document.getElementById('timeInput').value = currentTime();
+
+      await loadAttendances();
+    } catch (err) {
+      showStatus('Gagal simpan absensi: ' + err.message, 'error');
+    }
+  }
+
+  function initAutoRefresh() {
+    const check = document.getElementById('autoRefresh');
+
+    function start() {
+      if (refreshTimer) clearInterval(refreshTimer);
+
+      refreshTimer = setInterval(() => {
+        if (check.checked) loadAttendances();
+      }, 10000);
+    }
+
+    if (check) {
+      check.addEventListener('change', start);
+      start();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadPartials();
+
+    if (window.syncAdminProfileHeader) {
+      await window.syncAdminProfileHeader();
+    }
+
+    document.getElementById('dateInput').value = todayDate();
+    document.getElementById('timeInput').value = currentTime();
+
+    document.getElementById('attendanceForm').addEventListener('submit', saveAttendance);
+
+    ['searchInput', 'filterDate', 'filterStatus'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', loadAttendances);
+        el.addEventListener('change', loadAttendances);
+      }
+    });
+
+    initAutoRefresh();
+    await loadAttendances();
+  });
+  </script>
+</body>
+</html>

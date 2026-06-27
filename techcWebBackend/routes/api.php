@@ -31,7 +31,260 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Models\StudentDocumentation;
+use Carbon\Carbon;
+/*
+|--------------------------------------------------------------------------
+| ATTENDANCE / ABSENSI
+|--------------------------------------------------------------------------
+*/
 
+$storeAttendance = function (array $payload) {
+    $timezone = 'Asia/Jakarta';
+
+    $dateRaw = $payload['attendance_date']
+        ?? $payload['date']
+        ?? $payload['tanggal']
+        ?? $payload['Tanggal']
+        ?? now($timezone)->toDateString();
+
+    $timeRaw = $payload['attendance_time']
+        ?? $payload['time']
+        ?? $payload['jam']
+        ?? $payload['Jam']
+        ?? now($timezone)->format('H:i:s');
+
+    $memberId = $payload['member_id']
+        ?? $payload['id']
+        ?? $payload['ID']
+        ?? $payload['uid']
+        ?? $payload['UID']
+        ?? null;
+
+    $name = $payload['name']
+        ?? $payload['nama']
+        ?? $payload['Nama']
+        ?? null;
+
+    $status = $payload['status']
+        ?? $payload['Status']
+        ?? 'HADIR';
+
+    $source = $payload['source']
+        ?? $payload['Source']
+        ?? 'web';
+
+    $deviceName = $payload['device_name']
+        ?? $payload['device']
+        ?? $payload['Device']
+        ?? null;
+
+    $note = $payload['note']
+        ?? $payload['catatan']
+        ?? $payload['Catatan']
+        ?? null;
+
+    if (!$name) {
+        throw \Illuminate\Validation\ValidationException::withMessages([
+            'name' => 'Nama wajib diisi.',
+        ]);
+    }
+
+    $date = Carbon::parse($dateRaw, $timezone)->toDateString();
+    $time = Carbon::parse($timeRaw, $timezone)->format('H:i:s');
+
+    $status = strtoupper(trim($status));
+    $name = trim($name);
+    $memberId = $memberId !== null ? trim((string) $memberId) : null;
+
+    $uniqueHash = md5($date . '|' . $time . '|' . $memberId . '|' . strtolower($name) . '|' . $status);
+
+    $attendance = Attendance::updateOrCreate(
+        [
+            'unique_hash' => $uniqueHash,
+        ],
+        [
+            'attendance_date' => $date,
+            'attendance_time' => $time,
+            'member_id' => $memberId,
+            'name' => $name,
+            'status' => $status,
+            'source' => $source,
+            'device_name' => $deviceName,
+            'note' => $note,
+            'raw_payload' => $payload,
+        ]
+    );
+
+    return $attendance;
+};
+
+Route::get('/attendances', function (Request $request) {
+    try {
+        $query = Attendance::query()
+            ->orderByDesc('attendance_date')
+            ->orderByDesc('attendance_time')
+            ->orderByDesc('id');
+
+        if ($request->filled('date')) {
+            $query->whereDate('attendance_date', $request->date);
+        }
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('member_id')) {
+            $query->where('member_id', $request->member_id);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', strtoupper($request->status));
+        }
+
+        if ($request->filled('source')) {
+            $query->where('source', $request->source);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('member_id', 'like', "%{$search}%")
+                  ->orWhere('status', 'like', "%{$search}%")
+                  ->orWhere('source', 'like', "%{$search}%");
+            });
+        }
+
+        $limit = (int) $request->get('limit', 300);
+        $limit = max(1, min($limit, 1000));
+
+        $data = $query->limit($limit)->get();
+
+        $today = now('Asia/Jakarta')->toDateString();
+
+        return response()->json([
+            'message' => 'Data absensi berhasil diambil.',
+            'stats' => [
+                'total' => Attendance::count(),
+                'today' => Attendance::whereDate('attendance_date', $today)->count(),
+                'hadir_today' => Attendance::whereDate('attendance_date', $today)
+                    ->where('status', 'HADIR')
+                    ->count(),
+                'last_update' => Attendance::latest()->value('updated_at'),
+            ],
+            'data' => $data,
+        ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Attendance API error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
+    }
+});
+
+Route::post('/attendances', function (Request $request) use ($storeAttendance) {
+    try {
+        $attendance = $storeAttendance($request->all());
+
+        return response()->json([
+            'message' => 'Absensi berhasil disimpan.',
+            'data' => $attendance,
+        ], 201);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Save attendance error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
+    }
+});
+
+/*
+| Buat ESP32 yang lebih gampang kirim GET URL
+| Contoh:
+| /api/attendances/receive?Tanggal=2026-03-27&Jam=08:04:52&ID=1&Nama=Adit&Status=HADIR
+*/
+Route::get('/attendances/receive', function (Request $request) use ($storeAttendance) {
+    try {
+        $payload = $request->query();
+        $payload['source'] = $payload['source'] ?? 'esp32';
+
+        $attendance = $storeAttendance($payload);
+
+        return response()->json([
+            'message' => 'Absensi dari device berhasil diterima.',
+            'data' => $attendance,
+        ], 201);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Receive attendance error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
+    }
+});
+
+/*
+| Buat import banyak data dari Google Sheet / Apps Script
+*/
+Route::post('/attendances/bulk', function (Request $request) use ($storeAttendance) {
+    try {
+        $rows = $request->input('rows', []);
+
+        if (!is_array($rows)) {
+            return response()->json([
+                'message' => 'Format rows harus array.',
+            ], 422);
+        }
+
+        $saved = [];
+        $failed = [];
+
+        foreach ($rows as $index => $row) {
+            try {
+                $row['source'] = $row['source'] ?? 'sheet';
+                $saved[] = $storeAttendance($row);
+            } catch (\Throwable $e) {
+                $failed[] = [
+                    'index' => $index,
+                    'row' => $row,
+                    'error' => $e->getMessage(),
+                ];
+            }
+        }
+
+        return response()->json([
+            'message' => 'Import absensi selesai.',
+            'saved_count' => count($saved),
+            'failed_count' => count($failed),
+            'failed' => $failed,
+        ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Bulk attendance error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
+    }
+});
+
+Route::delete('/attendances/{attendance}', function (Attendance $attendance) {
+    $attendance->delete();
+
+    return response()->json([
+        'message' => 'Absensi berhasil dihapus.',
+    ]);
+});
 /*
 |--------------------------------------------------------------------------
 | AUTH

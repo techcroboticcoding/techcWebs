@@ -6,15 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attendance extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'attendance_date',
+        'attendance_time',
+        'member_id',
+        'name',
+        'status',
+        'source',
+        'device_name',
+        'note',
+        'unique_hash',
+        'raw_payload',
+    ];
 
-    public function student()
-    {
-        return $this->belongsTo(Student::class);
-    }
-
-    public function schedule()
-    {
-        return $this->belongsTo(Schedule::class);
-    }
+    protected $casts = [
+        'attendance_date' => 'date',
+        'raw_payload' => 'array',
+    ];
 }
