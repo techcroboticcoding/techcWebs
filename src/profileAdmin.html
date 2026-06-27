@@ -137,12 +137,13 @@ if (!token) {
                 <div class="relative px-6 pb-6">
                   <div class="-mt-16 flex flex-col items-center">
                     <div class="relative">
-                      <img
-                        id="profilePhoto"
-                        src="https://ui-avatars.com/api/?name=Admin+TECH-C&background=2563eb&color=fff&bold=true"
-                        class="h-32 w-32 rounded-full border-4 border-white object-cover shadow-2xl dark:border-slate-900"
-                        alt="Admin Profile"
-                      />
+<img
+  id="profilePhoto"
+  src="https://ui-avatars.com/api/?name=Admin+TECH-C&background=2563eb&color=fff&bold=true"
+  class="h-32 w-32 rounded-full border-4 border-white object-cover shadow-2xl dark:border-slate-900"
+  alt="Admin Profile"
+  onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Admin+TECH-C&background=2563eb&color=fff&bold=true';"
+/>
 
                       <label
                         for="photoInput"
@@ -400,16 +401,45 @@ if (!token) {
 
     return url;
   }
+function getBackendBaseUrl() {
+  return API_BASE.replace('/api', '').replace('http://', 'https://');
+}
 
-  function getPhotoUrl(profile) {
-    const name = profile?.name || localStorage.getItem('name') || 'Admin TECH-C';
+function fixHttps(url) {
+  if (!url) return url;
+  return String(url).replace('http://', 'https://');
+}
 
-    const url = fixHttps(profile?.photo_url);
+function getFallbackAvatar(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Admin TECH-C')}&background=2563eb&color=fff&bold=true`;
+}
 
-    if (url) return url;
+function getPhotoUrl(profile) {
+  const name = profile?.name || localStorage.getItem('name') || 'Admin TECH-C';
+  const backendBase = getBackendBaseUrl();
 
+  let raw = profile?.photo_url || profile?.photo || '';
+
+  if (!raw) {
     return getFallbackAvatar(name);
   }
+
+  raw = String(raw);
+
+  if (raw.startsWith('http://') || raw.startsWith('https://')) {
+    return fixHttps(raw) + `?v=${Date.now()}`;
+  }
+
+  if (raw.startsWith('/storage/')) {
+    return `${backendBase}${raw}?v=${Date.now()}`;
+  }
+
+  if (raw.startsWith('storage/')) {
+    return `${backendBase}/${raw}?v=${Date.now()}`;
+  }
+
+  return `${backendBase}/storage/${raw}?v=${Date.now()}`;
+}
 
   function updateLocalUser(profile) {
     if (!profile) return;

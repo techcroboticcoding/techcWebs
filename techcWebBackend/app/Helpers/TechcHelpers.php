@@ -43,21 +43,29 @@ if (!function_exists('techc_storage_url')) {
     {
         if (!$path) return null;
 
-        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+        $path = trim($path);
+
+        if (str_starts_with($path, 'https://')) {
             return $path;
         }
 
-        $path = ltrim($path, '/');
-
-        if (str_starts_with($path, 'storage/')) {
-            return asset($path);
+        if (str_starts_with($path, 'http://')) {
+            return str_replace('http://', 'https://', $path);
         }
+
+        $path = ltrim($path, '/');
 
         if (str_starts_with($path, 'public/')) {
             $path = str_replace('public/', '', $path);
         }
 
-        return asset('storage/' . $path);
+        if (str_starts_with($path, 'storage/')) {
+            $url = url($path);
+        } else {
+            $url = url('storage/' . $path);
+        }
+
+        return str_replace('http://', 'https://', $url);
     }
 }
 
