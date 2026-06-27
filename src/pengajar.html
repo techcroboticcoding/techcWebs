@@ -560,7 +560,30 @@ function updateStats(teachers, shownTeachers) {
     bar.style.width = `${percent}%`;
   }
 }
+function getTeacherPhoto(photo, name = 'TECH-C') {
+  if (!photo) {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+  }
 
+  photo = String(photo).trim();
+
+  // Kalau sudah URL internet
+  if (photo.startsWith('http://') || photo.startsWith('https://')) {
+    return photo.replace('http://', 'https://');
+  }
+
+  // Foto dummy pengajar dari folder frontend, jangan lewat Laravel storage
+  if (
+    photo.startsWith('./') ||
+    photo.startsWith('/') ||
+    photo.startsWith('src/') ||
+    photo.startsWith('images/')
+  ) {
+    return photo;
+  }
+
+  return `./${photo}`;
+}
 function renderPengajar(teachers) {
   const container = document.getElementById("pengajarList");
   const emptyState = document.getElementById("emptyState");
@@ -614,7 +637,7 @@ function renderPengajar(teachers) {
         <div class="relative px-5 pb-5">
           <div class="-mt-12 flex justify-center">
 <img
-  src="${getTeacherPhotoUrl(teacher.photo, teacher.name)}"
+  src="${getTeacherPhoto(teacher.photo, teacher.name)}"
   alt="${teacher.name}"
   class="h-20 w-20 rounded-2xl object-cover"
   onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(teacher.name)}&background=2563eb&color=fff&bold=true';"
