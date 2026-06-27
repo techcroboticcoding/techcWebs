@@ -32,12 +32,13 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Models\StudentDocumentation;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 /*
 |--------------------------------------------------------------------------
 | ATTENDANCE / ABSENSI
 |--------------------------------------------------------------------------
 */
-
 $storeAttendance = function (array $payload) {
     $timezone = 'Asia/Jakarta';
 
@@ -98,24 +99,104 @@ $storeAttendance = function (array $payload) {
 
     $uniqueHash = md5($date . '|' . $time . '|' . $memberId . '|' . strtolower($name) . '|' . $status);
 
-    $attendance = Attendance::updateOrCreate(
-        [
-            'unique_hash' => $uniqueHash,
-        ],
-        [
-            'attendance_date' => $date,
-            'attendance_time' => $time,
-            'member_id' => $memberId,
-            'name' => $name,
-            'status' => $status,
-            'source' => $source,
-            'device_name' => $deviceName,
-            'note' => $note,
-            'raw_payload' => $payload,
-        ]
-    );
+    $now = now();
 
-    return $attendance;
+    $data = [];
+
+    // Kolom baru
+    if (Schema::hasColumn('attendances', 'attendance_date')) {
+        $data['attendance_date'] = $date;
+    }
+
+    if (Schema::hasColumn('attendances', 'attendance_time')) {
+        $data['attendance_time'] = $time;
+    }
+
+    if (Schema::hasColumn('attendances', 'member_id')) {
+        $data['member_id'] = $memberId;
+    }
+
+    if (Schema::hasColumn('attendances', 'name')) {
+        $data['name'] = $name;
+    }
+
+    if (Schema::hasColumn('attendances', 'status')) {
+        $data['status'] = $status;
+    }
+
+    if (Schema::hasColumn('attendances', 'source')) {
+        $data['source'] = $source;
+    }
+
+    if (Schema::hasColumn('attendances', 'device_name')) {
+        $data['device_name'] = $deviceName;
+    }
+
+    if (Schema::hasColumn('attendances', 'note')) {
+        $data['note'] = $note;
+    }
+
+    if (Schema::hasColumn('attendances', 'unique_hash')) {
+        $data['unique_hash'] = $uniqueHash;
+    }
+
+    if (Schema::hasColumn('attendances', 'raw_payload')) {
+        $data['raw_payload'] = json_encode($payload);
+    }
+
+    // Kolom lama dari tabel sebelumnya
+    if (Schema::hasColumn('attendances', 'tanggal')) {
+        $data['tanggal'] = $date;
+    }
+
+    if (Schema::hasColumn('attendances', 'jam')) {
+        $data['jam'] = $time;
+    }
+
+    if (Schema::hasColumn('attendances', 'nama')) {
+        $data['nama'] = $name;
+    }
+
+    // Kalau ada kolom legacy untuk ID selain primary id
+    if (Schema::hasColumn('attendances', 'uid')) {
+        $data['uid'] = $memberId;
+    }
+
+    if (Schema::hasColumn('attendances', 'rfid_id')) {
+        $data['rfid_id'] = $memberId;
+    }
+
+    if (Schema::hasColumn('attendances', 'created_at')) {
+        $data['created_at'] = $now;
+    }
+
+    if (Schema::hasColumn('attendances', 'updated_at')) {
+        $data['updated_at'] = $now;
+    }
+
+    $exists = null;
+
+    if (Schema::hasColumn('attendances', 'unique_hash')) {
+        $exists = DB::table('attendances')
+            ->where('unique_hash', $uniqueHash)
+            ->first();
+    }
+
+    if ($exists) {
+        unset($data['created_at']);
+
+        DB::table('attendances')
+            ->where('unique_hash', $uniqueHash)
+            ->update($data);
+
+        return DB::table('attendances')
+            ->where('unique_hash', $uniqueHash)
+            ->first();
+    }
+
+    $id = DB::table('attendances')->insertGetId($data);
+
+    return DB::table('attendances')->where('id', $id)->first();
 };
 
 Route::get('/attendances', function (Request $request) {
