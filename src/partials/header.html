@@ -1,86 +1,56 @@
 <header
   x-data="{menuToggle: false}"
-  class="sticky top-0 z-99999 flex w-full border-gray-200 bg-white lg:border-b dark:border-gray-800 dark:bg-gray-900"
-  
+  class="sticky top-0 z-[99997] flex w-full items-center justify-between border-b border-slate-200 bg-white px-3 py-2 dark:border-slate-800 dark:bg-slate-950 lg:px-6 lg:py-3"
 >
-<button
-  type="button"
-  @click.stop="sidebarToggle = !sidebarToggle"
-  class="mr-3 flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-2xl font-black text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-white lg:hidden"
->
-  ☰
-</button>
-  <div class="flex grow flex-col items-center justify-between lg:flex-row lg:px-6">
-    
-    <!-- KIRI -->
-    <div class="flex w-full items-center justify-between gap-2 px-3 py-3 lg:px-0">
+  <!-- KIRI: HAMBURGER + LOGO MOBILE -->
+  <div class="flex min-w-0 items-center gap-2">
+    <!-- TOMBOL SIDEBAR HP -->
+    <button
+      type="button"
+      @click.stop="sidebarToggle = !sidebarToggle"
+      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-xl font-black text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-white lg:hidden"
+      aria-label="Open sidebar"
+    >
+      ☰
+    </button>
 
-      <!-- LOGO -->
-      <a href="index.html" class="lg:hidden">
-        <img src="./images/logo.png" />
+    <!-- LOGO MOBILE -->
+    <a href="index.html" class="flex min-w-0 items-center gap-2 lg:hidden">
+      <img
+        src="./images/logo.png"
+        alt="TECH-C"
+        class="h-9 w-9 shrink-0 rounded-xl object-contain"
+      />
+
+      <span class="hidden text-sm font-black text-slate-900 dark:text-white xs:inline">
+        TECH-C
+      </span>
+    </a>
+  </div>
+
+  <!-- KANAN: USER -->
+  <div class="flex min-w-0 items-center justify-end">
+    <div class="relative">
+      <a href="profileAdmin.html" class="flex min-w-0 items-center text-slate-700 dark:text-slate-200">
+        <!-- FOTO -->
+        <span class="mr-2 h-10 w-10 shrink-0 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800 sm:mr-3 sm:h-11 sm:w-11">
+          <img
+            id="header_avatar"
+            src="https://ui-avatars.com/api/?name=User&background=2563eb&color=fff&bold=true"
+            alt="Admin Profile"
+            class="h-full w-full object-cover"
+            onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Admin+TECH-C&background=2563eb&color=fff&bold=true';"
+          />
+        </span>
+
+        <!-- NAMA -->
+        <span
+          id="header_name"
+          class="max-w-[92px] truncate text-xs font-bold leading-4 text-slate-800 dark:text-white sm:max-w-[160px] sm:text-sm"
+        >
+          Loading...
+        </span>
       </a>
-
-    </div>
-
-    <!-- KANAN -->
-    <div class="flex items-center gap-4 px-5 py-4 lg:px-0">
-
-      <!-- USER -->
-      <div class="relative">
-        <a class="flex items-center text-gray-700">
-          
-<!-- FOTO -->
-<span class="mr-3 h-11 w-11 overflow-hidden rounded-full bg-slate-100">
-  <img
-    id="header_avatar"
-    src="https://ui-avatars.com/api/?name=User&background=2563eb&color=fff&bold=true"
-    alt="Admin Profile"
-    class="h-full w-full object-cover"
-    onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Admin+TECH-C&background=2563eb&color=fff&bold=true';"
-  />
-</span>
-          <!-- NAMA -->
-          <span id="header_name" class="text-theme-sm mr-1 font-medium">
-            Loading...
-          </span>
-
-        </a>
-      </div>
-
     </div>
   </div>
-</header><script>
-async function loadHeaderUser() {
-  try {
-    const res = await fetch('https://techcwebs-production.up.railway.app/api/profile', {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      }
-    });
-
-    const data = await res.json();
-    console.log("HEADER USER:", data);
-
-    // NAME
-    const name = data.name ?? "User";
-    const nameEl = document.getElementById('header_name');
-    if (nameEl) nameEl.innerText = name;
-
-    // AVATAR
-    const avatarEl = document.getElementById('header_avatar');
-    if (avatarEl) {
-      avatarEl.src = data.photo
-        ? `https://techcwebs-production.up.railway.app/storage/${data.photo}`
-        : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
-    }
-
-  } catch (err) {
-    console.error("Header error:", err);
-  }
-}
-
-// tunggu DOM + partial ke-load
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(loadHeaderUser, 500);
-});
-</script>
+</header>
