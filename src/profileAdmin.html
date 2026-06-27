@@ -388,25 +388,20 @@ if (!token) {
     }
   }
 
-  function getFallbackAvatar(name) {
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Admin TECH-C')}&background=2563eb&color=fff&bold=true`;
-  }
-
-  function fixHttps(url) {
-    if (!url) return url;
-
-    if (String(url).startsWith('http://techcwebs-production.up.railway.app')) {
-      return String(url).replace('http://', 'https://');
-    }
-
-    return url;
-  }
-function getBackendBaseUrl() {
+  function getBackendBaseUrl() {
   return API_BASE.replace('/api', '').replace('http://', 'https://');
 }
 
 function fixHttps(url) {
   if (!url) return url;
+
+  if (
+    String(url).includes('127.0.0.1') ||
+    String(url).includes('localhost')
+  ) {
+    return String(url);
+  }
+
   return String(url).replace('http://', 'https://');
 }
 
@@ -416,7 +411,6 @@ function getFallbackAvatar(name) {
 
 function getPhotoUrl(profile) {
   const name = profile?.name || localStorage.getItem('name') || 'Admin TECH-C';
-  const backendBase = getBackendBaseUrl();
 
   let raw = profile?.photo_url || profile?.photo || '';
 
@@ -430,50 +424,18 @@ function getPhotoUrl(profile) {
     return fixHttps(raw) + `?v=${Date.now()}`;
   }
 
-  if (raw.startsWith('/storage/')) {
-    return `${backendBase}${raw}?v=${Date.now()}`;
+  if (raw.startsWith('admin-profiles/')) {
+    const filename = raw.split('/').pop();
+    return `${API_BASE}/files/admin-profiles/${filename}?v=${Date.now()}`;
   }
 
-  if (raw.startsWith('storage/')) {
-    return `${backendBase}/${raw}?v=${Date.now()}`;
+  if (raw.includes('/')) {
+    const filename = raw.split('/').pop();
+    return `${API_BASE}/files/admin-profiles/${filename}?v=${Date.now()}`;
   }
 
-  return `${backendBase}/storage/${raw}?v=${Date.now()}`;
+  return `${API_BASE}/files/admin-profiles/${raw}?v=${Date.now()}`;
 }
-
-  function updateLocalUser(profile) {
-    if (!profile) return;
-
-    const name = profile.name || '';
-    const email = profile.email || '';
-    const photoUrl = getPhotoUrl(profile);
-
-    localStorage.setItem('name', name);
-    localStorage.setItem('email', email);
-    localStorage.setItem('photo_url', photoUrl);
-
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-
-    localStorage.setItem('user', JSON.stringify({
-      ...user,
-      id: profile.id || user.id,
-      name,
-      email,
-      role: profile.role || user.role || 'admin',
-      photo_url: photoUrl,
-      photo: profile.photo || user.photo || null,
-    }));
-
-    setText('header_name', name);
-    setText('dropdown_name', name);
-    setText('dropdown_email', email);
-
-    const avatar = document.getElementById('header_avatar');
-
-    if (avatar) {
-      avatar.src = photoUrl;
-    }
-  }
 
   function fillProfile(profile) {
     currentProfile = profile;

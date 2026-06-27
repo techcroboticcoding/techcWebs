@@ -75,3 +75,33 @@ if (!function_exists('techc_photo_url')) {
         return techc_storage_url($path);
     }
 }
+if (!function_exists('techc_force_https')) {
+    function techc_force_https($url)
+    {
+        if (!$url) return null;
+
+        if (
+            str_contains($url, '127.0.0.1') ||
+            str_contains($url, 'localhost')
+        ) {
+            return $url;
+        }
+
+        return str_replace('http://', 'https://', $url);
+    }
+}
+
+if (!function_exists('techc_admin_photo_url')) {
+    function techc_admin_photo_url($path)
+    {
+        if (!$path) return null;
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return techc_force_https($path);
+        }
+
+        $filename = basename($path);
+
+        return techc_force_https(url('api/files/admin-profiles/' . $filename));
+    }
+}

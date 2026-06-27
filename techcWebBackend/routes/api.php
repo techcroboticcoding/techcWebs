@@ -174,7 +174,39 @@ Route::get('/profile', function (Request $request) {
 | ADMIN PROFILE / BIODATA
 |--------------------------------------------------------------------------
 */
+/*
+|--------------------------------------------------------------------------
+| PUBLIC FILE VIEWER - ADMIN PROFILE
+|--------------------------------------------------------------------------
+*/
 
+Route::get('/files/admin-profiles/{filename}', function ($filename) {
+    try {
+        $filename = basename($filename);
+
+        $path = storage_path('app/public/admin-profiles/' . $filename);
+
+        if (!file_exists($path)) {
+            return response()->json([
+                'message' => 'File foto admin tidak ditemukan.',
+                'filename' => $filename,
+                'path' => $path,
+            ], 404);
+        }
+
+        return response()->file($path, [
+            'Cache-Control' => 'public, max-age=86400',
+        ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'File viewer error',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => basename($e->getFile()),
+        ], 500);
+    }
+});
 Route::get('/admin/profile', function (Request $request) {
     try {
         $user = techc_user_from_request($request);
@@ -191,7 +223,7 @@ Route::get('/admin/profile', function (Request $request) {
             'email' => $user->email,
             'role' => $user->role,
             'photo' => $user->photo ?? null,
-            'photo_url' => techc_photo_url($user->photo ?? null),
+            'photo_url' => techc_admin_photo_url($user->photo ?? null),
             'phone' => $user->phone ?? null,
             'whatsapp' => $user->whatsapp ?? null,
             'position' => $user->position ?? null,
@@ -266,7 +298,7 @@ Route::post('/admin/profile', function (Request $request) {
                 'email' => $user->fresh()->email,
                 'role' => $user->fresh()->role,
                 'photo' => $user->fresh()->photo,
-                'photo_url' => techc_photo_url($user->fresh()->photo),
+                'photo_url' => techc_admin_photo_url($user->fresh()->photo),
                 'phone' => $user->fresh()->phone,
                 'whatsapp' => $user->fresh()->whatsapp,
                 'position' => $user->fresh()->position,
@@ -309,25 +341,26 @@ Route::post('/admin/profile/photo', function (Request $request) {
         ]);
 
         $freshUser = $user->fresh();
+$freshUser = $user->fresh();
 
-        return response()->json([
-            'message' => 'Foto profile berhasil diperbarui.',
-            'photo' => $path,
-            'photo_url' => techc_photo_url($path),
-            'user' => [
-                'id' => $freshUser->id,
-                'name' => $freshUser->name,
-                'email' => $freshUser->email,
-                'role' => $freshUser->role,
-                'photo' => $freshUser->photo,
-                'photo_url' => techc_photo_url($freshUser->photo),
-                'phone' => $freshUser->phone ?? null,
-                'whatsapp' => $freshUser->whatsapp ?? null,
-                'position' => $freshUser->position ?? null,
-                'address' => $freshUser->address ?? null,
-                'bio' => $freshUser->bio ?? null,
-            ],
-        ]);
+return response()->json([
+    'message' => 'Foto profile berhasil diperbarui.',
+    'photo' => $path,
+    'photo_url' => techc_admin_photo_url($path),
+    'user' => [
+        'id' => $freshUser->id,
+        'name' => $freshUser->name,
+        'email' => $freshUser->email,
+        'role' => $freshUser->role,
+        'photo' => $freshUser->photo,
+        'photo_url' => techc_admin_photo_url($freshUser->photo),
+        'phone' => $freshUser->phone ?? null,
+        'whatsapp' => $freshUser->whatsapp ?? null,
+        'position' => $freshUser->position ?? null,
+        'address' => $freshUser->address ?? null,
+        'bio' => $freshUser->bio ?? null,
+    ],
+]);
 
     } catch (\Throwable $e) {
         return response()->json([
