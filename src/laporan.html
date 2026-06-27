@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Laporan Harian - TECH-C</title>
+
+  <style>
+    * {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #pageScroller {
+      height: 100vh;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    #pageScroller::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #pageScroller::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, .55);
+      border-radius: 999px;
+    }
+
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .dark .grid-bg {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+
+    .report-card {
+      transition: .25s ease;
+    }
+
+    .report-card:hover {
+      transform: translateY(-4px);
+    }
+  </style>
+</head>
+
+<script>
+const token = localStorage.getItem('token');
+const role = localStorage.getItem('role');
+
+if (!token) {
+  window.location.href = './login.html';
+} else if (role === 'siswa') {
+  window.location.href = './dashboardSiswa.html';
+} else if (role !== 'admin') {
+  localStorage.clear();
+  window.location.href = './login.html';
+}
+</script>
+
+<body
+  x-data="{ page: 'laporan', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
+    $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+  "
+  :class="{'dark bg-slate-950': darkMode === true}"
+  class="bg-slate-50"
+>
+
+  <include src="./partials/preloader.html"></include>
+
+  <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+
+    <include src="./partials/sidebar.html"></include>
+
+    <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
+
+      <include src="./partials/overlay.html"></include>
+      <include src="./partials/header.html"></include>
+
+      <main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
+
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <div class="absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full bg-blue-500/10 blur-3xl"></div>
+          <div class="absolute left-[-150px] top-72 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-3xl"></div>
+          <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
+        </div>
+
+        <section class="relative z-10 mx-auto max-w-7xl">
+
+          <!-- HERO -->
+          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="relative p-6 sm:p-7 lg:p-8">
+              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-blue-600/15 via-cyan-500/5 to-transparent lg:block"></div>
+
+              <div class="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
+                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
+                    Daily Report
+                  </div>
+
+                  <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                    Laporan Harian TECH-C
+                  </h1>
+
+                  <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+                    Buat laporan harian kegiatan, pilih nama rekan, isi detail laporan, lalu lihat rekapan laporan dalam satu halaman.
+                  </p>
+
+                  <div class="mt-5 flex flex-wrap gap-3">
+                    <div class="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/70">
+                      <p class="text-xs font-bold text-slate-400">Status API</p>
+                      <p id="apiStatus" class="mt-1 text-sm font-black text-yellow-500">Checking...</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/70">
+                      <p class="text-xs font-bold text-slate-400">Total Laporan</p>
+                      <p id="heroTotalReports" class="mt-1 text-sm font-black text-slate-900 dark:text-white">0</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/70">
+                      <p class="text-xs font-bold text-slate-400">Update Terakhir</p>
+                      <p id="lastUpdate" class="mt-1 text-sm font-black text-slate-900 dark:text-white">-</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rounded-[2rem] bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25">
+                  <p class="text-sm font-bold text-white/80">Laporan Hari Ini</p>
+                  <h2 id="todayReportCount" class="mt-2 text-4xl font-black">0</h2>
+                  <p class="mt-1 text-xs font-semibold text-white/70">Laporan masuk</p>
+
+                  <div class="mt-5 rounded-2xl bg-white/15 p-4">
+                    <div class="flex items-center justify-between text-xs font-bold text-white/80">
+                      <span>Rekap aktif</span>
+                      <span id="sourceStatus">Laravel</span>
+                    </div>
+                    <div class="mt-3 h-2 overflow-hidden rounded-full bg-white/20">
+                      <div id="reportBar" class="h-full w-0 rounded-full bg-white/70 transition-all"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FORM + PREVIEW -->
+          <div class="mb-7 grid grid-cols-1 gap-6 xl:grid-cols-5">
+
+            <!-- FORM -->
+            <div class="xl:col-span-2">
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                <h2 class="text-xl font-black text-slate-900 dark:text-white">Buat Laporan Harian</h2>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  Isi laporan kegiatan harian TECH-C.
+                </p>
+
+                <form id="reportForm" class="mt-5 space-y-4">
+
+                  <div>
+                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
+                      Tanggal Laporan
+                    </label>
+                    <input
+                      id="reportDate"
+                      type="date"
+                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
+                      Nama Rekan
+                    </label>
+                    <select
+                      id="partnerName"
+                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                      required
+                    >
+                      <option value="">Pilih nama rekan</option>
+                      <option value="Adam Rizki Hidayatullah">Adam Rizki Hidayatullah</option>
+                      <option value="Hashina Qiamu Mumtaziah">Hashina Qiamu Mumtaziah</option>
+                      <option value="Rizki Rahayu Pratama">Rizki Rahayu Pratama</option>
+                      <option value="Akbar Marzuqi">Akbar Marzuqi</option>
+                      <option value="Dinda Sri Rejeki">Dinda Sri Rejeki</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
+                      Judul Laporan
+                    </label>
+                    <input
+                      id="reportTitle"
+                      type="text"
+                      placeholder="Contoh: Kegiatan Kelas Robotik Hari Ini"
+                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
+                      Kategori Laporan
+                    </label>
+                    <select
+                      id="reportCategory"
+                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                    >
+                      <option value="Kegiatan Harian">Kegiatan Harian</option>
+                      <option value="Kelas Robotik">Kelas Robotik</option>
+                      <option value="Kelas Coding">Kelas Coding</option>
+                      <option value="Administrasi">Administrasi</option>
+                      <option value="Kunjungan Sekolah">Kunjungan Sekolah</option>
+                      <option value="Kendala">Kendala</option>
+                      <option value="Lainnya">Lainnya</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
+                      Isi Laporan
+                    </label>
+                    <textarea
+                      id="reportContent"
+                      rows="7"
+                      placeholder="Contoh: Hari ini kegiatan berjalan lancar. Siswa belajar merakit robot dasar, mengenal sensor, dan mencoba program sederhana..."
+                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold leading-7 text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                      required
+                    ></textarea>
+                  </div>
+
+                  <div>
+                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
+                      Status
+                    </label>
+                    <select
+                      id="reportStatus"
+                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                    >
+                      <option value="Selesai">Selesai</option>
+                      <option value="Berjalan">Berjalan</option>
+                      <option value="Butuh Follow Up">Butuh Follow Up</option>
+                    </select>
+                  </div>
+
+                  <button
+                    id="submitBtn"
+                    type="submit"
+                    class="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-4 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    Simpan Laporan
+                  </button>
+
+                  <div id="formStatus" class="hidden rounded-2xl p-4 text-sm font-bold"></div>
+
+                </form>
+              </div>
+            </div>
+
+            <!-- PREVIEW -->
+            <div class="xl:col-span-3">
+              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+                <div class="mb-5 flex items-center justify-between">
+                  <div>
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white">Preview Laporan</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">
+                      Tampilan laporan sebelum disimpan.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onclick="resetForm()"
+                    class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
+                  >
+                    Reset
+                  </button>
+                </div>
+
+                <div class="overflow-hidden rounded-[1.7rem] border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
+                  <div class="bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white">
+                    <p id="previewDate" class="text-xs font-black uppercase tracking-wider text-white/80">Tanggal laporan</p>
+                    <h3 id="previewTitle" class="mt-3 text-3xl font-black">Judul Laporan</h3>
+
+                    <div class="mt-5 flex flex-wrap gap-2">
+                      <span id="previewPartner" class="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
+                        Rekan
+                      </span>
+                      <span id="previewCategory" class="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
+                        Kategori
+                      </span>
+                      <span id="previewStatus" class="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
+                        Status
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="p-6">
+                    <p class="text-sm font-black text-slate-900 dark:text-white">Isi Laporan</p>
+                    <p id="previewContent" class="mt-3 whitespace-pre-line text-sm leading-7 text-slate-500 dark:text-slate-400">
+                      Isi laporan akan tampil di sini.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div class="rounded-[1.4rem] bg-blue-50 p-5 dark:bg-blue-950/50">
+                    <p class="text-xs font-bold text-blue-500">Adam</p>
+                    <p id="countAdam" class="mt-2 text-2xl font-black text-blue-700 dark:text-blue-300">0</p>
+                  </div>
+
+                  <div class="rounded-[1.4rem] bg-green-50 p-5 dark:bg-green-950/50">
+                    <p class="text-xs font-bold text-green-500">Selesai</p>
+                    <p id="countDone" class="mt-2 text-2xl font-black text-green-700 dark:text-green-300">0</p>
+                  </div>
+
+                  <div class="rounded-[1.4rem] bg-yellow-50 p-5 dark:bg-yellow-950/50">
+                    <p class="text-xs font-bold text-yellow-500">Follow Up</p>
+                    <p id="countFollowUp" class="mt-2 text-2xl font-black text-yellow-700 dark:text-yellow-300">0</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- FILTER -->
+          <div class="mb-5 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="grid grid-cols-1 gap-3 lg:grid-cols-12">
+              <div class="lg:col-span-5">
+                <input
+                  id="searchInput"
+                  type="text"
+                  placeholder="🔎 Cari laporan, nama rekan, isi laporan..."
+                  class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                />
+              </div>
+
+              <div class="lg:col-span-3">
+                <select
+                  id="filterPartner"
+                  class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                >
+                  <option value="">Semua Rekan</option>
+                  <option value="Adam Rizki Hidayatullah">Adam Rizki Hidayatullah</option>
+                  <option value="Hashina Qiamu Mumtaziah">Hashina Qiamu Mumtaziah</option>
+                  <option value="Rizki Rahayu Pratama">Rizki Rahayu Pratama</option>
+                  <option value="Akbar Marzuqi">Akbar Marzuqi</option>
+                  <option value="Dinda Sri Rejeki">Dinda Sri Rejeki</option>
+                </select>
+              </div>
+
+              <div class="lg:col-span-2">
+                <select
+                  id="filterStatus"
+                  class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                >
+                  <option value="">Semua Status</option>
+                  <option value="Selesai">Selesai</option>
+                  <option value="Berjalan">Berjalan</option>
+                  <option value="Butuh Follow Up">Butuh Follow Up</option>
+                </select>
+              </div>
+
+              <div class="lg:col-span-2">
+                <button
+                  type="button"
+                  onclick="loadReports()"
+                  class="w-full rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
+                >
+                  Refresh
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- REKAPAN LIST -->
+          <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white">Rekapan Laporan</h2>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  List laporan harian yang sudah dibuat.
+                </p>
+              </div>
+
+              <div class="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                Ditampilkan: <span id="shownCount">0</span>
+              </div>
+            </div>
+
+            <div id="reportList" class="space-y-4"></div>
+          </div>
+
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+  async function loadPartials() {
+    const includes = document.querySelectorAll('include');
+
+    for (let el of includes) {
+      const file = el.getAttribute('src');
+
+      try {
+        const res = await fetch(file);
+        const html = await res.text();
+        el.outerHTML = html;
+      } catch (err) {
+        console.error("Gagal load partial:", file, err);
+      }
+    }
+  }
+  </script>
+
+  <script>
+  const PRODUCTION_API_BASE = 'https://techcwebs-production.up.railway.app/api';
+  const LOCAL_API_BASE = 'http://127.0.0.1:8000/api';
+
+  function isLocalFrontend() {
+    return (
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname === ''
+    );
+  }
+
+  function getApiBase() {
+    const saved = localStorage.getItem('api_base');
+
+    if (isLocalFrontend()) {
+      return saved || LOCAL_API_BASE;
+    }
+
+    if (
+      saved &&
+      !saved.includes('127.0.0.1') &&
+      !saved.includes('localhost')
+    ) {
+      return saved;
+    }
+
+    localStorage.setItem('api_base', PRODUCTION_API_BASE);
+    return PRODUCTION_API_BASE;
+  }
+
+  const API_BASE = getApiBase();
+
+  const PARTNERS = [
+    "Adam Rizki Hidayatullah",
+    "Hashina Qiamu Mumtaziah",
+    "Rizki Rahayu Pratama",
+    "Akbar Marzuqi",
+    "Dinda Sri Rejeki"
+  ];
+
+  let allReports = [];
+
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = value;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function formatDate(value) {
+    if (!value) return '-';
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return value;
+
+    return date.toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+  }
+
+  function formatDateTime(value) {
+    if (!value) return '-';
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return value;
+
+    return date.toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    }) + ' • ' + date.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  function showStatus(message, type = 'success') {
+    const box = document.getElementById('formStatus');
+    if (!box) return;
+
+    box.className = 'rounded-2xl p-4 text-sm font-bold';
+    box.classList.remove('hidden');
+    box.innerText = message;
+
+    if (type === 'success') {
+      box.classList.add('bg-green-50', 'text-green-600', 'dark:bg-green-950', 'dark:text-green-300');
+    } else if (type === 'error') {
+      box.classList.add('bg-red-50', 'text-red-600', 'dark:bg-red-950', 'dark:text-red-300');
+    } else {
+      box.classList.add('bg-yellow-50', 'text-yellow-600', 'dark:bg-yellow-950', 'dark:text-yellow-300');
+    }
+  }
+
+  function setApiStatus(text, type = 'success') {
+    const el = document.getElementById('apiStatus');
+    if (!el) return;
+
+    el.innerText = text;
+    el.className = 'mt-1 text-sm font-black';
+
+    if (type === 'success') {
+      el.classList.add('text-green-500');
+    } else if (type === 'error') {
+      el.classList.add('text-red-500');
+    } else {
+      el.classList.add('text-yellow-500');
+    }
+  }
+
+  function updateLastUpdate() {
+    const now = new Date();
+
+    setText('lastUpdate', now.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }));
+  }
+
+  async function apiGet(path) {
+    const res = await fetch(`${API_BASE}${path}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'X-User-Email': localStorage.getItem('email') || '',
+        'X-User-Role': localStorage.getItem('role') || 'admin'
+      }
+    });
+
+    const raw = await res.text();
+
+    let data;
+
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      throw new Error('Response API bukan JSON: ' + raw);
+    }
+
+    if (!res.ok) {
+      throw new Error(data.message || `HTTP ${res.status}`);
+    }
+
+    return data;
+  }
+
+  async function apiPost(path, payload) {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'X-User-Email': localStorage.getItem('email') || '',
+        'X-User-Role': localStorage.getItem('role') || 'admin'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const raw = await res.text();
+
+    let data;
+
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      throw new Error('Response API bukan JSON: ' + raw);
+    }
+
+    if (!res.ok) {
+      throw new Error(data.message || `HTTP ${res.status}`);
+    }
+
+    return data;
+  }
+
+  function getLocalReports() {
+    try {
+      return JSON.parse(localStorage.getItem('techc_daily_reports') || '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  function saveLocalReport(report) {
+    const saved = getLocalReports();
+
+    saved.unshift({
+      ...report,
+      id: Date.now(),
+      local_only: true,
+      created_at: new Date().toISOString(),
+    });
+
+    localStorage.setItem('techc_daily_reports', JSON.stringify(saved));
+
+    return saved[0];
+  }
+
+  function normalizeReport(report) {
+    return {
+      id: report.id || Date.now(),
+      date: report.date || report.report_date || report.tanggal || report.created_at || '',
+      partner_name: report.partner_name || report.rekan || report.nama_rekan || report.name || '-',
+      title: report.title || report.judul || 'Laporan Harian',
+      category: report.category || report.kategori || 'Kegiatan Harian',
+      content: report.content || report.isi_laporan || report.description || report.deskripsi || '-',
+      status: report.status || 'Selesai',
+      local_only: report.local_only || false,
+      created_at: report.created_at || report.date || new Date().toISOString(),
+    };
+  }
+
+  function buildReportData() {
+    const date = document.getElementById('reportDate')?.value || new Date().toISOString().slice(0, 10);
+    const partnerName = document.getElementById('partnerName')?.value || '';
+    const title = document.getElementById('reportTitle')?.value || '';
+    const category = document.getElementById('reportCategory')?.value || 'Kegiatan Harian';
+    const content = document.getElementById('reportContent')?.value || '';
+    const status = document.getElementById('reportStatus')?.value || 'Selesai';
+
+    return {
+      date,
+      report_date: date,
+      tanggal: date,
+
+      partner_name: partnerName,
+      rekan: partnerName,
+      nama_rekan: partnerName,
+
+      title,
+      judul: title,
+
+      category,
+      kategori: category,
+
+      content,
+      isi_laporan: content,
+      description: content,
+      deskripsi: content,
+
+      status,
+      reporter_name: localStorage.getItem('name') || 'Admin TECH-C',
+      reporter_email: localStorage.getItem('email') || '',
+    };
+  }
+
+  function updatePreview() {
+    const data = buildReportData();
+
+    setText('previewDate', formatDate(data.date));
+    setText('previewTitle', data.title || 'Judul Laporan');
+    setText('previewPartner', data.partner_name || 'Rekan');
+    setText('previewCategory', data.category || 'Kategori');
+    setText('previewStatus', data.status || 'Status');
+    setText('previewContent', data.content || 'Isi laporan akan tampil di sini.');
+  }
+
+  async function loadHeaderUser() {
+    try {
+      const data = await apiGet('/profile');
+
+      const name = data.name || localStorage.getItem('name') || 'Admin TECH-C';
+      const email = data.email || localStorage.getItem('email') || '';
+
+      setText('header_name', name);
+      setText('dropdown_name', name);
+      setText('dropdown_email', email);
+
+      const avatar = document.getElementById('header_avatar');
+
+      if (avatar) {
+        avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+      }
+    } catch (err) {
+      console.warn('Header profile gagal:', err);
+    }
+  }
+
+  async function submitReport(e) {
+    e.preventDefault();
+
+    const data = buildReportData();
+
+    if (!data.partner_name) {
+      showStatus('Pilih nama rekan dulu.', 'error');
+      return;
+    }
+
+    if (!data.title) {
+      showStatus('Judul laporan wajib diisi.', 'error');
+      return;
+    }
+
+    if (!data.content) {
+      showStatus('Isi laporan wajib diisi.', 'error');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+
+    try {
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Menyimpan...';
+      }
+
+      showStatus('Menyimpan laporan ke Laravel...', 'loading');
+
+      await apiPost('/reports', data);
+
+      showStatus('Laporan berhasil disimpan ke Laravel.', 'success');
+
+      resetForm(false);
+      await loadReports();
+
+    } catch (err) {
+      console.warn('API report gagal, simpan localStorage:', err.message);
+
+      saveLocalReport(data);
+
+      showStatus('API laporan belum siap. Laporan disimpan sementara di browser.', 'success');
+
+      resetForm(false);
+      await loadReports();
+
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Simpan Laporan';
+      }
+    }
+  }
+
+  async function loadReports() {
+    const wrap = document.getElementById('reportList');
+
+    if (!wrap) return;
+
+    wrap.innerHTML = `
+      <div class="rounded-2xl bg-slate-50 p-5 text-sm font-bold text-slate-400 dark:bg-slate-950">
+        Loading laporan...
+      </div>
+    `;
+
+    let source = 'Laravel';
+
+    try {
+      const data = await apiGet('/reports');
+
+      const apiReports = Array.isArray(data)
+        ? data
+        : Array.isArray(data.data)
+          ? data.data
+          : [];
+
+      allReports = apiReports.map(normalizeReport);
+
+      setApiStatus('Connected', 'success');
+      source = 'Laravel';
+
+    } catch (err) {
+      console.warn('Gagal load Laravel reports:', err.message);
+
+      allReports = getLocalReports().map(normalizeReport);
+
+      setApiStatus('Local Backup', 'warning');
+      source = 'Local';
+    }
+
+    setText('sourceStatus', source);
+    updateStats();
+    applyFilter();
+    updateLastUpdate();
+  }
+
+  function updateStats() {
+    const today = new Date().toISOString().slice(0, 10);
+
+    const total = allReports.length;
+    const todayCount = allReports.filter(report => String(report.date || '').slice(0, 10) === today).length;
+    const doneCount = allReports.filter(report => report.status === 'Selesai').length;
+    const followUpCount = allReports.filter(report => report.status === 'Butuh Follow Up').length;
+    const adamCount = allReports.filter(report => report.partner_name === 'Adam Rizki Hidayatullah').length;
+
+    setText('heroTotalReports', total);
+    setText('todayReportCount', todayCount);
+    setText('countDone', doneCount);
+    setText('countFollowUp', followUpCount);
+    setText('countAdam', adamCount);
+
+    const bar = document.getElementById('reportBar');
+    if (bar) {
+      const percent = total > 0 ? Math.min(100, Math.round((todayCount / total) * 100)) : 0;
+      bar.style.width = `${percent}%`;
+    }
+  }
+
+  function getStatusClass(status) {
+    if (status === 'Selesai') {
+      return 'bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-300';
+    }
+
+    if (status === 'Berjalan') {
+      return 'bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-300';
+    }
+
+    return 'bg-yellow-100 text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300';
+  }
+
+  function applyFilter() {
+    const search = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
+    const partner = document.getElementById('filterPartner')?.value || '';
+    const status = document.getElementById('filterStatus')?.value || '';
+
+    let filtered = allReports.filter(report => {
+      const target = [
+        report.partner_name,
+        report.title,
+        report.category,
+        report.content,
+        report.status,
+        report.date
+      ].join(' ').toLowerCase();
+
+      const matchSearch = target.includes(search);
+      const matchPartner = !partner || report.partner_name === partner;
+      const matchStatus = !status || report.status === status;
+
+      return matchSearch && matchPartner && matchStatus;
+    });
+
+    renderReports(filtered);
+  }
+
+  function renderReports(reports) {
+    const wrap = document.getElementById('reportList');
+
+    if (!wrap) return;
+
+    setText('shownCount', reports.length);
+
+    if (!reports.length) {
+      wrap.innerHTML = `
+        <div class="rounded-2xl bg-slate-50 p-8 text-center dark:bg-slate-950">
+          <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-3xl shadow-lg dark:bg-slate-900">
+            📄
+          </div>
+          <h3 class="text-lg font-black text-slate-900 dark:text-white">Belum ada laporan</h3>
+          <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            Laporan harian yang dibuat akan muncul di sini.
+          </p>
+        </div>
+      `;
+      return;
+    }
+
+    wrap.innerHTML = reports.map(report => {
+      const statusClass = getStatusClass(report.status);
+
+      return `
+        <div class="report-card rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5 shadow-lg dark:border-slate-800 dark:bg-slate-950">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+                  ${escapeHtml(report.category)}
+                </span>
+
+                <span class="rounded-full px-3 py-1 text-xs font-black ${statusClass}">
+                  ${escapeHtml(report.status)}
+                </span>
+
+                ${report.local_only ? `
+                  <span class="rounded-full bg-yellow-100 px-3 py-1 text-xs font-black text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">
+                    Local
+                  </span>
+                ` : ''}
+              </div>
+
+              <h3 class="mt-3 text-xl font-black text-slate-900 dark:text-white">
+                ${escapeHtml(report.title)}
+              </h3>
+
+              <p class="mt-2 text-sm font-bold text-blue-600">
+                ${escapeHtml(report.partner_name)}
+              </p>
+
+              <p class="mt-4 whitespace-pre-line text-sm leading-7 text-slate-500 dark:text-slate-400">
+                ${escapeHtml(report.content)}
+              </p>
+            </div>
+
+            <div class="shrink-0 rounded-2xl bg-white p-4 text-left shadow-sm dark:bg-slate-900 lg:w-56">
+              <p class="text-xs font-bold text-slate-400">Tanggal Laporan</p>
+              <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">
+                ${escapeHtml(formatDate(report.date))}
+              </p>
+
+              <p class="mt-4 text-xs font-bold text-slate-400">Dibuat</p>
+              <p class="mt-1 text-xs font-black text-slate-500">
+                ${escapeHtml(formatDateTime(report.created_at))}
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function resetForm(clearStatus = true) {
+    const today = new Date().toISOString().slice(0, 10);
+
+    document.getElementById('reportDate').value = today;
+    document.getElementById('partnerName').value = '';
+    document.getElementById('reportTitle').value = '';
+    document.getElementById('reportCategory').value = 'Kegiatan Harian';
+    document.getElementById('reportContent').value = '';
+    document.getElementById('reportStatus').value = 'Selesai';
+
+    if (clearStatus) {
+      const box = document.getElementById('formStatus');
+      if (box) box.classList.add('hidden');
+    }
+
+    updatePreview();
+  }
+
+  function initEvents() {
+    const form = document.getElementById('reportForm');
+
+    if (form) {
+      form.addEventListener('submit', submitReport);
+    }
+
+    [
+      'reportDate',
+      'partnerName',
+      'reportTitle',
+      'reportCategory',
+      'reportContent',
+      'reportStatus'
+    ].forEach(id => {
+      const el = document.getElementById(id);
+
+      if (el) {
+        el.addEventListener('input', updatePreview);
+        el.addEventListener('change', updatePreview);
+      }
+    });
+
+    [
+      'searchInput',
+      'filterPartner',
+      'filterStatus'
+    ].forEach(id => {
+      const el = document.getElementById(id);
+
+      if (el) {
+        el.addEventListener('input', applyFilter);
+        el.addEventListener('change', applyFilter);
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadPartials();
+    await loadHeaderUser();
+
+    resetForm();
+    initEvents();
+
+    await loadReports();
+  });
+  </script>
+
+</body>
+</html>
