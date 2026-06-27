@@ -80,6 +80,7 @@
     }
   </style>
 </head>
+<script src="./admin-profile-sync.js"></script>
 
 <script>
 const token = localStorage.getItem('token');
@@ -1121,7 +1122,11 @@ const API_BASE = getApiBase();
 
   document.addEventListener('DOMContentLoaded', async () => {
     await loadPartials();
+
     await loadHeaderUser();
+        if (window.syncAdminProfileHeader) {
+  await window.syncAdminProfileHeader();
+}
     await loadStudents();
     await loadAdminUnpaidInvoices();
     initForm();

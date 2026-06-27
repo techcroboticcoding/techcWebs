@@ -56,7 +56,7 @@
     }
   </style>
 </head>
-
+<script src="./admin-profile-sync.js"></script>
 <script>
 const token = localStorage.getItem('token');
 const role = localStorage.getItem('role');
@@ -698,6 +698,9 @@ function formatTanggalUpload(value) {
   document.addEventListener('DOMContentLoaded', async () => {
     await loadPartials();
     await loadHeaderUser();
+    if (window.syncAdminProfileHeader) {
+  await window.syncAdminProfileHeader();
+}
     await loadStudents();
     initPreviewEvents();
     await loadDocumentations();

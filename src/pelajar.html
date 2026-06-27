@@ -85,7 +85,7 @@ if (!token) {
   window.location.href = './login.html';
 }
 </script>
-
+<script src="./admin-profile-sync.js"></script>
 <body
   x-data="{ page: 'pelajar', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
   x-init="
@@ -757,6 +757,9 @@ const API_BASE = getApiBase();
   document.addEventListener('DOMContentLoaded', async () => {
     await loadPartials();
     await loadHeaderUser();
+    if (window.syncAdminProfileHeader) {
+  await window.syncAdminProfileHeader();
+}
     await loadPelajar();
 
     const searchInput = document.getElementById('searchInput');
