@@ -1453,6 +1453,21 @@ Route::get('/debug-storage', function () {
         'storage_target' => @readlink(public_path('storage')),
     ];
 });
+
+Route::get('/debug-file', function () {
+
+    $path = 'student-documentations/5e0wMxwWa6xy1NAjtMtuZZXhMFVT01m9ehIlNe6k.jpg';
+
+    return [
+        'exists' => Storage::disk('public')->exists($path),
+        'path' => Storage::disk('public')->path($path),
+        'url' => Storage::disk('public')->url($path),
+        'size' => Storage::disk('public')->exists($path)
+            ? Storage::disk('public')->size($path)
+            : null,
+    ];
+
+});
 /*
 |--------------------------------------------------------------------------
 | DOCUMENTATION PLACEHOLDER
