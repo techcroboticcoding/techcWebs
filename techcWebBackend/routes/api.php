@@ -1471,6 +1471,30 @@ Route::get('/debug-file', function () {
 Route::get('/debug-files', function () {
     return Storage::disk('public')->allFiles();
 });
+use Cloudinary\Cloudinary;
+
+Route::get('/cloudinary-test', function () {
+
+    $cloudinary = new Cloudinary([
+        'cloud' => [
+            'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+            'api_key' => env('CLOUDINARY_API_KEY'),
+            'api_secret' => env('CLOUDINARY_API_SECRET'),
+        ],
+        'url' => [
+            'secure' => true,
+        ],
+    ]);
+
+    $result = $cloudinary->uploadApi()->upload(
+        public_path('favicon.ico'),
+        [
+            'folder' => 'techc-test'
+        ]
+    );
+
+    return $result['secure_url'];
+});
 /*
 |--------------------------------------------------------------------------
 | DOCUMENTATION PLACEHOLDER
