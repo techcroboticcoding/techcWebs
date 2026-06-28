@@ -34,7 +34,7 @@ use App\Models\StudentDocumentation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-
+use Cloudinary\Cloudinary;
 /*
 |--------------------------------------------------------------------------
 | ATTENDANCE / ABSENSI
@@ -1472,7 +1472,7 @@ Route::get('/debug-file', function () {
 Route::get('/debug-files', function () {
     return Storage::disk('public')->allFiles();
 });
-use Cloudinary\Cloudinary;
+
 Route::get('/debug-public', function () {
 
     $file = public_path('favicon.ico');
@@ -1534,7 +1534,6 @@ Route::get('/admin/documentations', function (Request $request) {
             return $doc;
         });
 });
-
 Route::post('/admin/documentations', function (Request $request) {
 
     $request->validate([
@@ -1544,16 +1543,30 @@ Route::post('/admin/documentations', function (Request $request) {
         'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
     ]);
 
-    // Upload ke Cloudinary
-    $upload = Cloudinary::upload(
+    // Inisialisasi Cloudinary
+    $cloudinary = new Cloudinary([
+        'cloud' => [
+            'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+            'api_key' => env('CLOUDINARY_API_KEY'),
+            'api_secret' => env('CLOUDINARY_API_SECRET'),
+        ],
+        'url' => [
+            'secure' => true,
+        ],
+    ]);
+
+    // Upload gambar
+    $upload = $cloudinary->uploadApi()->upload(
         $request->file('image')->getRealPath(),
         [
             'folder' => 'student-documentations'
         ]
     );
 
-    $imageUrl = $upload->getSecurePath();
+    // URL Cloudinary
+    $imageUrl = $upload['secure_url'];
 
+    // Simpan database
     $doc = StudentDocumentation::create([
         'student_id' => $request->student_id,
         'title' => $request->title,
@@ -1576,56 +1589,19 @@ Route::post('/admin/documentations', function (Request $request) {
     return response()->json([
         'message' => 'Dokumentasi berhasil dikirim.',
         'data' => $doc->load('student.school'),
-    ],201);
-
+    ], 201);
 });
 
-$upload = Cloudinary::upload(
-    $request->file('image')->getRealPath(),
-    [
-        'folder' => 'student-documentations'
-    ]
-);
-
-$path = $upload->getSecurePath();
-
-$doc = StudentDocumentation::create([
-    'student_id' => $request->student_id,
-    'title' => $request->title,
-    'description' => $request->description,
-    'image_path' => $path,
-    'status' => 'Published',
-]);
-
-    if (class_exists(StudentNotification::class)) {
-        StudentNotification::create([
-            'student_id' => $request->student_id,
-            'type' => 'documentation',
-            'title' => 'Dokumentasi Baru',
-            'message' => 'Admin TECH-C mengirim dokumentasi baru: ' . $request->title,
-            'url' => 'student-pages.html?page=dokumentasi',
-            'is_read' => false,
-        ]);
-    }
-
-    return response()->json([
-        'message' => 'Dokumentasi berhasil dikirim ke siswa.',
-        'data' => $doc->load('student.school'),
-    ], 201);
-
 Route::delete('/admin/documentations/{documentation}', function (StudentDocumentation $documentation) {
-$documentation->delete();
-
-return response()->json([
-    'message' => 'Dokumentasi berhasil dihapus.',
-]);
 
     $documentation->delete();
 
     return response()->json([
         'message' => 'Dokumentasi berhasil dihapus.',
     ]);
-});Route::get('/student/documentations', function (Request $request) {
+});
+
+Route::get('/student/documentations', function (Request $request) {
     try {
         $studentId = $request->header('X-Student-Id')
             ?? $request->query('student_id')
