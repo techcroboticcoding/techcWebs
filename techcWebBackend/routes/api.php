@@ -1473,11 +1473,16 @@ Route::get('/debug-files', function () {
 });
 use Cloudinary\Cloudinary;
 Route::get('/debug-public', function () {
+
+    $file = public_path('favicon.ico');
+
     return [
-        'favicon_exists' => file_exists(public_path('favicon.ico')),
-        'logo_exists' => file_exists(public_path('images/logo.png')),
-        'public_path' => public_path(),
+        'exists' => file_exists($file),
+        'size' => filesize($file),
+        'mime' => mime_content_type($file),
+        'path' => $file,
     ];
+
 });
 Route::get('/cloudinary-test', function () {
 
