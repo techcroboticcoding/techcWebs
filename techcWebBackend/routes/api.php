@@ -34,6 +34,7 @@ use App\Models\StudentDocumentation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+
 /*
 |--------------------------------------------------------------------------
 | ATTENDANCE / ABSENSI
@@ -1483,8 +1484,14 @@ Route::get('/debug-public', function () {
         'path' => $file,
     ];
 
-});
-Route::get('/cloudinary-test', function () {
+});Route::post('/cloudinary-test', function (Request $request) {
+
+    if (!$request->hasFile('image')) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Tidak ada file.'
+        ]);
+    }
 
     $cloudinary = new Cloudinary([
         'cloud' => [
@@ -1497,14 +1504,18 @@ Route::get('/cloudinary-test', function () {
         ],
     ]);
 
-    $result = $cloudinary->uploadApi()->upload(
-        public_path('favicon.ico'),
+    $upload = $cloudinary->uploadApi()->upload(
+        $request->file('image')->getRealPath(),
         [
             'folder' => 'techc-test'
         ]
     );
 
-    return $result['secure_url'];
+    return response()->json([
+        'success' => true,
+        'url' => $upload['secure_url']
+    ]);
+
 });
 /*
 |--------------------------------------------------------------------------
