@@ -1484,14 +1484,8 @@ Route::get('/debug-public', function () {
         'path' => $file,
     ];
 
-});Route::post('/cloudinary-test', function (Request $request) {
-
-    if (!$request->hasFile('image')) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Tidak ada file.'
-        ]);
-    }
+});
+Route::get('/cloudinary-test', function () {
 
     $cloudinary = new Cloudinary([
         'cloud' => [
@@ -1504,18 +1498,14 @@ Route::get('/debug-public', function () {
         ],
     ]);
 
-    $upload = $cloudinary->uploadApi()->upload(
-        $request->file('image')->getRealPath(),
+    $result = $cloudinary->uploadApi()->upload(
+        public_path('favicon.ico'),
         [
             'folder' => 'techc-test'
         ]
     );
 
-    return response()->json([
-        'success' => true,
-        'url' => $upload['secure_url']
-    ]);
-
+    return $result['secure_url'];
 });
 /*
 |--------------------------------------------------------------------------
@@ -1529,18 +1519,24 @@ Route::get('/debug-public', function () {
 */
 
 Route::get('/admin/documentations', function (Request $request) {
-    return StudentDocumentation::with('student.school')
+ return StudentDocumentation::with('student.school')
         ->latest()
         ->get()
         ->map(function ($doc) {
+
             $doc->student_name = $doc->student?->name;
             $doc->student_class = $doc->student?->kelas;
             $doc->student_school = $doc->student?->school?->nama;
+
+            // Tambahkan ini
+            $doc->image_url = $doc->image_path;
+
             return $doc;
         });
 });
 
 Route::post('/admin/documentations', function (Request $request) {
+
     $request->validate([
         'student_id' => 'required|exists:students,id',
         'title' => 'required|string|max:255',
@@ -1548,15 +1544,58 @@ Route::post('/admin/documentations', function (Request $request) {
         'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
     ]);
 
-    $path = $request->file('image')->store('student-documentations', 'public');
+    // Upload ke Cloudinary
+    $upload = Cloudinary::upload(
+        $request->file('image')->getRealPath(),
+        [
+            'folder' => 'student-documentations'
+        ]
+    );
+
+    $imageUrl = $upload->getSecurePath();
 
     $doc = StudentDocumentation::create([
         'student_id' => $request->student_id,
         'title' => $request->title,
         'description' => $request->description,
-        'image_path' => $path,
+        'image_path' => $imageUrl,
         'status' => 'Published',
     ]);
+
+    if (class_exists(StudentNotification::class)) {
+        StudentNotification::create([
+            'student_id' => $request->student_id,
+            'type' => 'documentation',
+            'title' => 'Dokumentasi Baru',
+            'message' => 'Admin TECH-C mengirim dokumentasi baru: '.$request->title,
+            'url' => 'student-pages.html?page=dokumentasi',
+            'is_read' => false,
+        ]);
+    }
+
+    return response()->json([
+        'message' => 'Dokumentasi berhasil dikirim.',
+        'data' => $doc->load('student.school'),
+    ],201);
+
+});
+
+$upload = Cloudinary::upload(
+    $request->file('image')->getRealPath(),
+    [
+        'folder' => 'student-documentations'
+    ]
+);
+
+$path = $upload->getSecurePath();
+
+$doc = StudentDocumentation::create([
+    'student_id' => $request->student_id,
+    'title' => $request->title,
+    'description' => $request->description,
+    'image_path' => $path,
+    'status' => 'Published',
+]);
 
     if (class_exists(StudentNotification::class)) {
         StudentNotification::create([
@@ -1573,12 +1612,13 @@ Route::post('/admin/documentations', function (Request $request) {
         'message' => 'Dokumentasi berhasil dikirim ke siswa.',
         'data' => $doc->load('student.school'),
     ], 201);
-});
 
 Route::delete('/admin/documentations/{documentation}', function (StudentDocumentation $documentation) {
-    if ($documentation->image_path && Storage::disk('public')->exists($documentation->image_path)) {
-        Storage::disk('public')->delete($documentation->image_path);
-    }
+$documentation->delete();
+
+return response()->json([
+    'message' => 'Dokumentasi berhasil dihapus.',
+]);
 
     $documentation->delete();
 
@@ -1614,7 +1654,7 @@ Route::delete('/admin/documentations/{documentation}', function (StudentDocument
             ->latest()
             ->get()
             ->map(function ($doc) {
-                $doc->image_url = techc_storage_url($doc->image_path);
+              $doc->image_url = $doc->image_path;
                 $doc->uploaded_at = $doc->created_at?->format('Y-m-d H:i:s');
                 return $doc;
             });
