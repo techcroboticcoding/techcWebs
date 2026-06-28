@@ -1472,7 +1472,13 @@ Route::get('/debug-files', function () {
     return Storage::disk('public')->allFiles();
 });
 use Cloudinary\Cloudinary;
-
+Route::get('/debug-public', function () {
+    return [
+        'favicon_exists' => file_exists(public_path('favicon.ico')),
+        'logo_exists' => file_exists(public_path('images/logo.png')),
+        'public_path' => public_path(),
+    ];
+});
 Route::get('/cloudinary-test', function () {
 
     $cloudinary = new Cloudinary([
