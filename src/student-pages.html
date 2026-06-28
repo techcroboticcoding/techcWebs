@@ -975,41 +975,54 @@ function renderTagihan(invoices) {
     minute: '2-digit',
   });
 }
-  function renderDokumentasi(docs) {
-  
-    if (!docs.length) {
-      return emptyState('Belum ada dokumentasi JPG.', 'Dokumentasi kelas akan tampil setelah admin upload foto ke Laravel.');
-    }
+ function renderDokumentasi(docs) {
 
-    return `
-     <div class="overflow-hidden rounded-[1.5rem] border border-slate-100 bg-slate-50 shadow-lg">
+  if (!docs.length) {
+    return emptyState(
+      'Belum ada dokumentasi JPG.',
+      'Dokumentasi kelas akan tampil setelah admin upload foto.'
+    );
+  }
 
-    <img
-        src="${doc.image_url}"
-        alt="${escapeHtml(doc.title)}"
-        class="h-64 w-full object-cover"
-        loading="lazy"
-        onerror="this.src='./images/no-image.png'"
-    >
+  return `
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
 
-    <div class="p-5">
-        <p class="text-lg font-black">
+      ${docs.map(doc => `
+
+      <div class="overflow-hidden rounded-[1.5rem] border border-slate-100 bg-slate-50 shadow-lg dark:border-slate-800 dark:bg-slate-950">
+
+        <img
+          src="${doc.image_url}"
+          alt="${escapeHtml(doc.title || 'Dokumentasi')}"
+          class="h-64 w-full object-cover"
+          loading="lazy"
+          onerror="this.src='./images/no-image.png'"
+        >
+
+        <div class="p-5">
+
+          <p class="text-lg font-black text-slate-900 dark:text-white">
             ${escapeHtml(doc.title || 'Dokumentasi')}
-        </p>
+          </p>
 
-        <p class="mt-2 text-sm">
+          <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
             ${escapeHtml(doc.description || '')}
-        </p>
+          </p>
 
-        <p class="mt-3 text-xs">
+          <p class="mt-3 text-xs font-bold text-slate-400">
             Upload:
             ${escapeHtml(formatTanggalUpload(doc.created_at))}
-        </p>
-    </div>
+          </p>
 
-</div>
-    `;
-  }
+        </div>
+
+      </div>
+
+      `).join('')}
+
+    </div>
+  `;
+}
 
   function renderProfile(dashboard, profile) {
     const student = getStudent(dashboard);
