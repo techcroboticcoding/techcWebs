@@ -1443,7 +1443,16 @@ Route::get('/materials', fn () => Material::with('lesson')->latest()->get());
 Route::get('/certificates', fn () => Certificate::with(['student', 'lesson'])->latest()->get());
 Route::get('/projects', fn () => StudentProject::with(['student', 'lesson'])->latest()->get());
 Route::get('/progress-records', fn () => ProgressRecord::with(['student', 'lesson', 'teacher'])->latest()->get());
+use Illuminate\Support\Facades\File;
 
+Route::get('/debug-storage', function () {
+    return [
+        'public_storage_exists' => File::exists(public_path('storage')),
+        'public_storage_is_link' => is_link(public_path('storage')),
+        'public_storage_path' => public_path('storage'),
+        'storage_target' => @readlink(public_path('storage')),
+    ];
+});
 /*
 |--------------------------------------------------------------------------
 | DOCUMENTATION PLACEHOLDER
