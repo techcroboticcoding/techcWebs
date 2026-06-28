@@ -35,6 +35,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Cloudinary\Cloudinary;
+use App\Models\StudentProgress;
 /*
 |--------------------------------------------------------------------------
 | ATTENDANCE / ABSENSI
@@ -594,6 +595,66 @@ Route::get('/files/admin-profiles/{filename}', function ($filename) {
             'file' => basename($e->getFile()),
         ], 500);
     }
+});
+Route::get('/admin/progress', function () {
+
+    return StudentProgress::with('student.school')
+        ->latest()
+        ->get();
+
+});
+Route::post('/admin/progress', function (Request $request) {
+
+    $request->validate([
+
+        'student_id'=>'required|exists:students,id'
+
+    ]);
+
+    $progress = StudentProgress::firstOrCreate(
+
+        [
+            'student_id'=>$request->student_id
+        ],
+
+        [
+            'progress'=>0,
+            'level'=>'Beginner',
+            'status'=>'Aktif',
+            'teacher_note'=>''
+        ]
+
+    );
+
+    return response()->json($progress);
+
+});
+Route::put('/admin/progress/{progress}', function (
+    Illuminate\Http\Request $request,
+    StudentProgress $progress
+) {
+
+    $request->validate([
+
+        'progress'=>'required|integer|min:0|max:100',
+        'level'=>'nullable|string|max:100',
+        'status'=>'nullable|string|max:50',
+        'teacher_note'=>'nullable|string'
+
+    ]);
+
+    $progress->update($request->only([
+        'progress',
+        'level',
+        'status',
+        'teacher_note'
+    ]));
+
+    return response()->json([
+        'message'=>'Progress berhasil diupdate.',
+        'data'=>$progress->fresh('student')
+    ]);
+
 });
 Route::get('/admin/profile', function (Request $request) {
     try {
@@ -1600,7 +1661,29 @@ Route::delete('/admin/documentations/{documentation}', function (StudentDocument
         'message' => 'Dokumentasi berhasil dihapus.',
     ]);
 });
+Route::get('/student/progress', function(Request $request){
 
+    $student = Student::where('user_id', auth()->id())->first();
+
+    return StudentProgress::where('student_id',$student->id)->first();
+
+});
+Route::get('/student/progress', function (Request $request) {
+
+    $studentId =
+        $request->query('student_id')
+        ?? $request->header('X-Student-Id');
+
+    if(!$studentId){
+
+        return response()->json(null);
+
+    }
+
+    return StudentProgress::where('student_id',$studentId)
+        ->first();
+
+});
 Route::get('/student/documentations', function (Request $request) {
     try {
         $studentId = $request->header('X-Student-Id')
