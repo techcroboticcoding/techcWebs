@@ -1468,6 +1468,9 @@ Route::get('/debug-file', function () {
     ];
 
 });
+Route::get('/debug-files', function () {
+    return Storage::disk('public')->allFiles();
+});
 /*
 |--------------------------------------------------------------------------
 | DOCUMENTATION PLACEHOLDER
