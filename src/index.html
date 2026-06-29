@@ -664,7 +664,7 @@ if (!token) {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
-const PRODUCTION_API_BASE = 'https://techcwebs-production.up.railway.app/api';
+const PRODUCTION_API_BASE = 'https://api.tech-c.my.id/api';
 const LOCAL_API_BASE = 'http://127.0.0.1:8000/api';
 
 function isLocalFrontend() {
@@ -1057,7 +1057,7 @@ async function loadHeaderUser() {
 
     if (photoUrl) {
       photoUrl = String(photoUrl)
-        .replace('http://techcwebs-production.up.railway.app', 'https://techcwebs-production.up.railway.app');
+        .replace('https://api.tech-c.my.id', 'https://api.tech-c.my.id/api');
 
       if (photoUrl.includes('/storage/admin-profiles/')) {
         const filename = photoUrl.split('/storage/admin-profiles/').pop().split('?')[0];
