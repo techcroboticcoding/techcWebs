@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Laporan Harian | TECH-C</title>
+  <title>Laporan Harian | AOneSchool</title>
 
   <style>
     * {
@@ -73,20 +73,11 @@
       color: #64748b;
     }
 
-    .document-preview {
-      font-family: Arial, Helvetica, sans-serif;
-    }
 
     .report-table tbody tr:last-child td {
       border-bottom: 0;
     }
 
-    @media (max-width: 640px) {
-      .document-preview {
-        min-height: auto;
-        padding: 1.25rem;
-      }
-    }
   </style>
 </head>
 
@@ -202,146 +193,74 @@ if (!token) {
             </div>
           </div>
 
-          <!-- FORM AND DOCUMENT PREVIEW -->
-          <div class="grid grid-cols-1 gap-6 xl:grid-cols-5">
-            <div class="xl:col-span-2">
-              <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <div class="border-b border-slate-200 px-6 py-5 dark:border-slate-800">
-                  <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Form Laporan Harian</h2>
-                  <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Lengkapi seluruh data laporan sebelum disimpan.</p>
-                </div>
-
-                <form id="reportForm" class="space-y-5 p-6">
-                  <div>
-                    <label for="reportDate" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Tanggal Laporan</label>
-                    <input id="reportDate" type="date" class="form-control" required />
-                  </div>
-
-                  <div>
-                    <label for="partnerName" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Nama Rekan</label>
-                    <select id="partnerName" class="form-control" required>
-                      <option value="">Pilih nama rekan</option>
-                      <option value="Adam Rizki Hidayatullah">Adam Rizki Hidayatullah</option>
-                      <option value="Hashina Qiamu Mumtaziah">Hashina Qiamu Mumtaziah</option>
-                      <option value="Rizki Rahayu Pratama">Rizki Rahayu Pratama</option>
-                      <option value="Akbar Marzuqi">Akbar Marzuqi</option>
-                      <option value="Dinda Sri Rejeki">Dinda Sri Rejeki</option>
-                                            <option value="Muhammad Teguh Bayu Saputra">Muhammad Teguh Bayu Saputra</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label for="reportTitle" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Judul Laporan</label>
-                    <input id="reportTitle" type="text" placeholder="Contoh: Pelaksanaan Kelas Robotik" class="form-control" required />
-                  </div>
-
-                  <div>
-                    <label for="reportCategory" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Kategori Laporan</label>
-                    <select id="reportCategory" class="form-control">
-                      <option value="Kegiatan Harian">Kegiatan Harian</option>
-                      <option value="Kelas Robotik">Kelas Robotik</option>
-                      <option value="Kelas Coding">Kelas Coding</option>
-                      <option value="Administrasi">Administrasi</option>
-                      <option value="Kunjungan Sekolah">Kunjungan Sekolah</option>
-                      <option value="Kendala">Kendala</option>
-                      <option value="Lainnya">Lainnya</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label for="reportContent" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Uraian Kegiatan</label>
-                    <textarea id="reportContent" rows="7" placeholder="Tuliskan kegiatan, hasil, kendala, dan tindak lanjut secara jelas..." class="form-control resize-y leading-7" required></textarea>
-                  </div>
-
-                  <div>
-                    <label for="reportStatus" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Status Laporan</label>
-                    <select id="reportStatus" class="form-control">
-                      <option value="Selesai">Selesai</option>
-                      <option value="Berjalan">Berjalan</option>
-                      <option value="Butuh Follow Up">Butuh Follow Up</option>
-                    </select>
-                  </div>
-
-                  <div class="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 dark:border-slate-800 sm:flex-row sm:justify-end">
-                    <button type="button" onclick="resetForm()" class="rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
-                      Kosongkan
-                    </button>
-                    <button id="submitBtn" type="submit" class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">
-                      Simpan Laporan
-                    </button>
-                  </div>
-
-                  <div id="formStatus" class="hidden rounded-lg p-4 text-sm font-medium"></div>
-                </form>
-              </div>
+          <!-- REPORT FORM -->
+          <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="border-b border-slate-200 px-6 py-5 dark:border-slate-800">
+              <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Form Laporan Harian</h2>
+              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Lengkapi seluruh data laporan sebelum disimpan.</p>
             </div>
 
-            <div class="xl:col-span-3">
-              <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <div class="flex items-center justify-between border-b border-slate-200 px-6 py-5 dark:border-slate-800">
-                  <div>
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Pratinjau Dokumen</h2>
-                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Pratinjau format laporan sebelum disimpan.</p>
-                  </div>
-                  <span class="rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">Draft</span>
-                </div>
-
-                <div class="p-4 sm:p-6">
-                  <article class="document-preview mx-auto min-h-[620px] max-w-3xl border border-slate-300 bg-white p-7 text-slate-800 shadow-sm dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 sm:p-10">
-                    <header class="border-b-2 border-slate-800 pb-5 text-center dark:border-slate-200">
-                      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">TECH-C Robotic & Coding</p>
-                      <h3 class="mt-2 text-xl font-bold uppercase tracking-wide">Laporan Kegiatan Harian</h3>
-                    </header>
-
-                    <div class="mt-7 overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700">
-                      <table class="w-full text-sm">
-                        <tbody class="divide-y divide-slate-300 dark:divide-slate-700">
-                          <tr>
-                            <th class="w-40 bg-slate-100 px-4 py-3 text-left font-semibold dark:bg-slate-900">Tanggal</th>
-                            <td id="previewDate" class="px-4 py-3">Tanggal laporan</td>
-                          </tr>
-                          <tr>
-                            <th class="bg-slate-100 px-4 py-3 text-left font-semibold dark:bg-slate-900">Nama Rekan</th>
-                            <td id="previewPartner" class="px-4 py-3">Nama rekan</td>
-                          </tr>
-                          <tr>
-                            <th class="bg-slate-100 px-4 py-3 text-left font-semibold dark:bg-slate-900">Kategori</th>
-                            <td id="previewCategory" class="px-4 py-3">Kategori</td>
-                          </tr>
-                          <tr>
-                            <th class="bg-slate-100 px-4 py-3 text-left font-semibold dark:bg-slate-900">Status</th>
-                            <td id="previewStatus" class="px-4 py-3">Status</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-
-                    <section class="mt-8">
-                      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Judul Laporan</p>
-                      <h4 id="previewTitle" class="mt-2 text-lg font-bold text-slate-900 dark:text-white">Judul Laporan</h4>
-                    </section>
-
-                    <section class="mt-7">
-                      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Uraian Kegiatan</p>
-                      <p id="previewContent" class="mt-3 whitespace-pre-line text-sm leading-7 text-slate-700 dark:text-slate-300">Isi laporan akan tampil di sini.</p>
-                    </section>
-
-                    <footer class="mt-14 grid grid-cols-2 gap-10 text-center text-sm">
-                      <div>
-                        <p>Mengetahui,</p>
-                        <div class="h-20"></div>
-                        <p class="border-t border-slate-500 pt-2 font-semibold">Koordinator</p>
-                      </div>
-                      <div>
-                        <p>Pelapor,</p>
-                        <div class="h-20"></div>
-                        <p class="border-t border-slate-500 pt-2 font-semibold">Admin TECH-C</p>
-                      </div>
-                    </footer>
-                  </article>
-                </div>
+            <form id="reportForm" class="grid grid-cols-1 gap-5 p-6 lg:grid-cols-2">
+              <div>
+                <label for="reportDate" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Tanggal Laporan</label>
+                <input id="reportDate" type="date" class="form-control" required />
               </div>
-            </div>
+
+              <div>
+                <label for="partnerName" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Nama Rekan</label>
+                <select id="partnerName" class="form-control" required>
+                  <option value="">Pilih nama rekan</option>
+                  <option value="Adam Rizki Hidayatullah">Adam Rizki Hidayatullah</option>
+                  <option value="Hashina Qiamu Mumtaziah">Hashina Qiamu Mumtaziah</option>
+                  <option value="Rizki Rahayu Pratama">Rizki Rahayu Pratama</option>
+                  <option value="Akbar Marzuqi">Akbar Marzuqi</option>
+                  <option value="Dinda Sri Rejeki">Dinda Sri Rejeki</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="reportTitle" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Judul Laporan</label>
+                <input id="reportTitle" type="text" placeholder="Contoh: Pelaksanaan Kelas Robotik" class="form-control" required />
+              </div>
+
+              <div>
+                <label for="reportCategory" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Kategori Laporan</label>
+                <select id="reportCategory" class="form-control">
+                  <option value="Kegiatan Harian">Kegiatan Harian</option>
+                  <option value="Kelas Robotik">Kelas Robotik</option>
+                  <option value="Kelas Coding">Kelas Coding</option>
+                  <option value="Administrasi">Administrasi</option>
+                  <option value="Kunjungan Sekolah">Kunjungan Sekolah</option>
+                  <option value="Kendala">Kendala</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </div>
+
+              <div class="lg:col-span-2">
+                <label for="reportContent" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Uraian Kegiatan</label>
+                <textarea id="reportContent" rows="7" placeholder="Tuliskan kegiatan, hasil, kendala, dan tindak lanjut secara jelas..." class="form-control resize-y leading-7" required></textarea>
+              </div>
+
+              <div>
+                <label for="reportStatus" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Status Laporan</label>
+                <select id="reportStatus" class="form-control">
+                  <option value="Selesai">Selesai</option>
+                  <option value="Berjalan">Berjalan</option>
+                  <option value="Butuh Follow Up">Butuh Follow Up</option>
+                </select>
+              </div>
+
+              <div class="flex items-end justify-end gap-3">
+                <button type="button" onclick="resetForm()" class="rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                  Kosongkan
+                </button>
+                <button id="submitBtn" type="submit" class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">
+                  Simpan Laporan
+                </button>
+              </div>
+
+              <div id="formStatus" class="hidden rounded-lg p-4 text-sm font-medium lg:col-span-2"></div>
+            </form>
           </div>
 
           <!-- REPORT TABLE -->
@@ -677,17 +596,6 @@ if (!token) {
     };
   }
 
-  function updatePreview() {
-    const data = buildReportData();
-
-    setText('previewDate', formatDate(data.date));
-    setText('previewTitle', data.title || 'Judul Laporan');
-    setText('previewPartner', data.partner_name || 'Rekan');
-    setText('previewCategory', data.category || 'Kategori');
-    setText('previewStatus', data.status || 'Status');
-    setText('previewContent', data.content || 'Isi laporan akan tampil di sini.');
-  }
-
   async function loadHeaderUser() {
     try {
       const data = await apiGet('/profile');
@@ -979,7 +887,6 @@ if (!token) {
       if (box) box.classList.add('hidden');
     }
 
-    updatePreview();
   }
 
   function initEvents() {
@@ -989,21 +896,6 @@ if (!token) {
       form.addEventListener('submit', submitReport);
     }
 
-    [
-      'reportDate',
-      'partnerName',
-      'reportTitle',
-      'reportCategory',
-      'reportContent',
-      'reportStatus'
-    ].forEach(id => {
-      const el = document.getElementById(id);
-
-      if (el) {
-        el.addEventListener('input', updatePreview);
-        el.addEventListener('change', updatePreview);
-      }
-    });
 
     [
       'searchInput',
