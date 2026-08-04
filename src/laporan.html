@@ -1,13 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Laporan Harian - TECH-C</title>
+  <title>Laporan Harian | TECH-C</title>
 
   <style>
     * {
+      box-sizing: border-box;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -27,32 +28,64 @@
 
     #pageScroller::-webkit-scrollbar {
       width: 8px;
+      height: 8px;
+    }
+
+    #pageScroller::-webkit-scrollbar-track {
+      background: transparent;
     }
 
     #pageScroller::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, .55);
+      background: rgba(100, 116, 139, 0.45);
       border-radius: 999px;
     }
 
-    .grid-bg {
-      background-image:
-        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
-      background-size: 42px 42px;
+    .form-control {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      background: #ffffff;
+      padding: 0.75rem 0.875rem;
+      color: #334155;
+      font-size: 0.875rem;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .dark .grid-bg {
-      background-image:
-        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    .form-control::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
     }
 
-    .report-card {
-      transition: .25s ease;
+    .form-control:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
     }
 
-    .report-card:hover {
-      transform: translateY(-4px);
+    .dark .form-control {
+      border-color: #334155;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+
+    .dark .form-control::placeholder {
+      color: #64748b;
+    }
+
+    .document-preview {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .report-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    @media (max-width: 640px) {
+      .document-preview {
+        min-height: auto;
+        padding: 1.25rem;
+      }
     }
   </style>
 </head>
@@ -92,107 +125,101 @@ if (!token) {
       <include src="./partials/overlay.html"></include>
       <include src="./partials/header.html"></include>
 
-      <main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
+      <main class="min-h-screen bg-slate-100 p-4 pb-16 dark:bg-slate-950 sm:p-6 lg:p-8">
+        <section class="mx-auto max-w-7xl space-y-6">
 
-        <div class="pointer-events-none absolute inset-0 overflow-hidden">
-          <div class="absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full bg-blue-500/10 blur-3xl"></div>
-          <div class="absolute left-[-150px] top-72 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-3xl"></div>
-          <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
-        </div>
+          <!-- PAGE HEADER -->
+          <div class="rounded-xl border border-slate-200 bg-white px-6 py-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600 dark:text-blue-400">
+                  Administrasi Kegiatan
+                </p>
+                <h1 class="mt-1 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+                  Laporan Harian TECH-C
+                </h1>
+                <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+                  Formulir pencatatan kegiatan harian dan rekapitulasi laporan staf dalam satu halaman.
+                </p>
+              </div>
 
-        <section class="relative z-10 mx-auto max-w-7xl">
-
-          <!-- HERO -->
-          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-            <div class="relative p-6 sm:p-7 lg:p-8">
-              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-blue-600/15 via-cyan-500/5 to-transparent lg:block"></div>
-
-              <div class="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
-                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
-                    Daily Report
-                  </div>
-
-                  <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-                    Laporan Harian TECH-C
-                  </h1>
-
-                  <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
-                    Buat laporan harian kegiatan, pilih nama rekan, isi detail laporan, lalu lihat rekapan laporan dalam satu halaman.
-                  </p>
-
-                  <div class="mt-5 flex flex-wrap gap-3">
-                    <div class="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/70">
-                      <p class="text-xs font-bold text-slate-400">Status API</p>
-                      <p id="apiStatus" class="mt-1 text-sm font-black text-yellow-500">Checking...</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/70">
-                      <p class="text-xs font-bold text-slate-400">Total Laporan</p>
-                      <p id="heroTotalReports" class="mt-1 text-sm font-black text-slate-900 dark:text-white">0</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/70">
-                      <p class="text-xs font-bold text-slate-400">Update Terakhir</p>
-                      <p id="lastUpdate" class="mt-1 text-sm font-black text-slate-900 dark:text-white">-</p>
-                    </div>
-                  </div>
+              <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div class="min-w-[130px] rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
+                  <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Status API</p>
+                  <p id="apiStatus" class="mt-1 text-sm font-semibold text-amber-500">Checking...</p>
                 </div>
 
-                <div class="rounded-[2rem] bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25">
-                  <p class="text-sm font-bold text-white/80">Laporan Hari Ini</p>
-                  <h2 id="todayReportCount" class="mt-2 text-4xl font-black">0</h2>
-                  <p class="mt-1 text-xs font-semibold text-white/70">Laporan masuk</p>
-
-                  <div class="mt-5 rounded-2xl bg-white/15 p-4">
-                    <div class="flex items-center justify-between text-xs font-bold text-white/80">
-                      <span>Rekap aktif</span>
-                      <span id="sourceStatus">Laravel</span>
-                    </div>
-                    <div class="mt-3 h-2 overflow-hidden rounded-full bg-white/20">
-                      <div id="reportBar" class="h-full w-0 rounded-full bg-white/70 transition-all"></div>
-                    </div>
-                  </div>
+                <div class="min-w-[130px] rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
+                  <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Laporan</p>
+                  <p id="heroTotalReports" class="mt-1 text-lg font-bold text-slate-900 dark:text-white">0</p>
                 </div>
+
+                <div class="min-w-[130px] rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
+                  <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Hari Ini</p>
+                  <p id="todayReportCount" class="mt-1 text-lg font-bold text-slate-900 dark:text-white">0</p>
+                </div>
+
+                <div class="min-w-[130px] rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
+                  <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Update Terakhir</p>
+                  <p id="lastUpdate" class="mt-1 text-sm font-semibold text-slate-900 dark:text-white">-</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5 flex items-center gap-3 border-t border-slate-200 pt-4 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+              <span class="font-medium">Sumber data:</span>
+              <span id="sourceStatus" class="rounded-md bg-slate-100 px-2.5 py-1 font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200">Laravel</span>
+              <div class="h-1.5 max-w-52 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                <div id="reportBar" class="h-full w-0 rounded-full bg-blue-600 transition-all"></div>
               </div>
             </div>
           </div>
 
-          <!-- FORM + PREVIEW -->
-          <div class="mb-7 grid grid-cols-1 gap-6 xl:grid-cols-5">
+          <!-- SUMMARY -->
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Laporan Berjalan</p>
+              <div class="mt-3 flex items-end justify-between">
+                <p id="countRunning" class="text-3xl font-bold text-slate-900 dark:text-white">0</p>
+                <span class="rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">Berjalan</span>
+              </div>
+            </div>
 
-            <!-- FORM -->
+            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Laporan Selesai</p>
+              <div class="mt-3 flex items-end justify-between">
+                <p id="countDone" class="text-3xl font-bold text-slate-900 dark:text-white">0</p>
+                <span class="rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Selesai</span>
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Memerlukan Tindak Lanjut</p>
+              <div class="mt-3 flex items-end justify-between">
+                <p id="countFollowUp" class="text-3xl font-bold text-slate-900 dark:text-white">0</p>
+                <span class="rounded-md bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:text-amber-300">Follow Up</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- FORM AND DOCUMENT PREVIEW -->
+          <div class="grid grid-cols-1 gap-6 xl:grid-cols-5">
             <div class="xl:col-span-2">
-              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-                <h2 class="text-xl font-black text-slate-900 dark:text-white">Buat Laporan Harian</h2>
-                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  Isi laporan kegiatan harian TECH-C.
-                </p>
+              <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <div class="border-b border-slate-200 px-6 py-5 dark:border-slate-800">
+                  <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Form Laporan Harian</h2>
+                  <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Lengkapi seluruh data laporan sebelum disimpan.</p>
+                </div>
 
-                <form id="reportForm" class="mt-5 space-y-4">
-
+                <form id="reportForm" class="space-y-5 p-6">
                   <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
-                      Tanggal Laporan
-                    </label>
-                    <input
-                      id="reportDate"
-                      type="date"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                      required
-                    />
+                    <label for="reportDate" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Tanggal Laporan</label>
+                    <input id="reportDate" type="date" class="form-control" required />
                   </div>
 
                   <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
-                      Nama Rekan
-                    </label>
-                    <select
-                      id="partnerName"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                      required
-                    >
+                    <label for="partnerName" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Nama Rekan</label>
+                    <select id="partnerName" class="form-control" required>
                       <option value="">Pilih nama rekan</option>
                       <option value="Adam Rizki Hidayatullah">Adam Rizki Hidayatullah</option>
                       <option value="Hashina Qiamu Mumtaziah">Hashina Qiamu Mumtaziah</option>
@@ -203,26 +230,13 @@ if (!token) {
                   </div>
 
                   <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
-                      Judul Laporan
-                    </label>
-                    <input
-                      id="reportTitle"
-                      type="text"
-                      placeholder="Contoh: Kegiatan Kelas Robotik Hari Ini"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                      required
-                    />
+                    <label for="reportTitle" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Judul Laporan</label>
+                    <input id="reportTitle" type="text" placeholder="Contoh: Pelaksanaan Kelas Robotik" class="form-control" required />
                   </div>
 
                   <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
-                      Kategori Laporan
-                    </label>
-                    <select
-                      id="reportCategory"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                    >
+                    <label for="reportCategory" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Kategori Laporan</label>
+                    <select id="reportCategory" class="form-control">
                       <option value="Kegiatan Harian">Kegiatan Harian</option>
                       <option value="Kelas Robotik">Kelas Robotik</option>
                       <option value="Kelas Coding">Kelas Coding</option>
@@ -234,180 +248,151 @@ if (!token) {
                   </div>
 
                   <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
-                      Isi Laporan
-                    </label>
-                    <textarea
-                      id="reportContent"
-                      rows="7"
-                      placeholder="Contoh: Hari ini kegiatan berjalan lancar. Siswa belajar merakit robot dasar, mengenal sensor, dan mencoba program sederhana..."
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold leading-7 text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                      required
-                    ></textarea>
+                    <label for="reportContent" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Uraian Kegiatan</label>
+                    <textarea id="reportContent" rows="7" placeholder="Tuliskan kegiatan, hasil, kendala, dan tindak lanjut secara jelas..." class="form-control resize-y leading-7" required></textarea>
                   </div>
 
                   <div>
-                    <label class="mb-2 block text-sm font-black text-slate-700 dark:text-slate-200">
-                      Status
-                    </label>
-                    <select
-                      id="reportStatus"
-                      class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                    >
+                    <label for="reportStatus" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Status Laporan</label>
+                    <select id="reportStatus" class="form-control">
                       <option value="Selesai">Selesai</option>
                       <option value="Berjalan">Berjalan</option>
                       <option value="Butuh Follow Up">Butuh Follow Up</option>
                     </select>
                   </div>
 
-                  <button
-                    id="submitBtn"
-                    type="submit"
-                    class="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-4 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    Simpan Laporan
-                  </button>
+                  <div class="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 dark:border-slate-800 sm:flex-row sm:justify-end">
+                    <button type="button" onclick="resetForm()" class="rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                      Kosongkan
+                    </button>
+                    <button id="submitBtn" type="submit" class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">
+                      Simpan Laporan
+                    </button>
+                  </div>
 
-                  <div id="formStatus" class="hidden rounded-2xl p-4 text-sm font-bold"></div>
-
+                  <div id="formStatus" class="hidden rounded-lg p-4 text-sm font-medium"></div>
                 </form>
               </div>
             </div>
 
-            <!-- PREVIEW -->
             <div class="xl:col-span-3">
-              <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-                <div class="mb-5 flex items-center justify-between">
+              <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <div class="flex items-center justify-between border-b border-slate-200 px-6 py-5 dark:border-slate-800">
                   <div>
-                    <h2 class="text-xl font-black text-slate-900 dark:text-white">Preview Laporan</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">
-                      Tampilan laporan sebelum disimpan.
-                    </p>
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Pratinjau Dokumen</h2>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Pratinjau format laporan sebelum disimpan.</p>
                   </div>
+                  <span class="rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">Draft</span>
+                </div>
 
-                  <button
-                    type="button"
-                    onclick="resetForm()"
-                    class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
-                  >
-                    Reset
+                <div class="p-4 sm:p-6">
+                  <article class="document-preview mx-auto min-h-[620px] max-w-3xl border border-slate-300 bg-white p-7 text-slate-800 shadow-sm dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 sm:p-10">
+                    <header class="border-b-2 border-slate-800 pb-5 text-center dark:border-slate-200">
+                      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">TECH-C Robotic & Coding</p>
+                      <h3 class="mt-2 text-xl font-bold uppercase tracking-wide">Laporan Kegiatan Harian</h3>
+                    </header>
+
+                    <div class="mt-7 overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700">
+                      <table class="w-full text-sm">
+                        <tbody class="divide-y divide-slate-300 dark:divide-slate-700">
+                          <tr>
+                            <th class="w-40 bg-slate-100 px-4 py-3 text-left font-semibold dark:bg-slate-900">Tanggal</th>
+                            <td id="previewDate" class="px-4 py-3">Tanggal laporan</td>
+                          </tr>
+                          <tr>
+                            <th class="bg-slate-100 px-4 py-3 text-left font-semibold dark:bg-slate-900">Nama Rekan</th>
+                            <td id="previewPartner" class="px-4 py-3">Nama rekan</td>
+                          </tr>
+                          <tr>
+                            <th class="bg-slate-100 px-4 py-3 text-left font-semibold dark:bg-slate-900">Kategori</th>
+                            <td id="previewCategory" class="px-4 py-3">Kategori</td>
+                          </tr>
+                          <tr>
+                            <th class="bg-slate-100 px-4 py-3 text-left font-semibold dark:bg-slate-900">Status</th>
+                            <td id="previewStatus" class="px-4 py-3">Status</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <section class="mt-8">
+                      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Judul Laporan</p>
+                      <h4 id="previewTitle" class="mt-2 text-lg font-bold text-slate-900 dark:text-white">Judul Laporan</h4>
+                    </section>
+
+                    <section class="mt-7">
+                      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Uraian Kegiatan</p>
+                      <p id="previewContent" class="mt-3 whitespace-pre-line text-sm leading-7 text-slate-700 dark:text-slate-300">Isi laporan akan tampil di sini.</p>
+                    </section>
+
+                    <footer class="mt-14 grid grid-cols-2 gap-10 text-center text-sm">
+                      <div>
+                        <p>Mengetahui,</p>
+                        <div class="h-20"></div>
+                        <p class="border-t border-slate-500 pt-2 font-semibold">Koordinator</p>
+                      </div>
+                      <div>
+                        <p>Pelapor,</p>
+                        <div class="h-20"></div>
+                        <p class="border-t border-slate-500 pt-2 font-semibold">Admin TECH-C</p>
+                      </div>
+                    </footer>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- REPORT TABLE -->
+          <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="border-b border-slate-200 px-6 py-5 dark:border-slate-800">
+              <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Rekapitulasi Laporan</h2>
+                  <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Data laporan tersimpan ditampilkan dalam format tabel.</p>
+                </div>
+                <div class="text-sm text-slate-500 dark:text-slate-400">
+                  Jumlah ditampilkan: <span id="shownCount" class="font-semibold text-slate-900 dark:text-white">0</span>
+                </div>
+              </div>
+
+              <div class="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-12">
+                <div class="lg:col-span-5">
+                  <label for="searchInput" class="sr-only">Cari laporan</label>
+                  <input id="searchInput" type="text" placeholder="Cari judul, rekan, kategori, atau isi laporan..." class="form-control" />
+                </div>
+
+                <div class="lg:col-span-3">
+                  <label for="filterPartner" class="sr-only">Filter rekan</label>
+                  <select id="filterPartner" class="form-control">
+                    <option value="">Semua Rekan</option>
+                    <option value="Adam Rizki Hidayatullah">Adam Rizki Hidayatullah</option>
+                    <option value="Hashina Qiamu Mumtaziah">Hashina Qiamu Mumtaziah</option>
+                    <option value="Rizki Rahayu Pratama">Rizki Rahayu Pratama</option>
+                    <option value="Akbar Marzuqi">Akbar Marzuqi</option>
+                    <option value="Dinda Sri Rejeki">Dinda Sri Rejeki</option>
+                  </select>
+                </div>
+
+                <div class="lg:col-span-2">
+                  <label for="filterStatus" class="sr-only">Filter status</label>
+                  <select id="filterStatus" class="form-control">
+                    <option value="">Semua Status</option>
+                    <option value="Selesai">Selesai</option>
+                    <option value="Berjalan">Berjalan</option>
+                    <option value="Butuh Follow Up">Butuh Follow Up</option>
+                  </select>
+                </div>
+
+                <div class="lg:col-span-2">
+                  <button type="button" onclick="loadReports()" class="h-full w-full rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                    Muat Ulang
                   </button>
                 </div>
-
-                <div class="overflow-hidden rounded-[1.7rem] border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
-                  <div class="bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white">
-                    <p id="previewDate" class="text-xs font-black uppercase tracking-wider text-white/80">Tanggal laporan</p>
-                    <h3 id="previewTitle" class="mt-3 text-3xl font-black">Judul Laporan</h3>
-
-                    <div class="mt-5 flex flex-wrap gap-2">
-                      <span id="previewPartner" class="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
-                        Rekan
-                      </span>
-                      <span id="previewCategory" class="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
-                        Kategori
-                      </span>
-                      <span id="previewStatus" class="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur">
-                        Status
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="p-6">
-                    <p class="text-sm font-black text-slate-900 dark:text-white">Isi Laporan</p>
-                    <p id="previewContent" class="mt-3 whitespace-pre-line text-sm leading-7 text-slate-500 dark:text-slate-400">
-                      Isi laporan akan tampil di sini.
-                    </p>
-                  </div>
-                </div>
-
-                <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <div class="rounded-[1.4rem] bg-blue-50 p-5 dark:bg-blue-950/50">
-                    <p class="text-xs font-bold text-blue-500">Belum Selesai</p>
-                    <p id="countAdam" class="mt-2 text-2xl font-black text-blue-700 dark:text-blue-300">0</p>
-                  </div>
-
-                  <div class="rounded-[1.4rem] bg-green-50 p-5 dark:bg-green-950/50">
-                    <p class="text-xs font-bold text-green-500">Selesai</p>
-                    <p id="countDone" class="mt-2 text-2xl font-black text-green-700 dark:text-green-300">0</p>
-                  </div>
-
-                  <div class="rounded-[1.4rem] bg-yellow-50 p-5 dark:bg-yellow-950/50">
-                    <p class="text-xs font-bold text-yellow-500">Follow Up</p>
-                    <p id="countFollowUp" class="mt-2 text-2xl font-black text-yellow-700 dark:text-yellow-300">0</p>
-                  </div>
-                </div>
-
               </div>
             </div>
 
-          </div>
-
-          <!-- FILTER -->
-          <div class="mb-5 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-            <div class="grid grid-cols-1 gap-3 lg:grid-cols-12">
-              <div class="lg:col-span-5">
-                <input
-                  id="searchInput"
-                  type="text"
-                  placeholder="🔎 Cari laporan, nama rekan, isi laporan..."
-                  class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                />
-              </div>
-
-              <div class="lg:col-span-3">
-                <select
-                  id="filterPartner"
-                  class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                >
-                  <option value="">Semua Rekan</option>
-                  <option value="Adam Rizki Hidayatullah">Adam Rizki Hidayatullah</option>
-                  <option value="Hashina Qiamu Mumtaziah">Hashina Qiamu Mumtaziah</option>
-                  <option value="Rizki Rahayu Pratama">Rizki Rahayu Pratama</option>
-                  <option value="Akbar Marzuqi">Akbar Marzuqi</option>
-                  <option value="Dinda Sri Rejeki">Dinda Sri Rejeki</option>
-                </select>
-              </div>
-
-              <div class="lg:col-span-2">
-                <select
-                  id="filterStatus"
-                  class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                >
-                  <option value="">Semua Status</option>
-                  <option value="Selesai">Selesai</option>
-                  <option value="Berjalan">Berjalan</option>
-                  <option value="Butuh Follow Up">Butuh Follow Up</option>
-                </select>
-              </div>
-
-              <div class="lg:col-span-2">
-                <button
-                  type="button"
-                  onclick="loadReports()"
-                  class="w-full rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
-                >
-                  Refresh
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- REKAPAN LIST -->
-          <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-            <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 class="text-xl font-black text-slate-900 dark:text-white">Rekapan Laporan</h2>
-                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  List laporan harian yang sudah dibuat.
-                </p>
-              </div>
-
-              <div class="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                Ditampilkan: <span id="shownCount">0</span>
-              </div>
-            </div>
-
-            <div id="reportList" class="space-y-4"></div>
+            <div id="reportList"></div>
           </div>
 
         </section>
@@ -525,7 +510,7 @@ if (!token) {
     const box = document.getElementById('formStatus');
     if (!box) return;
 
-    box.className = 'rounded-2xl p-4 text-sm font-bold';
+    box.className = 'rounded-lg p-4 text-sm font-medium';
     box.classList.remove('hidden');
     box.innerText = message;
 
@@ -543,7 +528,7 @@ if (!token) {
     if (!el) return;
 
     el.innerText = text;
-    el.className = 'mt-1 text-sm font-black';
+    el.className = 'mt-1 text-sm font-semibold';
 
     if (type === 'success') {
       el.classList.add('text-green-500');
@@ -825,15 +810,15 @@ if (!token) {
 
     const total = allReports.length;
     const todayCount = allReports.filter(report => String(report.date || '').slice(0, 10) === today).length;
+    const runningCount = allReports.filter(report => report.status === 'Berjalan').length;
     const doneCount = allReports.filter(report => report.status === 'Selesai').length;
     const followUpCount = allReports.filter(report => report.status === 'Butuh Follow Up').length;
-    const adamCount = allReports.filter(report => report.partner_name === 'Adam Rizki Hidayatullah').length;
 
     setText('heroTotalReports', total);
     setText('todayReportCount', todayCount);
+    setText('countRunning', runningCount);
     setText('countDone', doneCount);
     setText('countFollowUp', followUpCount);
-    setText('countAdam', adamCount);
 
     const bar = document.getElementById('reportBar');
     if (bar) {
@@ -844,14 +829,14 @@ if (!token) {
 
   function getStatusClass(status) {
     if (status === 'Selesai') {
-      return 'bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-300';
+      return 'border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300';
     }
 
     if (status === 'Berjalan') {
-      return 'bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-300';
+      return 'border border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-300';
     }
 
-    return 'bg-yellow-100 text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300';
+    return 'border border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-300';
   }
 
   function applyFilter() {
@@ -888,70 +873,94 @@ if (!token) {
 
     if (!reports.length) {
       wrap.innerHTML = `
-        <div class="rounded-2xl bg-slate-50 p-8 text-center dark:bg-slate-950">
-          <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-3xl shadow-lg dark:bg-slate-900">
-            📄
-          </div>
-          <h3 class="text-lg font-black text-slate-900 dark:text-white">Belum ada laporan</h3>
+        <div class="px-6 py-14 text-center">
+          <h3 class="text-base font-semibold text-slate-900 dark:text-white">Belum ada laporan</h3>
           <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            Laporan harian yang dibuat akan muncul di sini.
+            Data laporan yang sudah disimpan akan ditampilkan pada tabel ini.
           </p>
         </div>
       `;
       return;
     }
 
-    wrap.innerHTML = reports.map(report => {
+    const rows = reports.map((report, index) => {
       const statusClass = getStatusClass(report.status);
+      const content = String(report.content || '-');
+      const shortContent = content.length > 130
+        ? `${content.slice(0, 130)}...`
+        : content;
 
       return `
-        <div class="report-card rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5 shadow-lg dark:border-slate-800 dark:bg-slate-950">
-          <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div class="min-w-0 flex-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">
-                  ${escapeHtml(report.category)}
-                </span>
+        <tr class="transition hover:bg-slate-50 dark:hover:bg-slate-800/60">
+          <td class="whitespace-nowrap border-b border-slate-200 px-5 py-4 text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
+            ${index + 1}
+          </td>
 
-                <span class="rounded-full px-3 py-1 text-xs font-black ${statusClass}">
-                  ${escapeHtml(report.status)}
-                </span>
+          <td class="whitespace-nowrap border-b border-slate-200 px-5 py-4 align-top dark:border-slate-800">
+            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">
+              ${escapeHtml(formatDate(report.date))}
+            </p>
+            <p class="mt-1 text-xs text-slate-400">
+              ${escapeHtml(formatDateTime(report.created_at))}
+            </p>
+          </td>
 
-                ${report.local_only ? `
-                  <span class="rounded-full bg-yellow-100 px-3 py-1 text-xs font-black text-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">
-                    Local
-                  </span>
-                ` : ''}
-              </div>
+          <td class="border-b border-slate-200 px-5 py-4 align-top dark:border-slate-800">
+            <p class="min-w-[170px] text-sm font-medium text-slate-700 dark:text-slate-200">
+              ${escapeHtml(report.partner_name)}
+            </p>
+            ${report.local_only ? `
+              <span class="mt-2 inline-flex rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-300">
+                Penyimpanan lokal
+              </span>
+            ` : ''}
+          </td>
 
-              <h3 class="mt-3 text-xl font-black text-slate-900 dark:text-white">
+          <td class="border-b border-slate-200 px-5 py-4 align-top dark:border-slate-800">
+            <div class="min-w-[300px] max-w-lg">
+              <p class="text-sm font-semibold text-slate-900 dark:text-white">
                 ${escapeHtml(report.title)}
-              </h3>
-
-              <p class="mt-2 text-sm font-bold text-blue-600">
-                ${escapeHtml(report.partner_name)}
               </p>
-
-              <p class="mt-4 whitespace-pre-line text-sm leading-7 text-slate-500 dark:text-slate-400">
-                ${escapeHtml(report.content)}
+              <p class="mt-1.5 text-xs leading-5 text-slate-500 dark:text-slate-400" title="${escapeHtml(content)}">
+                ${escapeHtml(shortContent)}
               </p>
             </div>
+          </td>
 
-            <div class="shrink-0 rounded-2xl bg-white p-4 text-left shadow-sm dark:bg-slate-900 lg:w-56">
-              <p class="text-xs font-bold text-slate-400">Tanggal Laporan</p>
-              <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">
-                ${escapeHtml(formatDate(report.date))}
-              </p>
+          <td class="whitespace-nowrap border-b border-slate-200 px-5 py-4 align-top dark:border-slate-800">
+            <span class="inline-flex rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+              ${escapeHtml(report.category)}
+            </span>
+          </td>
 
-              <p class="mt-4 text-xs font-bold text-slate-400">Dibuat</p>
-              <p class="mt-1 text-xs font-black text-slate-500">
-                ${escapeHtml(formatDateTime(report.created_at))}
-              </p>
-            </div>
-          </div>
-        </div>
+          <td class="whitespace-nowrap border-b border-slate-200 px-5 py-4 align-top dark:border-slate-800">
+            <span class="inline-flex rounded-md px-2.5 py-1 text-xs font-semibold ${statusClass}">
+              ${escapeHtml(report.status)}
+            </span>
+          </td>
+        </tr>
       `;
     }).join('');
+
+    wrap.innerHTML = `
+      <div class="overflow-x-auto">
+        <table class="report-table min-w-full border-collapse text-left">
+          <thead class="bg-slate-50 dark:bg-slate-800/70">
+            <tr>
+              <th class="whitespace-nowrap border-b border-slate-200 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-700 dark:text-slate-400">No.</th>
+              <th class="whitespace-nowrap border-b border-slate-200 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-700 dark:text-slate-400">Tanggal</th>
+              <th class="whitespace-nowrap border-b border-slate-200 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-700 dark:text-slate-400">Nama Rekan</th>
+              <th class="whitespace-nowrap border-b border-slate-200 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-700 dark:text-slate-400">Laporan</th>
+              <th class="whitespace-nowrap border-b border-slate-200 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-700 dark:text-slate-400">Kategori</th>
+              <th class="whitespace-nowrap border-b border-slate-200 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-700 dark:text-slate-400">Status</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white dark:bg-slate-900">
+            ${rows}
+          </tbody>
+        </table>
+      </div>
+    `;
   }
 
   function resetForm(clearStatus = true) {
