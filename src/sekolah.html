@@ -752,17 +752,28 @@ const API_BASE = getApiBase();
     }
   }
   
-function pilihSekolah(id, encodedName){
+function pilihSekolah(id, encodedName) {
+    const name = decodeURIComponent(encodedName || '');
 
-    const name = decodeURIComponent(encodedName);
+    localStorage.setItem('school_id', id);
+    localStorage.setItem('school_name', name);
 
-    console.log(name);
+    switch (name) {
+        case "MIN 1 Cilegon":
+            window.location.href = "min1cilegon.html";
+            break;
 
-    if(name==="MIN 1 Cilegon"){
-        alert("Menuju MIN 1 Cilegon");
-        window.location.href="sekolah/min1cilegon.html";
+        case "MTsN 2 Cilegon":
+            window.location.href = "mtsn2cilegon.html";
+            break;
+
+        case "MTsN 1 Kota Serang":
+            window.location.href = "mtsn1kotaserang.html";
+            break;
+
+        default:
+            alert("Halaman sekolah belum tersedia.");
     }
-
 }
 
   document.addEventListener('DOMContentLoaded', async () => {
