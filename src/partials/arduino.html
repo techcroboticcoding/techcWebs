@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pembelajaran Arduino - TECH-C</title>
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #pageScroller {
+      height: 100vh;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    #pageScroller::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #pageScroller::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #pageScroller::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, .55);
+      border-radius: 999px;
+    }
+
+    #pageScroller::-webkit-scrollbar-thumb:hover {
+      background: rgba(37, 99, 235, .75);
+    }
+
+    * {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .dark .grid-bg {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+
+    .lesson-card {
+      transition: .25s ease;
+    }
+
+    .lesson-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .hide-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hide-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .code-box {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+  </style>
+</head>
+
+<script>
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
+
+  if (!token) {
+    window.location.href = './login.html';
+  } else if (role === 'siswa') {
+    window.location.href = './dashboardSiswa.html';
+  } else if (role !== 'admin') {
+    localStorage.clear();
+    window.location.href = './login.html';
+  }
+</script>
+
+<body
+  x-data="{ page: 'pelajaran', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
+    $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+  "
+  :class="{'dark bg-slate-950': darkMode === true}"
+  class="bg-slate-50"
+>
+
+  <include src="./partials/preloader.html"></include>
+
+  <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <include src="./partials/sidebar.html"></include>
+
+    <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
+      <include src="./partials/overlay.html"></include>
+      <include src="./partials/header.html"></include>
+
+      <main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <div class="absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full bg-blue-500/10 blur-3xl"></div>
+          <div class="absolute left-[-150px] top-72 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-3xl"></div>
+          <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
+        </div>
+
+        <section class="relative z-10 mx-auto max-w-7xl">
+          <!-- HERO -->
+          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="relative p-6 sm:p-7 lg:p-8">
+              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-blue-600/15 via-cyan-500/5 to-transparent lg:block"></div>
+
+              <div class="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
+                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
+                    Arduino Learning Track
+                  </div>
+
+                  <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                    Pembelajaran Arduino
+                  </h1>
+
+                  <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+                    Belajar Arduino secara bertahap, mulai dari pengenalan board dan pemrograman dasar, membaca sensor, komunikasi data, hingga membuat project robotik dan IoT.
+                  </p>
+
+                  <div class="mt-6 flex flex-wrap gap-3">
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Total Materi</p>
+                      <p id="totalLessonHero" class="mt-1 text-sm font-black text-slate-900 dark:text-white">0</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Pengenalan</p>
+                      <p class="mt-1 text-sm font-black text-blue-600">8 Materi</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Sensor</p>
+                      <p class="mt-1 text-sm font-black text-green-600">20 Materi</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Project</p>
+                      <p class="mt-1 text-sm font-black text-violet-600">4 Materi</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="relative shrink-0">
+                  <div class="absolute -inset-4 rounded-[2.5rem] bg-blue-500/20 blur-2xl"></div>
+
+                  <div class="relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[360px]">
+                    <div class="flex items-center justify-between gap-4">
+                      <div>
+                        <p class="text-sm font-bold text-white/80">Arduino Curriculum</p>
+                        <h2 id="totalLessonCard" class="mt-2 text-5xl font-black">0</h2>
+                        <p class="mt-1 text-xs font-semibold text-white/70">Materi pembelajaran</p>
+                      </div>
+
+                      <div class="flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-white/20 text-4xl backdrop-blur">
+                        🔌
+                      </div>
+                    </div>
+
+                    <div class="mt-5 rounded-2xl bg-white/15 p-4 backdrop-blur">
+                      <div class="flex items-center justify-between text-xs font-bold text-white/80">
+                        <span>Coverage kurikulum</span>
+                        <span>32 materi</span>
+                      </div>
+                      <div class="mt-3 h-3 overflow-hidden rounded-full bg-white/20">
+                        <div class="h-full w-full rounded-full bg-white"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CATEGORY TABS -->
+          <div class="mb-6 overflow-x-auto hide-scroll">
+            <div id="categoryTabs" class="flex min-w-max gap-3"></div>
+          </div>
+
+          <!-- TOOLBAR -->
+          <div class="mb-6 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div class="flex flex-1 flex-col gap-3 sm:flex-row">
+                <div class="relative flex-1">
+                  <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">🔎</div>
+                  <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Cari Arduino, HC-SR04, DHT11, sensor, project..."
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                  />
+                </div>
+
+                <select id="levelInput" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white">
+                  <option value="all">Semua Level</option>
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                  <option value="Project">Project</option>
+                </select>
+
+                <select id="sortInput" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white">
+                  <option value="default">Urutan Kurikulum</option>
+                  <option value="az">Judul A-Z</option>
+                  <option value="za">Judul Z-A</option>
+                  <option value="level">Level</option>
+                </select>
+              </div>
+
+              <div class="flex gap-3">
+                <button onclick="resetFilters()" class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:-translate-y-0.5 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+                  Reset Filter
+                </button>
+                <a href="pelajaran.html" class="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5 hover:shadow-2xl">
+                  ← Kembali
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUMMARY -->
+          <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 class="text-xl font-black text-slate-900 dark:text-white">Menu Pembelajaran</h2>
+              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Pilih materi untuk membuka penjelasan, topik, dan contoh program.</p>
+            </div>
+            <div class="rounded-2xl bg-white/90 px-4 py-3 text-sm font-black text-slate-600 shadow-lg shadow-slate-200/60 dark:bg-slate-900/90 dark:text-slate-300 dark:shadow-black/20">
+              Ditampilkan: <span id="shownCount">0</span>
+            </div>
+          </div>
+
+          <!-- LESSON GRID -->
+          <div id="lessonList" class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"></div>
+
+          <div id="emptyState" class="hidden rounded-[2rem] border border-white/70 bg-white/90 p-10 text-center shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-blue-50 text-4xl dark:bg-blue-950">🔎</div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white">Materi tidak ditemukan</h3>
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Coba ubah pencarian, level, atau kategori.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <div id="lessonModal" class="fixed inset-0 z-[999999] hidden items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
+    <div class="max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl dark:bg-slate-900">
+      <div class="relative">
+        <img id="modalImage" src="./images/logo.png" class="h-64 w-full rounded-t-[2rem] object-cover" alt="Gambar materi Arduino" />
+        <button onclick="closeLessonModal()" class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/90 text-xl font-black text-slate-800 shadow-lg backdrop-blur hover:bg-white">×</button>
+      </div>
+
+      <div class="p-6 sm:p-8">
+        <div class="mb-4 flex flex-wrap gap-2">
+          <span id="modalCategory" class="rounded-full bg-blue-50 px-4 py-2 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300"></span>
+          <span id="modalLevel" class="rounded-full bg-green-50 px-4 py-2 text-xs font-black text-green-600 dark:bg-green-950 dark:text-green-300"></span>
+          <span id="modalDuration" class="rounded-full bg-violet-50 px-4 py-2 text-xs font-black text-violet-600 dark:bg-violet-950 dark:text-violet-300"></span>
+        </div>
+
+        <h2 id="modalTitle" class="text-3xl font-black text-slate-900 dark:text-white"></h2>
+        <p id="modalDescription" class="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400"></p>
+
+        <div class="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <div class="rounded-2xl bg-slate-50 p-5 dark:bg-slate-950">
+            <h3 class="mb-3 text-sm font-black text-slate-900 dark:text-white">Materi Dipelajari</h3>
+            <ul id="modalTopics" class="space-y-2 text-sm font-semibold text-slate-500 dark:text-slate-400"></ul>
+          </div>
+
+          <div class="rounded-2xl bg-slate-50 p-5 dark:bg-slate-950">
+            <h3 class="mb-3 text-sm font-black text-slate-900 dark:text-white">Output Pembelajaran</h3>
+            <p id="modalOutput" class="text-sm leading-7 font-semibold text-slate-500 dark:text-slate-400"></p>
+
+            <h3 class="mb-3 mt-5 text-sm font-black text-slate-900 dark:text-white">Komponen / Tools</h3>
+            <div id="modalTools" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+
+        <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-950 p-5 text-slate-100 dark:border-slate-800">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <h3 class="text-sm font-black">Contoh Program</h3>
+            <span class="rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold text-white/60">Arduino IDE</span>
+          </div>
+          <pre id="modalCode" class="code-box overflow-x-auto text-xs leading-6 text-slate-300"></pre>
+        </div>
+
+        <div class="mt-5 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="text-xs font-black uppercase tracking-wide text-slate-400">Sumber Gambar</p>
+            <p id="modalSourceName" class="mt-1 text-sm font-bold text-slate-600 dark:text-slate-300"></p>
+          </div>
+          <a id="modalSourceLink" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-xl bg-white px-4 py-2 text-sm font-black text-blue-600 shadow-sm ring-1 ring-slate-200 hover:bg-blue-50 dark:bg-slate-900 dark:ring-slate-700">
+            Buka Sumber Gambar ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loadPartials() {
+      const includes = document.querySelectorAll('include');
+
+      for (const el of includes) {
+        const file = el.getAttribute('src');
+        try {
+          const res = await fetch(file);
+          const html = await res.text();
+          el.outerHTML = html;
+        } catch (err) {
+          console.error('Gagal load partial:', file, err);
+        }
+      }
+    }
+
+    const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
+        <rect width="1200" height="700" fill="url(#g)"/>
+        <circle cx="600" cy="320" r="160" fill="rgba(255,255,255,.16)"/>
+        <text x="600" y="300" fill="white" font-family="Arial, sans-serif" font-size="52" text-anchor="middle" font-weight="700">TECH-C Arduino</text>
+        <text x="600" y="370" fill="rgba(255,255,255,.8)" font-family="Arial, sans-serif" font-size="28" text-anchor="middle">Gambar tidak dapat dimuat</text>
+      </svg>
+    `);
+
+    const IMG = {
+      arduino: 'https://commons.wikimedia.org/wiki/Special:FilePath/Arduino%20Uno%20-%20R3.jpg',
+      hc_sr04: 'https://commons.wikimedia.org/wiki/Special:FilePath/SparkFun%20HC-SR04%20Ultrasonic-Sensor%2013959-01a.jpg',
+      pir: 'https://www.carrod.mx/cdn/shop/files/zzz.png_1_8c532c82-5272-4b09-a7f5-517fdad40654_1024x1024.png?v=1695755074',
+      ldr: 'https://img.drz.lazcdn.com/static/pk/p/606c455bcc7a3173e863322e2482c290.jpg_720x720q80.jpg_.webp',
+      dht11: 'https://commons.wikimedia.org/wiki/Special:FilePath/Dht11.jpg',
+      dht22: 'https://commons.wikimedia.org/wiki/Special:FilePath/AM2302%20%28DHT22%29%20digital%20temperature%20and%20humidity%20sensor%20module.jpg',
+      ds18b20: 'https://commons.wikimedia.org/wiki/Special:FilePath/Sensor%20DS18B20.jpg',
+      bmp280: 'https://commons.wikimedia.org/wiki/Special:FilePath/BMP280Sensor.jpg',
+      bme280: 'https://commons.wikimedia.org/wiki/Special:FilePath/SparkFun%20Atmospheric%20Sensor%20Breakout%20-%20BME280%2013676.jpg',
+      mq2: 'https://shillehtek.com/cdn/shop/files/2_c473f57b-2370-4142-9225-536aad318059.png?v=1770684006&width=128',
+      mq135: 'https://static.insales-cdn.com/r/VfqYivtrcEs/rs%3Afit%3A150%3A0%3A1/q%3A100/plain/images/products/1/812/896811820/zzrn2322766780.jpg%40jpg',
+      tcs3200: 'https://commons.wikimedia.org/wiki/Special:FilePath/TCS3200Board.png',
+      mpu6050: 'https://commons.wikimedia.org/wiki/Special:FilePath/GY-521%20MPU-6050%20Module%203%20Axis%20Gyroscope%20%2B%20Accelerometer%200487.jpg',
+      ir_receiver: 'https://commons.wikimedia.org/wiki/Special:FilePath/Ir%20mod%20HX1838.jpg',
+      rain: 'https://img.drz.lazcdn.com/static/lk/p/aec0726c6ca254389f1f7c167878848d.png_720x720q80.png_.webp',
+      soil: 'https://commons.wikimedia.org/wiki/Special:FilePath/DHT11%20and%20Soil%20Moisture%20connected%20to%20Arduino.jpg',
+      rc522: 'https://commons.wikimedia.org/wiki/Special:FilePath/RFID%20module%20RC522.jpg',
+      flame: 'https://image.thum.io/get/width/1200/noanimate/https://robodium.com/products/ky-026-flame-sensor-module',
+      sound: 'https://image.thum.io/get/width/1200/noanimate/https://www.beemong.com/product/small-microphone-sound-sensor-module',
+      hall: 'https://image.thum.io/get/width/1200/noanimate/https://www.embeddinator.com/product/hall-sensor-a3144-module',
+      obstacle: 'https://image.thum.io/get/width/1200/noanimate/https://arduinotech.dk/shop/infraroed-binaer-refleksions-sensor-modul-fc-51/'
+    };
+
+    const lessons = [
+      {
+        id: 1, title: '01. Mengenal Arduino Uno R3', category: 'Dasar Arduino', level: 'Beginner', duration: '1 Pertemuan', image: IMG.arduino,
+        sourceName: 'Wikimedia Commons - Arduino Uno R3', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Arduino_Uno_-_R3.jpg',
+        tools: ['Arduino Uno R3', 'USB Cable', 'Arduino IDE'],
+        output: 'Mampu mengenali fungsi Arduino Uno, memahami konsep board mikrokontroler, dan mengetahui alur sederhana dari program ke hardware.',
+        description: 'Pertemuan pembuka untuk mengenal Arduino Uno R3 sebagai board mikrokontroler yang digunakan dalam latihan elektronik, robotik, dan otomasi. Siswa memahami bagian utama board sebelum mulai membuat rangkaian.',
+        topics: ['Apa itu Arduino', 'Mengenal Arduino Uno R3', 'Port USB dan power', 'Pin digital dan analog', 'Mikrokontroler dan board', 'Alur program ke hardware'],
+        code: `// Belum ada program pada materi pengenalan.\n// Fokus: mengenali board, port, dan fungsi pin.`
+      },
+      {
+        id: 2, title: '02. Mengenal Pin Digital dan Analog', category: 'Dasar Arduino', level: 'Beginner', duration: '1 Pertemuan', image: IMG.arduino,
+        sourceName: 'Wikimedia Commons - Arduino Uno R3', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Arduino_Uno_-_R3.jpg',
+        tools: ['Arduino Uno', 'LED', 'Potensiometer'],
+        output: 'Mampu membedakan input/output digital dengan input analog dan memilih pin sesuai kebutuhan rangkaian.',
+        description: 'Materi tentang fungsi pin digital dan analog pada Arduino Uno. Siswa belajar bahwa input dan output dapat digunakan untuk membaca sensor atau mengendalikan komponen.',
+        topics: ['Digital input', 'Digital output', 'Analog input', 'Pin A0-A5', 'Pin 0-13', 'Konsep HIGH dan LOW'],
+        code: `const int ledPin = 13;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH);\n  delay(500);\n  digitalWrite(ledPin, LOW);\n  delay(500);\n}`
+      },
+      {
+        id: 3, title: '03. Instalasi Arduino IDE', category: 'Dasar Arduino', level: 'Beginner', duration: '1 Pertemuan', image: IMG.arduino,
+        sourceName: 'Wikimedia Commons - Arduino Uno R3', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Arduino_Uno_-_R3.jpg',
+        tools: ['Arduino IDE', 'USB Cable', 'Driver USB'],
+        output: 'Mampu menyiapkan Arduino IDE, memilih board dan port, serta siap mengunggah sketch.',
+        description: 'Siswa menyiapkan software pengembangan Arduino dan memahami proses dasar memilih board, port, serta melakukan upload program.',
+        topics: ['Install Arduino IDE', 'Pilih Board', 'Pilih Port', 'Compile sketch', 'Upload sketch', 'Serial Monitor'],
+        code: `// Setelah Arduino IDE siap, lakukan upload sketch sederhana.\nvoid setup() {}\nvoid loop() {}`
+      },
+      {
+        id: 4, title: '04. Program Pertama: Blink LED', category: 'Dasar Arduino', level: 'Beginner', duration: '1 Pertemuan', image: IMG.arduino,
+        sourceName: 'Wikimedia Commons - Arduino Uno R3', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Arduino_Uno_-_R3.jpg',
+        tools: ['Arduino Uno', 'LED', 'Resistor 220Ω', 'Breadboard'],
+        output: 'Membuat LED berkedip sebagai program hardware pertama.',
+        description: 'Siswa langsung membuat program output digital sederhana menggunakan LED. Materi memperkenalkan setup(), loop(), pinMode(), digitalWrite(), dan delay().',
+        topics: ['setup()', 'loop()', 'pinMode()', 'digitalWrite()', 'delay()', 'LED dan resistor'],
+        code: `const int ledPin = 13;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH);\n  delay(1000);\n  digitalWrite(ledPin, LOW);\n  delay(1000);\n}`
+      },
+      {
+        id: 5, title: '05. Digital Input: Push Button', category: 'Dasar Arduino', level: 'Beginner', duration: '1 Pertemuan', image: IMG.arduino,
+        sourceName: 'Wikimedia Commons - Arduino Uno R3', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Arduino_Uno_-_R3.jpg',
+        tools: ['Arduino Uno', 'Push Button', 'LED', 'Resistor'],
+        output: 'LED dapat dikendalikan dengan tombol.',
+        description: 'Siswa mempelajari input digital dengan membaca kondisi tombol lalu memberikan respon pada LED.',
+        topics: ['digitalRead()', 'INPUT_PULLUP', 'Button state', 'If condition', 'Input response'],
+        code: `const int buttonPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP);\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  bool pressed = digitalRead(buttonPin) == LOW;\n  digitalWrite(ledPin, pressed ? HIGH : LOW);\n}`
+      },
+      {
+        id: 6, title: '06. Analog Input: Potensiometer', category: 'Dasar Arduino', level: 'Beginner', duration: '1 Pertemuan', image: IMG.arduino,
+        sourceName: 'Wikimedia Commons - Arduino Uno R3', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Arduino_Uno_-_R3.jpg',
+        tools: ['Arduino Uno', 'Potensiometer', 'LED'],
+        output: 'Membaca nilai analog dan menggunakannya untuk mengubah kecerahan LED.',
+        description: 'Materi memperkenalkan analogRead() dan pemetaan nilai sensor ke output PWM.',
+        topics: ['analogRead()', 'Nilai ADC', 'map()', 'PWM', 'Analog to output'],
+        code: `const int potPin = A0;\nconst int ledPin = 9;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  int value = analogRead(potPin);\n  int brightness = map(value, 0, 1023, 0, 255);\n  analogWrite(ledPin, brightness);\n}`
+      },
+      {
+        id: 7, title: '07. PWM: Mengatur Kecepatan dan Kecerahan', category: 'Dasar Arduino', level: 'Intermediate', duration: '1 Pertemuan', image: IMG.arduino,
+        sourceName: 'Wikimedia Commons - Arduino Uno R3', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Arduino_Uno_-_R3.jpg',
+        tools: ['Arduino Uno', 'LED', 'DC Motor Driver'],
+        output: 'Memahami kontrol output berbasis PWM untuk LED atau motor driver.',
+        description: 'Siswa memahami konsep PWM dan bagaimana output digital dapat dikendalikan pada beberapa tingkat duty cycle.',
+        topics: ['PWM', 'analogWrite()', 'Duty cycle', 'LED dimming', 'Motor speed concept'],
+        code: `const int ledPin = 9;\n\nvoid setup() {}\n\nvoid loop() {\n  for (int value = 0; value <= 255; value++) {\n    analogWrite(ledPin, value);\n    delay(5);\n  }\n}`
+      },
+      {
+        id: 8, title: '08. Serial Monitor dan Debugging', category: 'Dasar Arduino', level: 'Beginner', duration: '1 Pertemuan', image: IMG.arduino,
+        sourceName: 'Wikimedia Commons - Arduino Uno R3', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Arduino_Uno_-_R3.jpg',
+        tools: ['Arduino Uno', 'Arduino IDE', 'Serial Monitor'],
+        output: 'Mampu membaca data sensor dan pesan debug melalui Serial Monitor.',
+        description: 'Siswa belajar Serial.begin(), Serial.print(), dan cara melihat nilai input dari program secara realtime.',
+        topics: ['Serial.begin()', 'Serial.print()', 'Serial.println()', 'Baud rate', 'Debugging'],
+        code: `void setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int value = analogRead(A0);\n  Serial.print("Nilai A0: ");\n  Serial.println(value);\n  delay(500);\n}`
+      },
+
+      {
+        id: 9, title: 'Sensor 01: HC-SR04 Ultrasonic', category: '20 Sensor', level: 'Beginner', duration: '1 Pertemuan', image: IMG.hc_sr04,
+        sourceName: 'Wikimedia Commons - SparkFun HC-SR04', sourceUrl: 'https://commons.wikimedia.org/wiki/File:SparkFun_HC-SR04_Ultrasonic-Sensor_13959-01a.jpg',
+        tools: ['HC-SR04', 'Arduino Uno', 'Jumper'],
+        output: 'Program pengukur jarak berbasis ultrasonic.',
+        description: 'Sensor ultrasonic digunakan untuk mengukur jarak dengan memanfaatkan pulsa trigger dan waktu pantulan echo.',
+        topics: ['Trig', 'Echo', 'pulseIn()', 'Perhitungan jarak', 'Serial Monitor'],
+        code: `const int trigPin = 9;\nconst int echoPin = 10;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n}\n\nvoid loop() {\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  long duration = pulseIn(echoPin, HIGH);\n  float distance = duration * 0.0343 / 2.0;\n  Serial.println(distance);\n  delay(300);\n}`
+      },
+      {
+        id: 10, title: 'Sensor 02: HC-SR501 PIR Motion', category: '20 Sensor', level: 'Beginner', duration: '1 Pertemuan', image: IMG.pir,
+        sourceName: 'Carrod - HC-SR501 PIR', sourceUrl: 'https://www.carrod.mx/products/sensor-pir-hc-sr501',
+        tools: ['HC-SR501', 'Arduino Uno', 'LED'],
+        output: 'Lampu indikator menyala ketika gerakan terdeteksi.',
+        description: 'Sensor PIR mendeteksi perubahan radiasi inframerah dari objek bergerak dan sering digunakan untuk sistem lampu otomatis atau alarm.',
+        topics: ['PIR', 'Motion detection', 'Digital output', 'Delay sensor', 'Automatic light'],
+        code: `const int pirPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(pirPin, INPUT);\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  int motion = digitalRead(pirPin);\n  digitalWrite(ledPin, motion);\n}`
+      },
+      {
+        id: 11, title: 'Sensor 03: LDR / Light Sensor', category: '20 Sensor', level: 'Beginner', duration: '1 Pertemuan', image: IMG.ldr,
+        sourceName: 'Lazada - LDR Photoresistor', sourceUrl: 'https://www.lazada.pk/products/ldr-photoresistor-module-for-arduino-i606c455bcc7a3173e863322e2482c290.html',
+        tools: ['LDR', 'Arduino Uno', 'Resistor'],
+        output: 'Membuat lampu otomatis berdasarkan intensitas cahaya.',
+        description: 'LDR berubah resistansinya berdasarkan intensitas cahaya dan dapat dibaca Arduino melalui rangkaian pembagi tegangan.',
+        topics: ['Light intensity', 'Analog input', 'Voltage divider', 'Threshold', 'Automatic lamp'],
+        code: `const int ldrPin = A0;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int light = analogRead(ldrPin);\n  digitalWrite(ledPin, light < 500 ? HIGH : LOW);\n  Serial.println(light);\n  delay(300);\n}`
+      },
+      {
+        id: 12, title: 'Sensor 04: DHT11 Temperature & Humidity', category: '20 Sensor', level: 'Beginner', duration: '1 Pertemuan', image: IMG.dht11,
+        sourceName: 'Wikimedia Commons - DHT11', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Dht11.jpg',
+        tools: ['DHT11', 'Arduino Uno', 'DHT Library'],
+        output: 'Menampilkan suhu dan kelembapan dari sensor DHT11.',
+        description: 'DHT11 merupakan sensor digital yang umum dipakai untuk membaca suhu dan kelembapan pada project Arduino.',
+        topics: ['Temperature', 'Humidity', 'Digital sensor', 'DHT library', 'Serial output'],
+        code: `#include <DHT.h>\n\n#define DHTPIN 2\n#define DHTTYPE DHT11\nDHT dht(DHTPIN, DHTTYPE);\n\nvoid setup() {\n  Serial.begin(9600);\n  dht.begin();\n}\n\nvoid loop() {\n  float h = dht.readHumidity();\n  float t = dht.readTemperature();\n  Serial.print("Temp: "); Serial.println(t);\n  Serial.print("Hum: "); Serial.println(h);\n  delay(2000);\n}`
+      },
+      {
+        id: 13, title: 'Sensor 05: DHT22 Temperature & Humidity', category: '20 Sensor', level: 'Intermediate', duration: '1 Pertemuan', image: IMG.dht22,
+        sourceName: 'Wikimedia Commons - AM2302 / DHT22', sourceUrl: 'https://commons.wikimedia.org/wiki/File:AM2302_(DHT22)_digital_temperature_and_humidity_sensor_module.jpg',
+        tools: ['DHT22', 'Arduino Uno', 'DHT Library'],
+        output: 'Membaca suhu dan kelembapan dengan sensor DHT22 untuk project monitoring.',
+        description: 'DHT22/AM2302 digunakan untuk pembacaan suhu dan kelembapan digital dengan resolusi dan rentang yang lebih tinggi daripada sensor kelas pemula seperti DHT11.',
+        topics: ['Temperature', 'Humidity', 'DHT22', 'Library', 'Environmental monitoring'],
+        code: `#include <DHT.h>\n#define DHTPIN 2\n#define DHTTYPE DHT22\nDHT dht(DHTPIN, DHTTYPE);\n\nvoid setup() {\n  Serial.begin(9600);\n  dht.begin();\n}\n\nvoid loop() {\n  Serial.println(dht.readTemperature());\n  Serial.println(dht.readHumidity());\n  delay(2000);\n}`
+      },
+      {
+        id: 14, title: 'Sensor 06: DS18B20 Temperature', category: '20 Sensor', level: 'Intermediate', duration: '1 Pertemuan', image: IMG.ds18b20,
+        sourceName: 'Wikimedia Commons - DS18B20', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Sensor_DS18B20.jpg',
+        tools: ['DS18B20', 'OneWire', 'DallasTemperature'],
+        output: 'Membaca suhu dengan sensor digital DS18B20.',
+        description: 'DS18B20 adalah sensor suhu digital yang umum dipakai pada Arduino dan mendukung komunikasi 1-Wire.',
+        topics: ['1-Wire', 'Temperature', 'OneWire library', 'DallasTemperature', 'Multiple sensors'],
+        code: `#include <OneWire.h>\n#include <DallasTemperature.h>\n\n#define ONE_WIRE_BUS 2\nOneWire oneWire(ONE_WIRE_BUS);\nDallasTemperature sensors(&oneWire);\n\nvoid setup() {\n  Serial.begin(9600);\n  sensors.begin();\n}\n\nvoid loop() {\n  sensors.requestTemperatures();\n  Serial.println(sensors.getTempCByIndex(0));\n  delay(1000);\n}`
+      },
+      {
+        id: 15, title: 'Sensor 07: BMP280 Pressure Sensor', category: '20 Sensor', level: 'Intermediate', duration: '1 Pertemuan', image: IMG.bmp280,
+        sourceName: 'Wikimedia Commons - BMP280', sourceUrl: 'https://commons.wikimedia.org/wiki/File:BMP280Sensor.jpg',
+        tools: ['BMP280', 'Arduino Uno', 'I2C / SPI'],
+        output: 'Membaca tekanan atmosfer dan temperatur dari BMP280.',
+        description: 'BMP280 merupakan sensor tekanan udara yang juga menyediakan pembacaan temperatur, dan umum digunakan untuk eksperimen cuaca maupun estimasi ketinggian.',
+        topics: ['Pressure', 'Temperature', 'I2C', 'SPI', 'Altitude concept'],
+        code: `#include <Adafruit_BMP280.h>\nAdafruit_BMP280 bmp;\n\nvoid setup() {\n  Serial.begin(9600);\n  bmp.begin(0x76);\n}\n\nvoid loop() {\n  Serial.print("Temp: ");\n  Serial.println(bmp.readTemperature());\n  Serial.print("Pressure: ");\n  Serial.println(bmp.readPressure());\n  delay(1000);\n}`
+      },
+      {
+        id: 16, title: 'Sensor 08: BME280 Environmental Sensor', category: '20 Sensor', level: 'Intermediate', duration: '1 Pertemuan', image: IMG.bme280,
+        sourceName: 'Wikimedia Commons - SparkFun BME280', sourceUrl: 'https://commons.wikimedia.org/wiki/File:SparkFun_Atmospheric_Sensor_Breakout_-_BME280_13676.jpg',
+        tools: ['BME280', 'Arduino Uno', 'I2C'],
+        output: 'Membaca temperatur, tekanan, dan kelembapan dalam satu modul.',
+        description: 'BME280 menggabungkan pembacaan temperatur, tekanan udara, dan kelembapan untuk project monitoring lingkungan.',
+        topics: ['Temperature', 'Humidity', 'Pressure', 'I2C', 'Environmental dashboard'],
+        code: `#include <Adafruit_BME280.h>\nAdafruit_BME280 bme;\n\nvoid setup() {\n  Serial.begin(9600);\n  bme.begin(0x76);\n}\n\nvoid loop() {\n  Serial.println(bme.readTemperature());\n  Serial.println(bme.readHumidity());\n  Serial.println(bme.readPressure());\n  delay(1000);\n}`
+      },
+      {
+        id: 17, title: 'Sensor 09: MQ-2 Gas & Smoke', category: '20 Sensor', level: 'Intermediate', duration: '1 Pertemuan', image: IMG.mq2,
+        sourceName: 'ShillehTek - MQ-2 Gas Sensor', sourceUrl: 'https://shillehtek.com/products/mq-2-gas-sensor-module',
+        tools: ['MQ-2', 'Arduino Uno', 'Buzzer'],
+        output: 'Membuat indikator sederhana untuk perubahan pembacaan gas atau asap.',
+        description: 'MQ-2 banyak dipakai pada project edukasi untuk mendeteksi perubahan konsentrasi gas/asap. Pembacaan modul hobby tidak boleh dianggap sebagai sistem keselamatan tersertifikasi.',
+        topics: ['Gas sensor', 'Smoke', 'Analog reading', 'Threshold', 'Alarm concept'],
+        code: `const int mq2Pin = A0;\nconst int buzzerPin = 8;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(buzzerPin, OUTPUT);\n}\n\nvoid loop() {\n  int value = analogRead(mq2Pin);\n  Serial.println(value);\n  digitalWrite(buzzerPin, value > 500 ? HIGH : LOW);\n  delay(300);\n}`
+      },
+      {
+        id: 18, title: 'Sensor 10: MQ-135 Air Quality', category: '20 Sensor', level: 'Advanced', duration: '1 Pertemuan', image: IMG.mq135,
+        sourceName: 'Insales - MQ-135 Module', sourceUrl: 'https://static.insales-cdn.com/',
+        tools: ['MQ-135', 'Arduino Uno', 'Analog Input'],
+        output: 'Membuat pembacaan analog sebagai indikator perubahan kualitas udara pada project edukasi.',
+        description: 'MQ-135 sering digunakan sebagai modul edukasi untuk memantau perubahan relatif terhadap kualitas udara. Nilai analog tidak otomatis sama dengan konsentrasi ppm tanpa kalibrasi dan kondisi pengujian yang tepat.',
+        topics: ['Air quality', 'Analog output', 'Calibration concept', 'Relative monitoring', 'Data logging'],
+        code: `const int airPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int value = analogRead(airPin);\n  Serial.print("MQ-135: ");\n  Serial.println(value);\n  delay(500);\n}`
+      },
+      {
+        id: 19, title: 'Sensor 11: TCS3200 Color Sensor', category: '20 Sensor', level: 'Advanced', duration: '1 Pertemuan', image: IMG.tcs3200,
+        sourceName: 'Wikimedia Commons - TCS3200 Board', sourceUrl: 'https://commons.wikimedia.org/wiki/File:TCS3200Board.png',
+        tools: ['TCS3200', 'Arduino Uno', 'RGB LED'],
+        output: 'Membaca komponen warna RGB dari objek dan membuat klasifikasi sederhana.',
+        description: 'TCS3200 menggunakan sensor fotodioda dan konverter frekuensi untuk membantu pengukuran warna. Materi mengenalkan konsep filtering RGB dan klasifikasi sederhana.',
+        topics: ['RGB', 'Photodiode', 'Frequency output', 'Color filtering', 'Classification'],
+        code: `// Pseudocode materi: baca kanal R, G, B\n// lalu bandingkan nilai untuk klasifikasi warna.\n// Implementasi pin dapat disesuaikan dengan modul TCS3200 yang digunakan.`
+      },
+      {
+        id: 20, title: 'Sensor 12: MPU6050 Accelerometer & Gyroscope', category: '20 Sensor', level: 'Advanced', duration: '1 Pertemuan', image: IMG.mpu6050,
+        sourceName: 'Wikimedia Commons - GY-521 MPU-6050', sourceUrl: 'https://commons.wikimedia.org/wiki/File:GY-521_MPU-6050_Module_3_Axis_Gyroscope_%2B_Accelerometer_0487.jpg',
+        tools: ['MPU6050', 'Arduino Uno', 'I2C'],
+        output: 'Membaca percepatan dan gerakan rotasi untuk project robot atau motion detection.',
+        description: 'MPU6050 merupakan IMU 6-axis yang menggabungkan accelerometer 3-axis dan gyroscope 3-axis melalui antarmuka I2C.',
+        topics: ['Accelerometer', 'Gyroscope', 'I2C', 'Motion detection', 'Tilt concept'],
+        code: `#include <Wire.h>\n\nvoid setup() {\n  Wire.begin();\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  // Baca register MPU6050 menggunakan library pilihan.\n  // Fokus materi: memahami data acceleration dan gyro.\n  delay(500);\n}`
+      },
+      {
+        id: 21, title: 'Sensor 13: HX1838 Infrared Receiver', category: '20 Sensor', level: 'Intermediate', duration: '1 Pertemuan', image: IMG.ir_receiver,
+        sourceName: 'Wikimedia Commons - HX1838 IR Module', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Ir_mod_HX1838.jpg',
+        tools: ['HX1838', 'IR Remote', 'Arduino Uno'],
+        output: 'Mengendalikan Arduino menggunakan remote infrared.',
+        description: 'Modul penerima infrared digunakan untuk membaca kode tombol dari remote dan mengubahnya menjadi perintah pada Arduino.',
+        topics: ['IR signal', 'Remote control', 'Decode button', 'IRremote library', 'Command mapping'],
+        code: `#include <IRremote.hpp>\n\nconst int IR_RECEIVE_PIN = 2;\n\nvoid setup() {\n  Serial.begin(9600);\n  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);\n}\n\nvoid loop() {\n  if (IrReceiver.decode()) {\n    Serial.println(IrReceiver.decodedIRData.command);\n    IrReceiver.resume();\n  }\n}`
+      },
+      {
+        id: 22, title: 'Sensor 14: Rain Sensor', category: '20 Sensor', level: 'Beginner', duration: '1 Pertemuan', image: IMG.rain,
+        sourceName: 'Lazada - Rain Sensor Module', sourceUrl: 'https://www.lazada.lk/products/rain-sensor-module-for-arduino',
+        tools: ['Rain Sensor', 'Arduino Uno', 'Buzzer'],
+        output: 'Membuat indikator hujan sederhana menggunakan pembacaan sensor.',
+        description: 'Modul rain sensor menggunakan perubahan konduktivitas pada permukaan sensor untuk memberikan indikasi basah atau kering.',
+        topics: ['Rain detection', 'Analog reading', 'Digital threshold', 'Buzzer', 'Automatic alert'],
+        code: `const int rainPin = A0;\nconst int buzzerPin = 8;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(buzzerPin, OUTPUT);\n}\n\nvoid loop() {\n  int rain = analogRead(rainPin);\n  Serial.println(rain);\n  digitalWrite(buzzerPin, rain < 500 ? HIGH : LOW);\n  delay(300);\n}`
+      },
+      {
+        id: 23, title: 'Sensor 15: Soil Moisture', category: '20 Sensor', level: 'Beginner', duration: '1 Pertemuan', image: IMG.soil,
+        sourceName: 'Wikimedia Commons - Soil Moisture with Arduino', sourceUrl: 'https://commons.wikimedia.org/wiki/File:DHT11_and_Soil_Moisture_connected_to_Arduino.jpg',
+        tools: ['Soil Moisture Sensor', 'Arduino Uno', 'Water Pump'],
+        output: 'Membuat indikator kelembapan tanah untuk project penyiraman otomatis.',
+        description: 'Sensor kelembapan tanah digunakan untuk membaca kondisi media tanam. Materi menghubungkan data analog dengan keputusan penyiraman.',
+        topics: ['Soil moisture', 'Analog sensor', 'Threshold', 'Plant monitoring', 'Automatic watering'],
+        code: `const int soilPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int soil = analogRead(soilPin);\n  Serial.print("Soil: ");\n  Serial.println(soil);\n  delay(500);\n}`
+      },
+      {
+        id: 24, title: 'Sensor 16: KY-026 Flame Sensor', category: '20 Sensor', level: 'Intermediate', duration: '1 Pertemuan', image: IMG.flame,
+        sourceName: 'ROBODIUM - KY-026 Flame Sensor Module', sourceUrl: 'https://robodium.com/products/ky-026-flame-sensor-module',
+        tools: ['KY-026', 'Arduino Uno', 'Buzzer'],
+        output: 'Membuat alarm edukasi berdasarkan deteksi sumber cahaya dalam spektrum sensor flame.',
+        description: 'KY-026 merupakan modul sensor flame yang menyediakan output analog dan digital. Cocok untuk latihan robot pemadam api dan eksperimen deteksi sumber api, bukan untuk sistem keselamatan tersertifikasi.',
+        topics: ['Flame detection', 'Analog output', 'Digital output', 'LM393', 'Alarm project'],
+        code: `const int flamePin = 2;\nconst int buzzerPin = 8;\n\nvoid setup() {\n  pinMode(flamePin, INPUT);\n  pinMode(buzzerPin, OUTPUT);\n}\n\nvoid loop() {\n  int detected = digitalRead(flamePin);\n  digitalWrite(buzzerPin, detected == LOW ? HIGH : LOW);\n}`
+      },
+      {
+        id: 25, title: 'Sensor 17: KY-038 Sound Sensor', category: '20 Sensor', level: 'Beginner', duration: '1 Pertemuan', image: IMG.sound,
+        sourceName: 'BEEMONG - Sound Sensor Module', sourceUrl: 'https://www.beemong.com/product/small-microphone-sound-sensor-module',
+        tools: ['KY-038', 'Arduino Uno', 'LED'],
+        output: 'Membuat indikator sederhana yang merespon suara atau tepukan.',
+        description: 'Modul microphone sound sensor digunakan untuk latihan membaca perubahan suara sebagai input analog/digital.',
+        topics: ['Microphone module', 'Sound level', 'Analog output', 'Digital threshold', 'Clap detection'],
+        code: `const int soundPin = A0;\nconst int ledPin = 13;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  int sound = analogRead(soundPin);\n  digitalWrite(ledPin, sound > 500 ? HIGH : LOW);\n  Serial.println(sound);\n}`
+      },
+      {
+        id: 26, title: 'Sensor 18: Hall Effect A3144', category: '20 Sensor', level: 'Intermediate', duration: '1 Pertemuan', image: IMG.hall,
+        sourceName: 'Embeddinator - Hall Sensor A3144 Module', sourceUrl: 'https://www.embeddinator.com/product/hall-sensor-a3144-module',
+        tools: ['A3144 Hall Sensor', 'Magnet', 'Arduino Uno'],
+        output: 'Mendeteksi keberadaan medan magnet untuk penghitung putaran atau sakelar magnetik.',
+        description: 'Hall sensor membaca perubahan medan magnet. Materi ini dapat digunakan untuk membuat counter roda atau sensor posisi.',
+        topics: ['Hall effect', 'Magnetic field', 'Digital output', 'Counter', 'RPM concept'],
+        code: `const int hallPin = 2;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(hallPin, INPUT);\n}\n\nvoid loop() {\n  if (digitalRead(hallPin) == LOW) {\n    Serial.println("Magnet terdeteksi");\n    delay(200);\n  }\n}`
+      },
+      {
+        id: 27, title: 'Sensor 19: FC-51 IR Obstacle', category: '20 Sensor', level: 'Beginner', duration: '1 Pertemuan', image: IMG.obstacle,
+        sourceName: 'ArduinoTech - FC-51 Infrared Obstacle Sensor', sourceUrl: 'https://arduinotech.dk/shop/infraroed-binaer-refleksions-sensor-modul-fc-51/',
+        tools: ['FC-51', 'Arduino Uno', 'Robot Car'],
+        output: 'Mendeteksi objek di depan robot untuk membuat logika berhenti atau menghindar.',
+        description: 'FC-51 merupakan modul infrared obstacle yang umum dipakai pada robot line/obstacle avoidance sebagai input digital.',
+        topics: ['IR emitter', 'Obstacle detection', 'Digital output', 'Robot avoidance', 'Threshold adjustment'],
+        code: `const int obstaclePin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(obstaclePin, INPUT);\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  int obstacle = digitalRead(obstaclePin);\n  digitalWrite(ledPin, obstacle == LOW ? HIGH : LOW);\n}`
+      },
+      {
+        id: 28, title: 'Sensor 20: RC522 RFID Module', category: '20 Sensor', level: 'Advanced', duration: '1 Pertemuan', image: IMG.rc522,
+        sourceName: 'Wikimedia Commons - RFID RC522', sourceUrl: 'https://commons.wikimedia.org/wiki/File:RFID_module_RC522.jpg',
+        tools: ['RC522', 'RFID Card', 'SPI', 'Arduino Uno'],
+        output: 'Membaca UID kartu atau tag RFID untuk sistem akses sederhana.',
+        description: 'RC522 adalah modul RFID yang umum dipakai pada Arduino untuk latihan identifikasi kartu/tag dan project access control.',
+        topics: ['RFID', 'UID', 'SPI', 'MFRC522 library', 'Access control'],
+        code: `#include <SPI.h>\n#include <MFRC522.h>\n\n#define SS_PIN 10\n#define RST_PIN 9\nMFRC522 rfid(SS_PIN, RST_PIN);\n\nvoid setup() {\n  Serial.begin(9600);\n  SPI.begin();\n  rfid.PCD_Init();\n}\n\nvoid loop() {\n  if (!rfid.PICC_IsNewCardPresent()) return;\n  if (!rfid.PICC_ReadCardSerial()) return;\n  Serial.println("RFID terdeteksi");\n  rfid.PICC_HaltA();\n}`
+      },
+
+      {
+        id: 29, title: 'Project 01: Lampu Otomatis LDR', category: 'Project', level: 'Project', duration: '1-2 Pertemuan', image: IMG.ldr,
+        sourceName: 'Lazada - LDR Photoresistor', sourceUrl: 'https://www.lazada.pk/products/ldr-photoresistor-module-for-arduino-i606c455bcc7a3173e863322e2482c290.html',
+        tools: ['Arduino Uno', 'LDR', 'LED / Relay'],
+        output: 'Prototype lampu otomatis yang menyala saat kondisi gelap.',
+        description: 'Project integrasi input analog dan output. Siswa menentukan threshold cahaya dan membuat sistem lampu otomatis.',
+        topics: ['Sensor calibration', 'Threshold', 'Digital output', 'Automation', 'Testing'],
+        code: `// Gabungkan konsep analogRead() + threshold + output.\n// Tantangan: tambahkan hysteresis agar lampu tidak berkedip saat nilai berada di batas.`
+      },
+      {
+        id: 30, title: 'Project 02: Monitoring Suhu dan Kelembapan', category: 'Project', level: 'Project', duration: '1-2 Pertemuan', image: IMG.dht11,
+        sourceName: 'Wikimedia Commons - DHT11', sourceUrl: 'https://commons.wikimedia.org/wiki/File:Dht11.jpg',
+        tools: ['Arduino Uno', 'DHT11', 'LCD / Serial Monitor'],
+        output: 'Sistem monitoring lingkungan dengan tampilan data sensor.',
+        description: 'Project untuk menggabungkan sensor DHT11 dengan tampilan data. Siswa dapat mengembangkan menjadi dashboard sederhana.',
+        topics: ['Sensor reading', 'Display', 'Data logging', 'Threshold alert', 'Monitoring'],
+        code: `// Tantangan project:\n// 1. Baca suhu dan kelembapan\n// 2. Tampilkan ke LCD atau Serial Monitor\n// 3. Tambahkan alarm jika suhu melewati batas`
+      },
+      {
+        id: 31, title: 'Project 03: Robot Avoider', category: 'Project', level: 'Project', duration: '2 Pertemuan', image: IMG.hc_sr04,
+        sourceName: 'Wikimedia Commons - HC-SR04', sourceUrl: 'https://commons.wikimedia.org/wiki/File:SparkFun_HC-SR04_Ultrasonic-Sensor_13959-01a.jpg',
+        tools: ['Arduino Uno', 'HC-SR04', 'L298N', 'DC Motor'],
+        output: 'Robot mobil yang mendeteksi rintangan dan memilih arah gerak.',
+        description: 'Project robotik integrasi sensor ultrasonic, motor driver, dan logika keputusan untuk menghindari objek.',
+        topics: ['Distance reading', 'Motor control', 'Decision logic', 'Obstacle avoidance', 'Robot testing'],
+        code: `// Logika dasar:\n// jika jarak > 25 cm -> maju\n// jika jarak <= 25 cm -> berhenti -> belok\n// Kembangkan dengan pembacaan sensor kiri/kanan untuk navigasi.`
+      },
+      {
+        id: 32, title: 'Project 04: Smart Door RFID', category: 'Project', level: 'Project', duration: '2 Pertemuan', image: IMG.rc522,
+        sourceName: 'Wikimedia Commons - RFID RC522', sourceUrl: 'https://commons.wikimedia.org/wiki/File:RFID_module_RC522.jpg',
+        tools: ['Arduino Uno', 'RC522', 'Servo', 'Buzzer'],
+        output: 'Prototype pintu otomatis yang merespons kartu RFID terdaftar.',
+        description: 'Project akhir untuk menggabungkan identifikasi RFID, servo, buzzer, dan aturan akses sederhana.',
+        topics: ['RFID UID', 'Whitelist', 'Servo', 'Buzzer', 'Access control'],
+        code: `// Tantangan project:\n// 1. Baca UID kartu\n// 2. Cocokkan dengan daftar UID yang diizinkan\n// 3. Gerakkan servo jika cocok\n// 4. Bunyikan buzzer jika ditolak`
+      }
+    ];
+
+    let activeCategory = 'Semua';
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.innerText = value;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function getCategoryIcon(category) {
+      const map = {
+        'Dasar Arduino': '🔌',
+        '20 Sensor': '📡',
+        'Project': '🚀'
+      };
+      return map[category] || '📚';
+    }
+
+    function getLevelColor(level) {
+      if (level === 'Beginner') return 'bg-green-50 text-green-600 dark:bg-green-950 dark:text-green-300';
+      if (level === 'Intermediate') return 'bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300';
+      if (level === 'Advanced') return 'bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-300';
+      if (level === 'Project') return 'bg-orange-50 text-orange-600 dark:bg-orange-950 dark:text-orange-300';
+      return 'bg-slate-50 text-slate-600 dark:bg-slate-950 dark:text-slate-300';
+    }
+
+    function renderCategoryTabs() {
+      const wrapper = document.getElementById('categoryTabs');
+      if (!wrapper) return;
+
+      const categories = ['Semua', 'Dasar Arduino', '20 Sensor', 'Project'];
+
+      wrapper.innerHTML = categories.map(category => {
+        const active = category === activeCategory;
+        return `
+          <button
+            onclick="setCategory('${escapeHtml(category)}')"
+            class="rounded-2xl px-5 py-3 text-sm font-black transition ${
+              active
+                ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-xl shadow-blue-500/25'
+                : 'bg-white/90 text-slate-500 shadow-lg shadow-slate-200/60 hover:-translate-y-0.5 hover:text-slate-900 dark:bg-slate-900/90 dark:text-slate-400 dark:shadow-black/20 dark:hover:text-white'
+            }"
+          >
+            ${category === 'Semua' ? '🌐' : getCategoryIcon(category)} ${category}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setCategory(category) {
+      activeCategory = category;
+      renderCategoryTabs();
+      applyFilter();
+    }
+
+    function applyFilter() {
+      const search = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
+      const level = document.getElementById('levelInput')?.value || 'all';
+      const sort = document.getElementById('sortInput')?.value || 'default';
+
+      let filtered = lessons.filter(item => {
+        const target = [item.title, item.category, item.level, item.description, ...item.topics, ...item.tools].join(' ').toLowerCase();
+        const matchSearch = target.includes(search);
+        const matchCategory = activeCategory === 'Semua' || item.category === activeCategory;
+        const matchLevel = level === 'all' || item.level === level;
+        return matchSearch && matchCategory && matchLevel;
+      });
+
+      if (sort === 'az') filtered.sort((a, b) => a.title.localeCompare(b.title, 'id'));
+      if (sort === 'za') filtered.sort((a, b) => b.title.localeCompare(a.title, 'id'));
+      if (sort === 'level') {
+        const order = { Beginner: 1, Intermediate: 2, Advanced: 3, Project: 4 };
+        filtered.sort((a, b) => (order[a.level] || 99) - (order[b.level] || 99));
+      }
+
+      renderLessons(filtered);
+    }
+
+    function renderLessons(items) {
+      const container = document.getElementById('lessonList');
+      const emptyState = document.getElementById('emptyState');
+      if (!container) return;
+
+      setText('shownCount', items.length);
+
+      if (!items.length) {
+        container.innerHTML = '';
+        emptyState?.classList.remove('hidden');
+        return;
+      }
+
+      emptyState?.classList.add('hidden');
+
+      container.innerHTML = items.map(item => {
+        const levelColor = getLevelColor(item.level);
+        const safeImage = escapeHtml(item.image);
+        return `
+          <article onclick="openLessonModal(${item.id})" class="lesson-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="relative h-48 overflow-hidden">
+              <img
+                src="${safeImage}"
+                onerror="this.onerror=null; this.src='${FALLBACK_IMAGE}'"
+                loading="lazy"
+                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                alt="${escapeHtml(item.title)}"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/10 to-transparent"></div>
+              <div class="absolute left-4 top-4 flex flex-wrap gap-2">
+                <span class="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-slate-700 shadow-sm">${getCategoryIcon(item.category)} ${escapeHtml(item.category)}</span>
+              </div>
+              <div class="absolute bottom-4 left-4 right-4">
+                <p class="text-xs font-bold text-white/75">${escapeHtml(item.duration)}</p>
+                <h3 class="mt-1 line-clamp-2 text-lg font-black leading-tight text-white">${escapeHtml(item.title)}</h3>
+              </div>
+            </div>
+
+            <div class="p-5">
+              <div class="flex items-center justify-between gap-3">
+                <span class="rounded-full px-3 py-1 text-xs font-black ${levelColor}">${escapeHtml(item.level)}</span>
+                <span class="text-xs font-bold text-slate-400">#${String(item.id).padStart(2, '0')}</span>
+              </div>
+
+              <p class="mt-4 line-clamp-3 text-sm leading-6 text-slate-500 dark:text-slate-400">${escapeHtml(item.description)}</p>
+
+              <div class="mt-5 flex flex-wrap gap-2">
+                ${item.tools.slice(0, 3).map(tool => `<span class="rounded-xl bg-slate-100 px-3 py-2 text-[11px] font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">${escapeHtml(tool)}</span>`).join('')}
+              </div>
+
+              <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800">
+                <span class="text-xs font-bold text-slate-400">${item.topics.length} topik</span>
+                <span class="text-sm font-black text-blue-600 transition group-hover:translate-x-1">Buka Materi →</span>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function openLessonModal(id) {
+      const item = lessons.find(x => x.id === id);
+      if (!item) return;
+
+      setText('modalCategory', `${getCategoryIcon(item.category)} ${item.category}`);
+      setText('modalLevel', item.level);
+      setText('modalDuration', item.duration);
+      setText('modalTitle', item.title);
+      setText('modalDescription', item.description);
+      setText('modalOutput', item.output);
+      setText('modalSourceName', item.sourceName);
+      setText('modalCode', item.code || '// Belum ada contoh program untuk materi ini.');
+
+      const modalImage = document.getElementById('modalImage');
+      modalImage.src = item.image;
+      modalImage.onerror = () => {
+        modalImage.onerror = null;
+        modalImage.src = FALLBACK_IMAGE;
+      };
+      modalImage.alt = item.title;
+
+      const sourceLink = document.getElementById('modalSourceLink');
+      sourceLink.href = item.sourceUrl;
+
+      document.getElementById('modalTopics').innerHTML = item.topics.map(topic => `<li class="flex gap-2"><span class="mt-1 text-blue-500">•</span><span>${escapeHtml(topic)}</span></li>`).join('');
+      document.getElementById('modalTools').innerHTML = item.tools.map(tool => `<span class="rounded-xl bg-white px-3 py-2 text-xs font-black text-slate-600 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700">${escapeHtml(tool)}</span>`).join('');
+
+      const modal = document.getElementById('lessonModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeLessonModal() {
+      const modal = document.getElementById('lessonModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    function resetFilters() {
+      activeCategory = 'Semua';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('levelInput').value = 'all';
+      document.getElementById('sortInput').value = 'default';
+      renderCategoryTabs();
+      applyFilter();
+    }
+
+    document.getElementById('searchInput')?.addEventListener('input', applyFilter);
+    document.getElementById('levelInput')?.addEventListener('change', applyFilter);
+    document.getElementById('sortInput')?.addEventListener('change', applyFilter);
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeLessonModal();
+    });
+
+    document.getElementById('lessonModal')?.addEventListener('click', event => {
+      if (event.target.id === 'lessonModal') closeLessonModal();
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadPartials();
+
+      setText('totalLessonHero', lessons.length);
+      setText('totalLessonCard', lessons.length);
+
+      renderCategoryTabs();
+      applyFilter();
+    });
+  </script>
+</body>
+</html>
