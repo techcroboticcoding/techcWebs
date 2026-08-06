@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pembelajaran ESP32 + PictoBlox - TECH-C</title>
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #pageScroller {
+      height: 100vh;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    #pageScroller::-webkit-scrollbar { width: 8px; }
+    #pageScroller::-webkit-scrollbar-track { background: transparent; }
+    #pageScroller::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, .55); border-radius: 999px; }
+    #pageScroller::-webkit-scrollbar-thumb:hover { background: rgba(37, 99, 235, .75); }
+
+    * {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .dark .grid-bg {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+
+    .lesson-card { transition: .25s ease; }
+    .lesson-card:hover { transform: translateY(-6px); }
+
+    .hide-scroll::-webkit-scrollbar { display: none; }
+    .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .code-box {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    .pin-table th,
+    .pin-table td {
+      border-bottom: 1px solid rgba(148, 163, 184, .22);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .pin-table th {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: #64748b;
+    }
+
+    .pin-table tr:last-child td { border-bottom: 0; }
+
+    .source-note a { color: #2563eb; }
+    .source-note a:hover { text-decoration: underline; }
+  </style>
+</head>
+
+<script>
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
+
+  if (!token) {
+    window.location.href = './login.html';
+  } else if (role === 'siswa') {
+    window.location.href = './dashboardSiswa.html';
+  } else if (role !== 'admin') {
+    localStorage.clear();
+    window.location.href = './login.html';
+  }
+</script>
+
+<body
+  x-data="{ page: 'pelajaran', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-init="
+    darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
+    $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+  "
+  :class="{'dark bg-slate-950': darkMode === true}"
+  class="bg-slate-50"
+>
+
+  <include src="./partials/preloader.html"></include>
+
+  <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <include src="./partials/sidebar.html"></include>
+
+    <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
+      <include src="./partials/overlay.html"></include>
+      <include src="./partials/header.html"></include>
+
+      <main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+          <div class="absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full bg-indigo-500/10 blur-3xl"></div>
+          <div class="absolute left-[-150px] top-72 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-3xl"></div>
+          <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
+        </div>
+
+        <section class="relative z-10 mx-auto max-w-7xl">
+          <!-- HERO -->
+          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="relative p-6 sm:p-7 lg:p-8">
+              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-indigo-600/15 via-cyan-500/5 to-transparent lg:block"></div>
+
+              <div class="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-black text-indigo-600 dark:border-indigo-900/60 dark:bg-indigo-950/60 dark:text-indigo-300">
+                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
+                    ESP32 + PictoBlox Learning Track
+                  </div>
+
+                  <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                    Pembelajaran ESP32 dengan PictoBlox
+                  </h1>
+
+                  <p class="mt-3 max-w-3xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+                    Jalur belajar dari nol: install PictoBlox, mengenal ESP32, menghubungkan board, memahami Upload Mode, mengendalikan GPIO dan PWM, lalu membuat mobil robot standar TECH-C dengan pin motor 16, 17, 18, 19 dan PWM 25, 26.
+                  </p>
+
+                  <div class="mt-6 flex flex-wrap gap-3">
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Total Materi</p>
+                      <p id="totalLessonHero" class="mt-1 text-sm font-black text-slate-900 dark:text-white">20</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Dasar</p>
+                      <p class="mt-1 text-sm font-black text-indigo-600">10 Materi</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Robot</p>
+                      <p class="mt-1 text-sm font-black text-green-600">8 Materi</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
+                      <p class="text-xs font-semibold text-slate-500">Project</p>
+                      <p class="mt-1 text-sm font-black text-violet-600">2 Materi</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="relative shrink-0">
+                  <div class="absolute -inset-4 rounded-[2.5rem] bg-indigo-500/20 blur-2xl"></div>
+
+                  <div class="relative w-full rounded-[2rem] border border-indigo-100 bg-gradient-to-br from-indigo-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-indigo-500/25 dark:border-indigo-900 sm:w-[360px]">
+                    <div class="flex items-center justify-between gap-4">
+                      <div>
+                        <p class="text-sm font-bold text-white/80">TECH-C ESP32 Track</p>
+                        <h2 id="totalLessonCard" class="mt-2 text-5xl font-black">20</h2>
+                        <p class="mt-1 text-xs font-semibold text-white/70">Materi pembelajaran</p>
+                      </div>
+
+                      <div class="flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-white/20 text-4xl backdrop-blur">
+                        📡
+                      </div>
+                    </div>
+
+                    <div class="mt-5 rounded-2xl bg-white/15 p-4 backdrop-blur">
+                      <div class="flex items-center justify-between text-xs font-bold text-white/80">
+                        <span>Standar robot TECH-C</span>
+                        <span>6 pin kontrol</span>
+                      </div>
+                      <div class="mt-3 grid grid-cols-3 gap-2 text-center text-xs font-black">
+                        <div class="rounded-xl bg-white/15 p-2">16 / 17</div>
+                        <div class="rounded-xl bg-white/15 p-2">18 / 19</div>
+                        <div class="rounded-xl bg-white/15 p-2">25 / 26 PWM</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ROBOT PIN STANDARD -->
+          <div class="mb-7 rounded-[1.7rem] border border-indigo-100 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-indigo-900/50 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+              <div class="max-w-2xl">
+                <p class="text-xs font-black uppercase tracking-[0.16em] text-indigo-500">Konfigurasi Robot Standar TECH-C</p>
+                <h2 class="mt-2 text-2xl font-black text-slate-900 dark:text-white">Pin motor yang kita gunakan</h2>
+                <p class="mt-2 text-sm leading-7 text-slate-500 dark:text-slate-400">
+                  Untuk materi mobil robot di halaman ini, kita menggunakan dua motor DC melalui motor driver dua kanal. Dua pin pertama menentukan arah putaran, sedangkan satu pin PWM mengatur kecepatan masing-masing motor.
+                </p>
+              </div>
+
+              <div class="w-full overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950 lg:max-w-2xl">
+                <table class="pin-table min-w-full text-sm">
+                  <thead>
+                    <tr>
+                      <th>Bagian</th>
+                      <th>GPIO ESP32</th>
+                      <th>Fungsi</th>
+                      <th>Catatan</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-slate-600 dark:text-slate-300">
+                    <tr><td class="font-black">Motor Kiri</td><td class="font-black text-indigo-600">16, 17</td><td>Arah</td><td>IN1 + IN2</td></tr>
+                    <tr><td class="font-black">Motor Kanan</td><td class="font-black text-indigo-600">18, 19</td><td>Arah</td><td>IN3 + IN4</td></tr>
+                    <tr><td class="font-black">Kecepatan Kiri</td><td class="font-black text-green-600">25</td><td>PWM</td><td>ENA / PWM kiri</td></tr>
+                    <tr><td class="font-black">Kecepatan Kanan</td><td class="font-black text-green-600">26</td><td>PWM</td><td>ENB / PWM kanan</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+              <div class="rounded-2xl bg-indigo-50 p-4 text-sm dark:bg-indigo-950/40">
+                <p class="font-black text-indigo-700 dark:text-indigo-300">Gerak Maju</p>
+                <p class="mt-1 leading-6 text-slate-600 dark:text-slate-300">Kiri: 16 HIGH + 17 LOW. Kanan: 18 HIGH + 19 LOW. PWM 25 dan 26 menentukan kecepatan.</p>
+              </div>
+              <div class="rounded-2xl bg-amber-50 p-4 text-sm dark:bg-amber-950/40">
+                <p class="font-black text-amber-700 dark:text-amber-300">Gerak Mundur</p>
+                <p class="mt-1 leading-6 text-slate-600 dark:text-slate-300">Balik logika arah kedua motor. Jika arah robot terbalik, tukar kabel motor atau balik HIGH/LOW pada blok.</p>
+              </div>
+              <div class="rounded-2xl bg-rose-50 p-4 text-sm dark:bg-rose-950/40">
+                <p class="font-black text-rose-700 dark:text-rose-300">Catatan Driver</p>
+                <p class="mt-1 leading-6 text-slate-600 dark:text-slate-300">Jika memakai L298N, jumper ENA/ENB perlu dilepas saat pin ENA/ENB dikendalikan PWM dari ESP32.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- CATEGORY TABS -->
+          <div class="mb-6 overflow-x-auto hide-scroll">
+            <div id="categoryTabs" class="flex min-w-max gap-3"></div>
+          </div>
+
+          <!-- TOOLBAR -->
+          <div class="mb-6 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div class="flex flex-1 flex-col gap-3 sm:flex-row">
+                <div class="relative flex-1">
+                  <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">🔎</div>
+                  <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Cari PictoBlox, GPIO, PWM, motor, Dabble, WiFi..."
+                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                  />
+                </div>
+
+                <select id="levelInput" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-600 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white">
+                  <option value="all">Semua Level</option>
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                  <option value="Project">Project</option>
+                </select>
+
+                <select id="sortInput" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-600 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white">
+                  <option value="default">Urutan Kurikulum</option>
+                  <option value="az">Judul A-Z</option>
+                  <option value="za">Judul Z-A</option>
+                  <option value="level">Level</option>
+                </select>
+              </div>
+
+              <div class="flex gap-3">
+                <button onclick="resetFilters()" class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:-translate-y-0.5 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+                  Reset Filter
+                </button>
+                <a href="pelajaran.html" class="rounded-2xl bg-gradient-to-r from-indigo-600 to-cyan-500 px-5 py-3 text-sm font-black text-white shadow-xl shadow-indigo-500/25 transition hover:-translate-y-0.5 hover:shadow-2xl">
+                  ← Kembali
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUMMARY -->
+          <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 class="text-xl font-black text-slate-900 dark:text-white">Menu Pembelajaran</h2>
+              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Klik materi untuk membuka penjelasan langkah demi langkah dan contoh blok PictoBlox.</p>
+            </div>
+            <div class="rounded-2xl bg-white/90 px-4 py-3 text-sm font-black text-slate-600 shadow-lg shadow-slate-200/60 dark:bg-slate-900/90 dark:text-slate-300 dark:shadow-black/20">
+              Ditampilkan: <span id="shownCount">20</span>
+            </div>
+          </div>
+
+          <!-- LESSON GRID -->
+          <div id="lessonList" class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"></div>
+
+          <div id="emptyState" class="hidden rounded-[2rem] border border-white/70 bg-white/90 p-10 text-center shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+            <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-indigo-50 text-4xl dark:bg-indigo-950">🔎</div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white">Materi tidak ditemukan</h3>
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Coba ubah pencarian, level, atau kategori.</p>
+          </div>
+
+          <!-- SOURCE NOTE -->
+          <div class="source-note mt-8 rounded-2xl border border-slate-200 bg-white/80 p-5 text-sm leading-7 text-slate-500 shadow-lg dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-400">
+            <p class="font-black text-slate-700 dark:text-slate-200">Catatan materi</p>
+            <p class="mt-1">Alur instalasi dan penggunaan PictoBlox di halaman ini mengikuti dokumentasi resmi STEMpedia/PictoBlox. Untuk versi aplikasi terbaru, gunakan halaman download resmi. Materi motor robot TECH-C memakai konfigurasi pin khusus kelas kita.</p>
+            <div class="mt-3 flex flex-wrap gap-3 font-bold">
+              <a href="https://thestempedia.com/product/pictoblox/download-pictoblox/" target="_blank" rel="noopener">Download PictoBlox Resmi</a>
+              <a href="https://ai.thestempedia.com/" target="_blank" rel="noopener">Dokumentasi PictoBlox</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL DETAIL -->
+  <div id="lessonModal" class="fixed inset-0 z-[999999] hidden items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
+    <div class="max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl dark:bg-slate-900">
+      <div class="relative">
+        <img id="modalImage" src="" class="h-72 w-full rounded-t-[2rem] bg-slate-100 object-cover dark:bg-slate-800" alt="Lesson Image" />
+        <button onclick="closeLessonModal()" class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/90 text-xl font-black text-slate-800 shadow-lg backdrop-blur hover:bg-white">×</button>
+      </div>
+
+      <div class="p-6 sm:p-8">
+        <div class="mb-4 flex flex-wrap gap-2">
+          <span id="modalCategory" class="rounded-full bg-indigo-50 px-4 py-2 text-xs font-black text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300"></span>
+          <span id="modalLevel" class="rounded-full bg-green-50 px-4 py-2 text-xs font-black text-green-600 dark:bg-green-950 dark:text-green-300"></span>
+          <span id="modalDuration" class="rounded-full bg-violet-50 px-4 py-2 text-xs font-black text-violet-600 dark:bg-violet-950 dark:text-violet-300"></span>
+        </div>
+
+        <h2 id="modalTitle" class="text-3xl font-black text-slate-900 dark:text-white"></h2>
+        <p id="modalDescription" class="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400"></p>
+
+        <div class="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <div class="rounded-2xl bg-slate-50 p-5 dark:bg-slate-950">
+            <h3 class="mb-3 text-sm font-black text-slate-900 dark:text-white">Yang Dipelajari</h3>
+            <ul id="modalTopics" class="space-y-2 text-sm font-semibold text-slate-500 dark:text-slate-400"></ul>
+          </div>
+
+          <div class="rounded-2xl bg-indigo-50 p-5 dark:bg-indigo-950/40">
+            <h3 class="mb-3 text-sm font-black text-indigo-800 dark:text-indigo-200">Blok / Langkah PictoBlox</h3>
+            <ul id="modalBlocks" class="space-y-2 text-sm font-semibold text-slate-600 dark:text-slate-300"></ul>
+          </div>
+        </div>
+
+        <div class="mt-5 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+          <h3 class="text-sm font-black text-slate-900 dark:text-white">Project / Output</h3>
+          <p id="modalProject" class="mt-2 text-sm leading-7 font-semibold text-slate-500 dark:text-slate-400"></p>
+        </div>
+
+        <div id="modalCodeWrap" class="mt-5 hidden">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <h3 class="text-sm font-black text-slate-900 dark:text-white">Contoh Logika / Kode</h3>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-500 dark:bg-slate-800 dark:text-slate-300">Referensi</span>
+          </div>
+          <pre id="modalCode" class="code-box overflow-x-auto rounded-2xl bg-slate-950 p-5 text-xs leading-6 text-emerald-300"></pre>
+        </div>
+
+        <div class="mt-5 rounded-2xl bg-amber-50 p-5 text-sm leading-7 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+          <p class="font-black">Catatan Praktik</p>
+          <p id="modalNotes" class="mt-1"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  async function loadPartials() {
+    const includes = document.querySelectorAll('include');
+    for (let el of includes) {
+      const file = el.getAttribute('src');
+      try {
+        const res = await fetch(file);
+        const html = await res.text();
+        el.outerHTML = html;
+      } catch (err) {
+        console.error('Gagal load partial:', file, err);
+      }
+    }
+  }
+  </script>
+
+  <script>
+    const IMG = {
+      pictoblox: 'https://commons.wikimedia.org/wiki/Special:FilePath/Pictoblox.png',
+      installer: 'https://commons.wikimedia.org/wiki/Special:FilePath/Pictoblox_Installer.png',
+      esp32: 'https://commons.wikimedia.org/wiki/Special:FilePath/ESP32_Dev_Board.jpg',
+      motor: 'https://commons.wikimedia.org/wiki/Special:FilePath/Dosmotorsl298n.jpg'
+    };
+
+    // Fallback memakai logo lokal agar tidak diproses sebagai inline SVG oleh HTML/Webpack loader.
+    const FALLBACK_IMG = './images/logo.png';
+
+    const lessons = [
+      {
+        id: 1,
+        title: 'Mengenal ESP32 dan Fungsi Dasarnya',
+        category: '01. Dasar ESP32',
+        level: 'Beginner',
+        duration: '1 Pertemuan',
+        image: IMG.esp32,
+        topics: ['Apa itu ESP32', 'GPIO dan pin', 'USB dan power', 'WiFi dan Bluetooth', 'Perbedaan ESP32 dan Arduino UNO'],
+        blocks: ['Pilih Board → ESP32', 'Kenali blok GPIO digital', 'Kenali blok analog dan PWM', 'Gunakan “when ESP32 starts up” sebagai titik awal program'],
+        project: 'Siswa dapat menjelaskan bagian utama board ESP32 dan menyebutkan fungsi pin yang akan dipakai untuk robot.',
+        notes: 'Gunakan board ESP32 yang umum dipakai di kelas. Posisi label pin bisa berbeda antar board, jadi selalu cek silkscreen board sebelum memasang kabel.',
+        code: ''
+      },
+      {
+        id: 2,
+        title: 'Install PictoBlox di Komputer',
+        category: '01. Dasar ESP32',
+        level: 'Beginner',
+        duration: '1 Pertemuan',
+        image: IMG.installer,
+        topics: ['Download installer resmi', 'Install di Windows / macOS / Linux', 'Menjalankan PictoBlox', 'Memeriksa versi aplikasi'],
+        blocks: ['Download PictoBlox dari halaman resmi', 'Jalankan installer', 'Selesaikan wizard instalasi', 'Buka PictoBlox dan pilih lingkungan coding'],
+        project: 'PictoBlox berhasil terbuka dan siap digunakan untuk proyek hardware.',
+        notes: 'Untuk Linux, bila serial port tidak bisa diakses, dokumentasi resmi STEMpedia menyarankan memastikan user memiliki akses grup dialout. Gunakan installer sesuai OS.',
+        code: ''
+      },
+      {
+        id: 3,
+        title: 'Mengenal Tampilan PictoBlox',
+        category: '01. Dasar ESP32',
+        level: 'Beginner',
+        duration: '1 Pertemuan',
+        image: IMG.pictoblox,
+        topics: ['Stage / workspace', 'Palette blok', 'Board tab', 'Extensions', 'Upload Mode'],
+        blocks: ['Cari blok “when ESP32 starts up”', 'Gunakan Control → forever', 'Kenali kategori ESP32', 'Kenali tombol Upload Code'],
+        project: 'Siswa mampu menemukan blok utama ESP32 dan membuat workspace kosong untuk latihan.',
+        notes: 'Jangan langsung memasukkan banyak blok. Mulai dari satu program sederhana agar siswa paham alur setup dan loop.',
+        code: ''
+      },
+      {
+        id: 4,
+        title: 'Menghubungkan ESP32 ke PictoBlox',
+        category: '01. Dasar ESP32',
+        level: 'Beginner',
+        duration: '1 Pertemuan',
+        image: IMG.esp32,
+        topics: ['Kabel USB data', 'Board selection', 'Connect', 'Serial Port', 'Troubleshooting'],
+        blocks: ['Board → ESP32', 'Connect', 'Pilih COM / serial port yang benar', 'Pastikan board terdeteksi'],
+        project: 'ESP32 muncul sebagai board yang terhubung di PictoBlox.',
+        notes: 'Gunakan kabel USB yang mendukung data. Jika port tidak muncul, cek driver USB-serial, kabel, dan izin akses serial.',
+        code: ''
+      },
+      {
+        id: 5,
+        title: 'Stage Mode vs Upload Mode',
+        category: '01. Dasar ESP32',
+        level: 'Beginner',
+        duration: '1 Pertemuan',
+        image: IMG.pictoblox,
+        topics: ['Perbedaan Stage Mode', 'Perbedaan Upload Mode', 'Kapan memakai masing-masing', 'Program tersimpan di board'],
+        blocks: ['Switch Mode ke Upload', 'Gunakan “when ESP32 starts up”', 'Klik Upload Code'],
+        project: 'Siswa memahami bahwa Upload Mode digunakan untuk memasukkan program ke ESP32 agar bisa berjalan setelah board diberi daya.',
+        notes: 'Untuk materi robot kelas, gunakan Upload Mode supaya program motor tetap berada di ESP32 dan robot tidak bergantung pada laptop setelah upload.',
+        code: ''
+      },
+      {
+        id: 6,
+        title: 'Upload Program Pertama: LED Blink',
+        category: '01. Dasar ESP32',
+        level: 'Beginner',
+        duration: '1 Pertemuan',
+        image: IMG.esp32,
+        topics: ['Digital output', 'HIGH dan LOW', 'Delay', 'Upload Code'],
+        blocks: ['when ESP32 starts up', 'forever', 'set digital pin 2 output as HIGH', 'wait 1 seconds', 'set digital pin 2 output as LOW', 'wait 1 seconds'],
+        project: 'LED onboard atau LED eksternal berkedip secara periodik.',
+        notes: 'Nomor LED onboard dapat berbeda tergantung jenis board. Jika board kelas berbeda, pilih GPIO LED yang benar dari dokumentasi board.',
+        code: `pinMode(2, OUTPUT);\n\nvoid loop() {\n  digitalWrite(2, HIGH);\n  delay(1000);\n  digitalWrite(2, LOW);\n  delay(1000);\n}`
+      },
+      {
+        id: 7,
+        title: 'GPIO Digital: HIGH, LOW, dan Output',
+        category: '01. Dasar ESP32',
+        level: 'Beginner',
+        duration: '1 Pertemuan',
+        image: IMG.esp32,
+        topics: ['GPIO output', 'HIGH', 'LOW', 'Kontrol perangkat'],
+        blocks: ['set digital pin 16 output as HIGH', 'set digital pin 16 output as LOW', 'Gunakan wait untuk membuat urutan'],
+        project: 'Mengendalikan LED atau relay sederhana menggunakan GPIO.',
+        notes: 'GPIO ESP32 bekerja pada level logika 3,3V. Jangan menghubungkan beban motor langsung ke GPIO.',
+        code: ''
+      },
+      {
+        id: 8,
+        title: 'GPIO Digital Input: Push Button',
+        category: '01. Dasar ESP32',
+        level: 'Beginner',
+        duration: '1 Pertemuan',
+        image: IMG.esp32,
+        topics: ['Digital input', 'Read digital pin', 'If else', 'Tombol sebagai input'],
+        blocks: ['forever', 'read status of digital pin', 'if then else', 'set digital pin output'],
+        project: 'Tombol ditekan → LED menyala. Tombol dilepas → LED mati.',
+        notes: 'Gunakan pull-up atau pull-down sesuai wiring. Hindari input floating agar hasil pembacaan stabil.',
+        code: ''
+      },
+      {
+        id: 9,
+        title: 'Analog Input: Membaca Potensiometer',
+        category: '01. Dasar ESP32',
+        level: 'Beginner',
+        duration: '1 Pertemuan',
+        image: IMG.esp32,
+        topics: ['Analog input', 'ADC', 'Nilai sensor', 'Map nilai'],
+        blocks: ['read analog pin 32', 'forever', 'set variable', 'map nilai sensor'],
+        project: 'Memutar potensiometer menghasilkan nilai input yang berubah-ubah.',
+        notes: 'Materi ini penting sebelum belajar PWM karena siswa bisa melihat hubungan input analog dengan output PWM.',
+        code: ''
+      },
+      {
+        id: 10,
+        title: 'PWM Dasar: Mengatur Kecepatan / Kecerahan',
+        category: '01. Dasar ESP32',
+        level: 'Beginner',
+        duration: '1 Pertemuan',
+        image: IMG.esp32,
+        topics: ['PWM', 'Duty cycle', 'Kontrol kecepatan', 'Kontrol kecerahan'],
+        blocks: ['set PWM pin 25 output as value', 'Gunakan nilai PWM bertingkat', 'Uji 0, 64, 128, 192, 255'],
+        project: 'LED dapat diredupkan atau motor dapat diatur kecepatannya melalui PWM.',
+        notes: 'Nilai PWM yang muncul di PictoBlox dapat bergantung pada blok atau board support yang digunakan. Untuk latihan kelas, gunakan skala yang ditampilkan pada blok PWM dan mulai dari nilai rendah.',
+        code: ''
+      },
+      {
+        id: 11,
+        title: 'Mengenal Motor Driver dan Dua Motor DC',
+        category: '02. Robot Car',
+        level: 'Intermediate',
+        duration: '1 Pertemuan',
+        image: IMG.motor,
+        topics: ['Mengapa perlu motor driver', 'Motor kiri dan kanan', 'IN1-IN4', 'ENA-ENB / PWM', 'Power motor'],
+        blocks: ['Kontrol digital untuk arah', 'Kontrol PWM untuk kecepatan', 'Gunakan dua kanal motor'],
+        project: 'Siswa dapat menjelaskan hubungan ESP32 → motor driver → motor kiri/kanan.',
+        notes: 'Motor tidak boleh digerakkan langsung dari GPIO ESP32. Driver motor diperlukan untuk mengelola arus motor dan arah putar.',
+        code: ''
+      },
+      {
+        id: 12,
+        title: 'Wiring Standar Robot TECH-C: GPIO 16,17,18,19 + PWM 25,26',
+        category: '02. Robot Car',
+        level: 'Intermediate',
+        duration: '1 Pertemuan',
+        image: IMG.motor,
+        topics: ['Motor kiri: 16,17', 'Motor kanan: 18,19', 'PWM kiri: 25', 'PWM kanan: 26', 'Common GND'],
+        blocks: ['16 → arah kiri 1', '17 → arah kiri 2', '18 → arah kanan 1', '19 → arah kanan 2', '25 → PWM kiri', '26 → PWM kanan'],
+        project: 'Wiring robot mengikuti standar kelas sehingga program yang dibuat siswa konsisten antar robot.',
+        notes: 'Mapping kelas: LEFT_IN1=16, LEFT_IN2=17, RIGHT_IN1=18, RIGHT_IN2=19, LEFT_PWM=25, RIGHT_PWM=26. Pastikan GND ESP32 dan GND driver motor terhubung bersama.',
+        code: `LEFT_IN1  = 16;\nLEFT_IN2  = 17;\nRIGHT_IN1 = 18;\nRIGHT_IN2 = 19;\nLEFT_PWM  = 25;\nRIGHT_PWM = 26;`
+      },
+      {
+        id: 13,
+        title: 'Menggerakkan Motor Kiri',
+        category: '02. Robot Car',
+        level: 'Intermediate',
+        duration: '1 Pertemuan',
+        image: IMG.motor,
+        topics: ['Arah motor kiri', 'GPIO 16', 'GPIO 17', 'PWM GPIO 25'],
+        blocks: ['16 HIGH', '17 LOW', 'PWM 25 = speed', 'Uji forward kiri', 'Balik HIGH/LOW untuk reverse'],
+        project: 'Motor kiri dapat maju dan mundur dengan kecepatan yang dapat diatur.',
+        notes: 'Jika motor kiri bergerak terbalik dari yang diharapkan, balik kedua kabel motor atau tukar logika 16/17.',
+        code: `// Motor kiri maju\ndigitalWrite(16, HIGH);\ndigitalWrite(17, LOW);\nanalogWrite(25, 180);\n\n// Motor kiri mundur\ndigitalWrite(16, LOW);\ndigitalWrite(17, HIGH);\nanalogWrite(25, 180);`
+      },
+      {
+        id: 14,
+        title: 'Menggerakkan Motor Kanan',
+        category: '02. Robot Car',
+        level: 'Intermediate',
+        duration: '1 Pertemuan',
+        image: IMG.motor,
+        topics: ['Arah motor kanan', 'GPIO 18', 'GPIO 19', 'PWM GPIO 26'],
+        blocks: ['18 HIGH', '19 LOW', 'PWM 26 = speed', 'Uji forward kanan', 'Balik HIGH/LOW untuk reverse'],
+        project: 'Motor kanan dapat maju dan mundur dengan kecepatan yang dapat diatur.',
+        notes: 'Karena posisi motor kanan dan kiri bisa saling berlawanan, jangan panik jika logika HIGH/LOW awal terasa terbalik. Kalibrasi dengan uji satu motor terlebih dahulu.',
+        code: `// Motor kanan maju\ndigitalWrite(18, HIGH);\ndigitalWrite(19, LOW);\nanalogWrite(26, 180);\n\n// Motor kanan mundur\ndigitalWrite(18, LOW);\ndigitalWrite(19, HIGH);\nanalogWrite(26, 180);`
+      },
+      {
+        id: 15,
+        title: 'Gerak Maju dan Mundur Mobil Robot',
+        category: '02. Robot Car',
+        level: 'Intermediate',
+        duration: '1 Pertemuan',
+        image: IMG.motor,
+        topics: ['Sinkronisasi dua motor', 'Maju', 'Mundur', 'Kecepatan sama'],
+        blocks: ['Set arah motor kiri', 'Set arah motor kanan', 'Set PWM 25 dan 26', 'wait', 'Stop'],
+        project: 'Mobil robot bergerak maju 2 detik, berhenti, lalu mundur 2 detik.',
+        notes: 'Mulai dengan PWM rendah agar siswa bisa melihat arah motor. Naikkan kecepatan setelah wiring benar.',
+        code: `// Maju\n16=HIGH, 17=LOW, 18=HIGH, 19=LOW\nPWM25=180, PWM26=180\n\n// Mundur\n16=LOW, 17=HIGH, 18=LOW, 19=HIGH\nPWM25=180, PWM26=180`
+      },
+      {
+        id: 16,
+        title: 'Belok Kiri dan Belok Kanan',
+        category: '02. Robot Car',
+        level: 'Intermediate',
+        duration: '1 Pertemuan',
+        image: IMG.motor,
+        topics: ['Differential drive', 'Belok kiri', 'Belok kanan', 'PWM berbeda'],
+        blocks: ['Kiri stop + kanan maju untuk belok kiri', 'Kanan stop + kiri maju untuk belok kanan', 'Alternatif: satu motor maju, satu motor mundur'],
+        project: 'Robot dapat maju, mundur, belok kiri, belok kanan, dan berhenti.',
+        notes: 'Untuk belok halus, gunakan PWM berbeda pada kedua sisi. Untuk putar di tempat, arahkan satu sisi maju dan sisi lain mundur.',
+        code: `// Contoh belok kiri\nPWM25 = 0;\nPWM26 = 180;\n\n// Contoh belok kanan\nPWM25 = 180;\nPWM26 = 0;`
+      },
+      {
+        id: 17,
+        title: 'Stop, Brake, dan Keamanan Motor',
+        category: '02. Robot Car',
+        level: 'Advanced',
+        duration: '1 Pertemuan',
+        image: IMG.motor,
+        topics: ['Stop motor', 'PWM 0', 'State aman', 'Emergency stop'],
+        blocks: ['set PWM 25 to 0', 'set PWM 26 to 0', 'Buat blok custom stopMotor', 'Panggil saat kondisi darurat'],
+        project: 'Robot selalu memiliki prosedur berhenti yang dipanggil saat tombol stop atau kondisi bahaya terdeteksi.',
+        notes: 'Untuk proyek nyata, gunakan kondisi default yang aman. Jangan biarkan motor tetap aktif ketika program berhenti atau sensor gagal.',
+        code: `void stopMotor() {\n  analogWrite(25, 0);\n  analogWrite(26, 0);\n}`
+      },
+      {
+        id: 18,
+        title: 'Variabel Speed dan Kontrol Kecepatan Robot',
+        category: '02. Robot Car',
+        level: 'Advanced',
+        duration: '1 Pertemuan',
+        image: IMG.pictoblox,
+        topics: ['Variable speed', 'PWM', 'Slider / input', 'Kecepatan berbeda'],
+        blocks: ['Buat variable speed', 'Set speed ke nilai awal', 'Gunakan speed untuk PWM 25', 'Gunakan speed untuk PWM 26'],
+        project: 'Siswa membuat satu variabel speed yang mengatur kedua motor secara bersamaan.',
+        notes: 'Mulai dari nilai aman. Pastikan kedua motor memiliki karakteristik yang mirip; jika robot cenderung membelok, lakukan kompensasi PWM kiri/kanan.',
+        code: `speed = 180;\nanalogWrite(25, speed);\nanalogWrite(26, speed);`
+      },
+      {
+        id: 19,
+        title: 'Robot Avoider: Sensor Jarak + Motor',
+        category: '03. Robot Project',
+        level: 'Project',
+        duration: '2 Pertemuan',
+        image: IMG.motor,
+        topics: ['HC-SR04', 'Baca jarak', 'If condition', 'Berhenti', 'Belok menghindar'],
+        blocks: ['Read sensor jarak', 'Jika jarak kurang dari 20 cm', 'stop motor', 'belok', 'jika tidak maju'],
+        project: 'Robot bergerak maju dan otomatis menghindari objek di depannya.',
+        notes: 'Pastikan supply sensor dan level logika aman. Untuk versi robot kelas, logika avoider sebaiknya dibuat setelah fungsi maju/mundur/putar sudah stabil.',
+        code: `if (distance \u003c 20) {\n  stopMotor();\n  // belok\n} else {\n  // maju\n}`
+      },
+      {
+        id: 20,
+        title: 'Final Project: Mobil Robot ESP32 dengan PictoBlox',
+        category: '03. Robot Project',
+        level: 'Project',
+        duration: '2–3 Pertemuan',
+        image: IMG.pictoblox,
+        topics: ['Upload program', 'Pin 16–19', 'PWM 25–26', 'Sensor', 'Manual control', 'Autonomous mode'],
+        blocks: ['when ESP32 starts up', 'Buat custom block motor', 'Buat forward/backward/left/right/stop', 'Tambahkan sensor', 'Tambahkan mode manual / autonomous'],
+        project: 'Satu robot utuh yang dapat bergerak dengan standar pin kelas dan memiliki minimal satu fitur tambahan: obstacle avoidance, kontrol Bluetooth/Dabble, atau kontrol WiFi.',
+        notes: 'Ini menjadi proyek akhir track ESP32. Fokus penilaian: wiring benar, program modular, pin sesuai standar, robot aman, dan siswa mampu menjelaskan alur program.',
+        code: `// Standar pin TECH-C\n// Kiri: 16,17 + PWM25\n// Kanan: 18,19 + PWM26\n//\n// Tantangan siswa:\n// 1. Buat forward()\n// 2. Buat backward()\n// 3. Buat turnLeft()\n// 4. Buat turnRight()\n// 5. Buat stopMotor()\n// 6. Tambahkan sensor / kontrol nirkabel`
+      }
+    ];
+
+    let activeCategory = 'Semua';
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function getCategoryIcon(category) {
+      if (category.includes('Dasar')) return '📡';
+      if (category.includes('Robot Car')) return '🚗';
+      if (category.includes('Project')) return '🤖';
+      return '📚';
+    }
+
+    function getLevelColor(level) {
+      if (level === 'Beginner') return 'bg-green-50 text-green-600 dark:bg-green-950 dark:text-green-300';
+      if (level === 'Intermediate') return 'bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300';
+      if (level === 'Advanced') return 'bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-300';
+      if (level === 'Project') return 'bg-orange-50 text-orange-600 dark:bg-orange-950 dark:text-orange-300';
+      return 'bg-slate-50 text-slate-600 dark:bg-slate-950 dark:text-slate-300';
+    }
+
+    function renderCategoryTabs() {
+      const wrapper = document.getElementById('categoryTabs');
+      const categories = ['Semua', ...new Set(lessons.map(item => item.category))];
+
+      wrapper.innerHTML = categories.map(category => {
+        const active = category === activeCategory;
+        return `
+          <button
+            onclick="setCategory('${escapeHtml(category)}')"
+            class="rounded-2xl px-5 py-3 text-sm font-black transition ${
+              active
+                ? 'bg-gradient-to-r from-indigo-600 to-cyan-500 text-white shadow-xl shadow-indigo-500/25'
+                : 'bg-white/90 text-slate-500 shadow-lg shadow-slate-200/60 hover:-translate-y-0.5 hover:text-slate-900 dark:bg-slate-900/90 dark:text-slate-400 dark:shadow-black/20 dark:hover:text-white'
+            }"
+          >
+            ${category === 'Semua' ? '🌐' : getCategoryIcon(category)} ${escapeHtml(category)}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setCategory(category) {
+      activeCategory = category;
+      renderCategoryTabs();
+      applyFilter();
+    }
+
+    function applyFilter() {
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const level = document.getElementById('levelInput').value;
+      const sort = document.getElementById('sortInput').value;
+
+      let filtered = lessons.filter(item => {
+        const target = [item.title, item.category, item.level, item.duration, item.description, ...(item.topics || []), ...(item.blocks || [])].join(' ').toLowerCase();
+        const matchSearch = target.includes(search);
+        const matchCategory = activeCategory === 'Semua' || item.category === activeCategory;
+        const matchLevel = level === 'all' || item.level === level;
+        return matchSearch && matchCategory && matchLevel;
+      });
+
+      if (sort === 'az') filtered.sort((a, b) => a.title.localeCompare(b.title));
+      if (sort === 'za') filtered.sort((a, b) => b.title.localeCompare(a.title));
+      if (sort === 'level') {
+        const order = { Beginner: 1, Intermediate: 2, Advanced: 3, Project: 4 };
+        filtered.sort((a, b) => (order[a.level] || 99) - (order[b.level] || 99));
+      }
+
+      renderLessons(filtered);
+    }
+
+    function renderLessons(items) {
+      const container = document.getElementById('lessonList');
+      const empty = document.getElementById('emptyState');
+      document.getElementById('shownCount').innerText = items.length;
+
+      if (!items.length) {
+        container.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+      container.innerHTML = items.map(item => `
+        <article onclick="openLessonModal(${item.id})" class="lesson-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+          <div class="relative h-48 overflow-hidden">
+            <img
+              src="${item.image}"
+              onerror="this.onerror=null;this.src='${FALLBACK_IMG}'"
+              alt="${escapeHtml(item.title)}"
+              class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent p-5">
+              <span class="inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-black text-slate-700">${escapeHtml(item.category)}</span>
+            </div>
+          </div>
+
+          <div class="p-5">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="rounded-full px-3 py-1 text-xs font-black ${getLevelColor(item.level)}">${escapeHtml(item.level)}</span>
+              <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-500 dark:bg-slate-800 dark:text-slate-300">${escapeHtml(item.duration)}</span>
+            </div>
+
+            <h3 class="mt-4 text-xl font-black leading-tight text-slate-900 dark:text-white">${escapeHtml(item.title)}</h3>
+            <p class="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400">${escapeHtml(item.description || item.project)}</p>
+
+            <div class="mt-5 flex items-center justify-between gap-3">
+              <div class="text-xs font-bold text-slate-400">${item.topics.length} topik pembelajaran</div>
+              <button class="rounded-xl bg-indigo-50 px-4 py-2 text-xs font-black text-indigo-600 transition group-hover:bg-indigo-600 group-hover:text-white dark:bg-indigo-950 dark:text-indigo-300">Buka Materi →</button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function openLessonModal(id) {
+      const item = lessons.find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById('modalImage').src = item.image;
+      document.getElementById('modalImage').onerror = function() {
+        this.onerror = null;
+        this.src = FALLBACK_IMG;
+      };
+      document.getElementById('modalCategory').innerText = item.category;
+      document.getElementById('modalLevel').innerText = item.level;
+      document.getElementById('modalDuration').innerText = item.duration;
+      document.getElementById('modalTitle').innerText = item.title;
+      document.getElementById('modalDescription').innerText = item.project || '';
+
+      document.getElementById('modalTopics').innerHTML = item.topics.map(x => `<li class="flex gap-2"><span class="text-indigo-500">✓</span><span>${escapeHtml(x)}</span></li>`).join('');
+      document.getElementById('modalBlocks').innerHTML = item.blocks.map(x => `<li class="flex gap-2"><span class="text-indigo-500">▸</span><span>${escapeHtml(x)}</span></li>`).join('');
+      document.getElementById('modalProject').innerText = item.project || '-';
+      document.getElementById('modalNotes').innerText = item.notes || '-';
+
+      const codeWrap = document.getElementById('modalCodeWrap');
+      const code = document.getElementById('modalCode');
+      if (item.code) {
+        codeWrap.classList.remove('hidden');
+        code.textContent = item.code;
+      } else {
+        codeWrap.classList.add('hidden');
+        code.textContent = '';
+      }
+
+      const modal = document.getElementById('lessonModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeLessonModal() {
+      const modal = document.getElementById('lessonModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    function resetFilters() {
+      activeCategory = 'Semua';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('levelInput').value = 'all';
+      document.getElementById('sortInput').value = 'default';
+      renderCategoryTabs();
+      applyFilter();
+    }
+
+    document.getElementById('lessonModal').addEventListener('click', function(e) {
+      if (e.target === this) closeLessonModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLessonModal();
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadPartials();
+      renderCategoryTabs();
+      renderLessons(lessons);
+
+      ['searchInput', 'levelInput', 'sortInput'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', applyFilter);
+          el.addEventListener('change', applyFilter);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
