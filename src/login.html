@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,189 +11,202 @@
 
   <style>
     * {
+      box-sizing: border-box;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .glass-card {
-      background: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
+    html, body {
+      min-height: 100%;
+      margin: 0;
     }
 
-    .float-robot {
-      animation: floatRobot 4s ease-in-out infinite;
+    body {
+      background: #f5f7fb;
+      color: #0f172a;
     }
 
-    @keyframes floatRobot {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-12px);
-      }
+    .login-shell {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(37, 99, 235, .06), transparent 28%),
+        radial-gradient(circle at 90% 90%, rgba(15, 118, 110, .05), transparent 25%),
+        #f5f7fb;
     }
 
-    .grid-bg {
-      background-image:
-        linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
-      background-size: 38px 38px;
+    .login-panel {
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, .08);
+    }
+
+    .brand-panel {
+      background: #10233f;
+      color: #ffffff;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+    }
+
+    .brand-rule {
+      width: 54px;
+      height: 3px;
+      border-radius: 999px;
+      background: #3b82f6;
+    }
+
+    .info-row {
+      border-top: 1px solid rgba(255,255,255,.12);
+    }
+
+    .login-form-card {
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+    }
+
+    .field {
+      border: 1px solid #d7dee8;
+      background: #fbfcfe;
+      transition: .18s ease;
+    }
+
+    .field:focus-within {
+      border-color: #2563eb;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+    }
+
+    .field input {
+      background: transparent;
+      outline: none;
+    }
+
+    .primary-btn {
+      background: #2563eb;
+      transition: .18s ease;
+    }
+
+    .primary-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .primary-btn:disabled {
+      background: #94a3b8;
     }
 
     .loader {
-      width: 18px;
-      height: 18px;
-      border: 3px solid rgba(255, 255, 255, .35);
-      border-top-color: #fff;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,.35);
+      border-top-color: #ffffff;
       border-radius: 999px;
       animation: spin .7s linear infinite;
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 1023px) {
+      .login-panel {
+        box-shadow: 0 12px 32px rgba(15, 23, 42, .07);
       }
     }
   </style>
 </head>
 
-<body class="min-h-screen overflow-y-auto bg-slate-950">
+<body class="login-shell">
 
-  <!-- BACKGROUND -->
-  <div class="fixed inset-0 grid-bg"></div>
+  <main class="flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+    <section class="login-panel grid w-full max-w-5xl overflow-hidden rounded-2xl lg:grid-cols-[42%_58%]">
 
-  <div class="fixed -top-40 -right-40 h-[460px] w-[460px] rounded-full bg-blue-600/30 blur-3xl"></div>
-  <div class="fixed top-40 -left-40 h-[420px] w-[420px] rounded-full bg-cyan-500/25 blur-3xl"></div>
-  <div class="fixed bottom-[-160px] right-1/3 h-[420px] w-[420px] rounded-full bg-violet-600/25 blur-3xl"></div>
-
-  <!-- MAIN WRAPPER -->
-<main class="relative z-10 flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-
-    <section class="grid w-full max-w-6xl overflow-hidden rounded-[2rem] border border-white/10 bg-white/10 shadow-2xl shadow-black/40 backdrop-blur-xl lg:grid-cols-2">
-
-      <!-- LEFT BRAND PANEL -->
-      <div class="relative hidden overflow-hidden bg-gradient-to-br from-blue-700 via-cyan-600 to-slate-950 p-10 text-white lg:block">
-
-        <div class="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl"></div>
-        <div class="absolute -bottom-24 -left-20 h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl"></div>
-
-        <div class="relative z-10 flex h-full flex-col justify-between">
-
-          <!-- LOGO -->
-          <div>
-            <div class="flex items-center gap-3">
-              <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
-                <img src="./images/logo.png" class="h-10 w-10 object-contain" alt="TECH-C" />
-              </div>
-
-              <div>
-                <h1 class="text-2xl font-black tracking-tight">TECH-C</h1>
-                <p class="text-sm font-semibold text-white/70">Robotic & Coding</p>
-              </div>
+      <!-- BRAND PANEL -->
+      <aside class="brand-panel hidden p-8 lg:flex lg:flex-col lg:justify-between xl:p-10">
+        <div>
+          <div class="flex items-center gap-3">
+            <div class="brand-mark flex items-center justify-center rounded-xl">
+              <img src="./images/logo.png" class="h-8 w-8 object-contain" alt="TECH-C" />
             </div>
-
-            <div class="mt-14">
-              <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white/85 backdrop-blur">
-                <span class="h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
-                Learning Management Portal
-              </div>
-
-              <h2 class="max-w-md text-4xl font-black leading-tight tracking-tight">
-                Kelola kelas robotik, siswa, jadwal, dan progress belajar dalam satu sistem.
-              </h2>
-
-              <p class="mt-5 max-w-md text-sm leading-6 text-white/70">
-                Dashboard modern untuk Admin Tech-C, Pengajar, dan Siswa agar proses belajar coding dan robotik lebih rapi, cepat, dan terpantau.
-              </p>
-            </div>
-          </div>
-
-          <!-- ROBOT CARD -->
-          <div class="relative mt-10">
-
-            <div class="float-robot mx-auto flex h-56 w-56 items-center justify-center rounded-[3rem] border border-white/20 bg-white/15 shadow-2xl shadow-cyan-900/30 backdrop-blur">
-              <svg width="130" height="130" viewBox="0 0 24 24" fill="none">
-                <path d="M12 3v3" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                <path d="M6.5 8h11A2.5 2.5 0 0 1 20 10.5v6A3.5 3.5 0 0 1 16.5 20h-9A3.5 3.5 0 0 1 4 16.5v-6A2.5 2.5 0 0 1 6.5 8Z" stroke="white" stroke-width="1.8"/>
-                <path d="M9 13h.01M15 13h.01" stroke="white" stroke-width="3" stroke-linecap="round"/>
-                <path d="M9 17h6" stroke="white" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </div>
-
-            <div class="mt-8 grid grid-cols-3 gap-3">
-              <div class="rounded-2xl bg-white/10 p-4 backdrop-blur">
-                <p class="text-2xl font-black">27+</p>
-                <p class="mt-1 text-xs text-white/65">Sekolah</p>
-              </div>
-
-              <div class="rounded-2xl bg-white/10 p-4 backdrop-blur">
-                <p class="text-2xl font-black">AI</p>
-                <p class="mt-1 text-xs text-white/65">Coding</p>
-              </div>
-
-              <div class="rounded-2xl bg-white/10 p-4 backdrop-blur">
-                <p class="text-2xl font-black">IoT</p>
-                <p class="mt-1 text-xs text-white/65">Robotik</p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- RIGHT LOGIN PANEL -->
-<div class="relative bg-white/95 p-5 text-slate-900 sm:p-8 lg:p-10">
-
-<div class="mx-auto flex max-w-md flex-col justify-center py-4">
-
-          <!-- MOBILE LOGO -->
-          <div class="mb-8 flex items-center justify-center gap-3 lg:hidden">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50">
-              <img src="./images/logo.png" class="h-10 w-10 object-contain" alt="TECH-C" />
-            </div>
-
             <div>
-              <h1 class="text-2xl font-black text-slate-900">TECH-C</h1>
-              <p class="text-sm font-semibold text-slate-500">Robotic & Coding</p>
+              <h1 class="text-lg font-bold tracking-tight">TECH-C</h1>
+              <p class="text-xs font-medium text-slate-300">Robotic & Coding</p>
             </div>
           </div>
 
-          <!-- TITLE -->
-          <div class="mb-8 text-center lg:text-left">
-            <div class="mb-3 inline-flex rounded-full bg-blue-50 px-4 py-2 text-xs font-bold text-blue-600">
-              Welcome back
+          <div class="mt-16">
+            <div class="brand-rule"></div>
+            <p class="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
+              Learning Management System
+            </p>
+            <h2 class="mt-4 max-w-sm text-3xl font-bold leading-tight">
+              Satu tempat untuk mengelola pembelajaran dan kegiatan kelas.
+            </h2>
+            <p class="mt-5 max-w-sm text-sm leading-7 text-slate-300">
+              Akses materi, pelajaran robotik dan coding, laporan kegiatan, serta perkembangan siswa dari satu dashboard.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <div class="info-row grid grid-cols-3 gap-4 pt-5">
+            <div>
+              <p class="text-lg font-bold">27+</p>
+              <p class="mt-1 text-xs text-slate-400">Sekolah</p>
             </div>
+            <div>
+              <p class="text-lg font-bold">AI</p>
+              <p class="mt-1 text-xs text-slate-400">Pembelajaran</p>
+            </div>
+            <div>
+              <p class="text-lg font-bold">IoT</p>
+              <p class="mt-1 text-xs text-slate-400">Robotik</p>
+            </div>
+          </div>
+          <p class="mt-6 text-xs text-slate-400">© 2026 TECH-C. Internal Learning Portal.</p>
+        </div>
+      </aside>
 
-<h2 class="bg-gradient-to-r from-blue-700 via-cyan-500 to-violet-600 bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-4xl">
-  Login TECH-C
-</h2>
+      <!-- LOGIN PANEL -->
+      <section class="bg-white px-5 py-8 sm:px-8 lg:px-10 xl:px-12">
+        <div class="mx-auto max-w-md">
 
+          <!-- MOBILE BRAND -->
+          <div class="mb-8 flex items-center gap-3 lg:hidden">
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-slate-50">
+              <img src="./images/logo.png" class="h-8 w-8 object-contain" alt="TECH-C" />
+            </div>
+            <div>
+              <h1 class="text-lg font-bold text-slate-900">TECH-C</h1>
+              <p class="text-xs font-medium text-slate-500">Robotic & Coding</p>
+            </div>
+          </div>
+
+          <div class="mb-7">
+            <p class="text-sm font-semibold text-blue-600">Selamat datang kembali</p>
+            <h2 class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              Masuk ke dashboard
+            </h2>
             <p class="mt-3 text-sm leading-6 text-slate-500">
-              Masuk ke dashboard untuk mengelola pembelajaran robotic & coding.
+              Gunakan akun TECH-C untuk melanjutkan ke portal pembelajaran.
             </p>
           </div>
 
-          <!-- FORM CARD -->
-          <div class="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
-
+          <div class="login-form-card rounded-xl p-5 sm:p-6">
             <form id="loginForm" class="space-y-5">
 
               <!-- EMAIL -->
               <div>
-                <label for="email" class="mb-2 block text-sm font-bold text-slate-700">
-                  Email
-                </label>
-
-                <div class="relative">
-                  <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                    ✉️
-                  </div>
-
+                <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">Email</label>
+                <div class="field flex items-center gap-3 rounded-lg px-4 py-3">
+                  <span class="text-sm text-slate-400">✉</span>
                   <input
                     type="email"
                     id="email"
-                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-4 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
-                    placeholder="email@gmail.com"
+                    class="min-w-0 w-full text-sm font-medium text-slate-800 placeholder:text-slate-400"
+                    placeholder="nama@email.com"
                     autocomplete="email"
                     required
                   />
@@ -202,37 +215,30 @@
 
               <!-- PASSWORD -->
               <div>
-                <label for="password" class="mb-2 block text-sm font-bold text-slate-700">
-                  Password
-                </label>
-
-                <div class="relative">
-                  <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                    🔒
-                  </div>
-
+                <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">Password</label>
+                <div class="field flex items-center gap-3 rounded-lg px-4 py-3">
+                  <span class="text-sm text-slate-400">•••</span>
                   <input
                     type="password"
                     id="password"
-                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-4 pr-14 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                    class="min-w-0 w-full text-sm font-medium text-slate-800 placeholder:text-slate-400"
                     placeholder="Masukkan password"
                     autocomplete="current-password"
                     required
                   />
-
                   <button
                     type="button"
                     id="togglePassword"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 rounded-xl px-2 py-1 text-xs font-bold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+                    class="shrink-0 text-xs font-semibold text-slate-500 hover:text-slate-800"
                   >
-                    Show
+                    Tampilkan
                   </button>
                 </div>
               </div>
 
               <!-- OPTIONS -->
               <div class="flex items-center justify-between gap-3">
-                <label class="flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-500">
+                <label class="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-500">
                   <input
                     id="rememberEmail"
                     type="checkbox"
@@ -243,7 +249,7 @@
 
                 <button
                   type="button"
-                  class="text-sm font-bold text-blue-600 hover:text-blue-700"
+                  class="text-sm font-semibold text-blue-600 hover:text-blue-700"
                   onclick="alert('Hubungi admin TECH-C untuk reset password.')"
                 >
                   Lupa password?
@@ -251,44 +257,34 @@
               </div>
 
               <!-- ERROR -->
-<!-- ERROR -->
-<div
-  id="errorBox"
-  class="hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-600"
->
-  <span id="error"></span>
-</div>
+              <div id="errorBox" class="hidden rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-600">
+                <span id="error"></span>
+              </div>
 
-<!-- SUCCESS -->
-<div
-  id="successBox"
-  class="hidden rounded-2xl border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-600"
->
-  Login berhasil. Mengalihkan dashboard...
-</div>
+              <!-- SUCCESS -->
+              <div id="successBox" class="hidden rounded-lg border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-600">
+                Login berhasil. Mengalihkan dashboard...
+              </div>
 
-<!-- BUTTON -->
-<button
-  id="loginBtn"
-  type="submit"
-  class="flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-4 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-500/35 disabled:translate-y-0 disabled:cursor-not-allowed disabled:from-slate-400 disabled:to-slate-400 disabled:shadow-none"
->
-  <span id="loginBtnText">Login Sekarang</span>
-  <span id="loginLoader" class="loader hidden"></span>
-</button>
-
+              <!-- BUTTON -->
+              <button
+                id="loginBtn"
+                type="submit"
+                class="primary-btn flex w-full items-center justify-center gap-3 rounded-lg px-5 py-3.5 text-sm font-bold text-white shadow-sm"
+              >
+                <span id="loginBtnText">Masuk</span>
+                <span id="loginLoader" class="loader hidden"></span>
+              </button>
             </form>
           </div>
 
-          <!-- FOOTER INFO -->
-          <div class="mt-6 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-center text-xs font-semibold text-slate-500">
-            TECH-C Robotic & Coding Management System
-            <br />
-            <span class="text-slate-400">Admin Portal • Student Portal • Learning Tracking</span>
+          <div class="mt-5 border-t border-slate-200 pt-5 text-xs leading-5 text-slate-400">
+            <p class="font-semibold text-slate-500">TECH-C Robotic & Coding</p>
+            <p>Admin Portal • Student Portal • Learning Tracking</p>
           </div>
 
         </div>
-      </div>
+      </section>
 
     </section>
   </main>
@@ -366,7 +362,7 @@
 
     function setLoading(isLoading) {
       loginBtn.disabled = isLoading;
-      loginBtnText.innerText = isLoading ? "Memproses..." : "Login Sekarang";
+      loginBtnText.innerText = isLoading ? "Memproses..." : "Masuk";
 
       if (isLoading) {
         loginLoader.classList.remove("hidden");
