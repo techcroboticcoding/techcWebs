@@ -110,23 +110,24 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+  
+    .learning-menu-card {
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+
+    .learning-menu-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .learning-icon {
+      transition: transform .2s ease;
+    }
+
+    .learning-menu-card:hover .learning-icon {
+      transform: scale(1.08);
+    }
   </style>
 </head>
-
-<script>
-const token = localStorage.getItem('token');
-const role = localStorage.getItem('role');
-
-if (!token) {
-  window.location.href = './login.html';
-} else if (role === 'siswa') {
-  window.location.href = './dashboardSiswa.html';
-} else if (role !== 'admin') {
-  localStorage.clear();
-  window.location.href = './login.html';
-}
-</script>
-
 <body
   x-data="{ page: 'pelajaran', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
   x-init="
@@ -153,1385 +154,176 @@ if (!token) {
       <include src="./partials/header.html"></include>
 
       <!-- MAIN -->
+
 <main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
-        <!-- BACKGROUND GLOW -->
-        <div class="pointer-events-none absolute inset-0 overflow-hidden">
-          <div class="absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full bg-blue-500/10 blur-3xl"></div>
-          <div class="absolute left-[-150px] top-72 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-3xl"></div>
-          <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
-        </div>
-
-        <section class="relative z-10 mx-auto max-w-7xl">
-
-          <!-- HERO -->
-          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-            <div class="relative p-6 sm:p-7 lg:p-8">
-
-              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-blue-600/15 via-cyan-500/5 to-transparent lg:block"></div>
-
-              <div class="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
-
-                <div>
-                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
-                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
-                    Curriculum Management
-                  </div>
-
-                  <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-                    Pelajaran TECH-C Robotic & Coding
-                  </h1>
-
-                  <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
-                    Kurikulum lengkap mulai dari Scratch Game, PictoBlox, Python, Arduino, ESP32, Computer Vision, sampai AI Engineering.
-                  </p>
-
-                  <div class="mt-6 flex flex-wrap gap-3">
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
-                      <p class="text-xs font-semibold text-slate-500">Status API</p>
-                      <p id="apiStatus" class="mt-1 text-sm font-black text-yellow-500">Checking...</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
-                      <p class="text-xs font-semibold text-slate-500">Total Modul</p>
-                      <p id="totalLessonHero" class="mt-1 text-sm font-black text-slate-900 dark:text-white">0</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
-                      <p class="text-xs font-semibold text-slate-500">Update Terakhir</p>
-                      <p id="lastUpdate" class="mt-1 text-sm font-black text-slate-900 dark:text-white">-</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- HERO CARD -->
-                <div class="relative shrink-0">
-                  <div class="absolute -inset-4 rounded-[2.5rem] bg-blue-500/20 blur-2xl"></div>
-
-                  <div class="relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[360px]">
-                    <div class="flex items-center justify-between gap-4">
-                      <div>
-                        <p class="text-sm font-bold text-white/80">TECH-C Curriculum</p>
-                        <h2 id="totalLessonCard" class="mt-2 text-5xl font-black">0</h2>
-                        <p class="mt-1 text-xs font-semibold text-white/70">Materi pembelajaran</p>
-                      </div>
-
-                      <div class="flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-white/20 text-4xl backdrop-blur">
-                        📚
-                      </div>
-                    </div>
-
-                    <div class="mt-5 rounded-2xl bg-white/15 p-4 backdrop-blur">
-                      <div class="flex items-center justify-between text-xs font-bold text-white/80">
-                        <span>Coverage materi</span>
-                        <span id="coverageText">0 kategori</span>
-                      </div>
-
-                      <div class="mt-3 h-3 overflow-hidden rounded-full bg-white/20">
-                        <div id="coverageBar" class="h-full w-0 rounded-full bg-white transition-all duration-700"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          <!-- TOP STATS -->
-          <div class="mb-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-
-            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-blue-500/10"></div>
-              <div class="relative flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Semua Modul</p>
-                  <h2 id="statTotal" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Materi tersedia</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl dark:bg-blue-950">📚</div>
-              </div>
-            </div>
-
-            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-green-500/10"></div>
-              <div class="relative flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Kategori</p>
-                  <h2 id="statCategory" class="mt-3 text-4xl font-black text-green-500">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Track belajar</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-2xl dark:bg-green-950">🧩</div>
-              </div>
-            </div>
-
-            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-cyan-500/10"></div>
-              <div class="relative flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Ditampilkan</p>
-                  <h2 id="statShown" class="mt-3 text-4xl font-black text-cyan-500">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Hasil filter</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-2xl dark:bg-cyan-950">🔎</div>
-              </div>
-            </div>
-
-            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-violet-500/10"></div>
-              <div class="relative flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Sumber</p>
-                  <h2 id="sourceStatus" class="mt-3 text-2xl font-black text-violet-500">Static</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">API / fallback</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-2xl dark:bg-violet-950">⚡</div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- CATEGORY FILTER -->
-          <div class="mb-6 overflow-x-auto hide-scroll">
-            <div id="categoryTabs" class="flex min-w-max gap-3">
-              <!-- JS RENDER -->
-            </div>
-          </div>
-
-          <!-- TOOLBAR -->
-          <div class="mb-6 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-
-              <div class="flex flex-1 flex-col gap-3 sm:flex-row">
-
-                <div class="relative flex-1">
-                  <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                    🔎
-                  </div>
-
-                  <input
-                    id="searchInput"
-                    type="text"
-                    placeholder="Cari Scratch, Arduino, ESP32, Python, AI..."
-                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
-                  />
-                </div>
-
-                <select
-                  id="levelInput"
-                  class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                >
-                  <option value="all">Semua Level</option>
-                  <option value="Beginner">Beginner</option>
-                  <option value="Intermediate">Intermediate</option>
-                  <option value="Advanced">Advanced</option>
-                  <option value="Project">Project</option>
-                </select>
-
-                <select
-                  id="sortInput"
-                  class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                >
-                  <option value="default">Urutan Kurikulum</option>
-                  <option value="az">Judul A-Z</option>
-                  <option value="za">Judul Z-A</option>
-                  <option value="level">Level</option>
-                </select>
-
-              </div>
-
-              <div class="flex gap-3">
-                <button
-                  onclick="loadLessons()"
-                  class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:-translate-y-0.5 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-                >
-                  Refresh
-                </button>
-
-                <a
-                  href="tambah-pelajaran.html"
-                  class="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5 hover:shadow-2xl"
-                >
-                  + Tambah Materi
-                </a>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- GRID LESSONS -->
-          <div id="lessonList" class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            <!-- JS RENDER -->
-          </div>
-
-          <!-- EMPTY STATE -->
-          <div id="emptyState" class="hidden rounded-[2rem] border border-white/70 bg-white/90 p-10 text-center shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-            <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-blue-50 text-4xl dark:bg-blue-950">
-              🔎
-            </div>
-
-            <h3 class="text-xl font-black text-slate-900 dark:text-white">
-              Materi tidak ditemukan
-            </h3>
-
-            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Coba ubah pencarian, level, atau kategori.
-            </p>
-          </div>
-
-        </section>
-      </main>
-    </div>
+  <!-- BACKGROUND -->
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full bg-blue-500/10 blur-3xl"></div>
+    <div class="absolute left-[-150px] top-72 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-3xl"></div>
+    <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
   </div>
 
-  <!-- MODAL DETAIL -->
-  <div
-    id="lessonModal"
-    class="fixed inset-0 z-[999999] hidden items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm"
-  >
-    <div class="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl dark:bg-slate-900">
-      <div class="relative">
-<img
-  id="modalImage"
-  src="./images/logo.png"
-  class="h-64 w-full rounded-t-[2rem] object-cover"
-  alt="Lesson Image"
-/>
-        <button
-          onclick="closeLessonModal()"
-          class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/90 text-xl font-black text-slate-800 shadow-lg backdrop-blur hover:bg-white"
-        >
-          ×
-        </button>
-      </div>
+  <section class="relative z-10 mx-auto max-w-7xl">
 
-      <div class="p-6 sm:p-8">
-        <div class="mb-4 flex flex-wrap gap-2">
-          <span id="modalCategory" class="rounded-full bg-blue-50 px-4 py-2 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300"></span>
-          <span id="modalLevel" class="rounded-full bg-green-50 px-4 py-2 text-xs font-black text-green-600 dark:bg-green-950 dark:text-green-300"></span>
-          <span id="modalDuration" class="rounded-full bg-violet-50 px-4 py-2 text-xs font-black text-violet-600 dark:bg-violet-950 dark:text-violet-300"></span>
+    <!-- PAGE HEADER -->
+    <div class="mb-8 rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20 sm:p-8">
+      <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
+            <span class="h-2 w-2 rounded-full bg-blue-500"></span>
+            Learning Center
+          </div>
+
+          <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+            Menu Pembelajaran TECH-C
+          </h1>
+
+          <p class="mt-3 max-w-3xl text-sm leading-7 text-slate-500 dark:text-slate-400 sm:text-base">
+            Pilih jalur pembelajaran yang ingin dipelajari. Materi Arduino, ESP32, dan Scratch akan tersedia pada halaman pembelajaran masing-masing.
+          </p>
         </div>
 
-        <h2 id="modalTitle" class="text-3xl font-black text-slate-900 dark:text-white"></h2>
-        <p id="modalDescription" class="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400"></p>
-
-        <div class="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <div class="rounded-2xl bg-slate-50 p-5 dark:bg-slate-950">
-            <h3 class="mb-3 text-sm font-black text-slate-900 dark:text-white">Materi Dipelajari</h3>
-            <ul id="modalTopics" class="space-y-2 text-sm font-semibold text-slate-500 dark:text-slate-400"></ul>
-          </div>
-
-          <div class="rounded-2xl bg-slate-50 p-5 dark:bg-slate-950">
-            <h3 class="mb-3 text-sm font-black text-slate-900 dark:text-white">Output / Project</h3>
-            <p id="modalProject" class="text-sm leading-7 font-semibold text-slate-500 dark:text-slate-400"></p>
-
-            <h3 class="mb-3 mt-5 text-sm font-black text-slate-900 dark:text-white">Tools</h3>
-            <div id="modalTools" class="flex flex-wrap gap-2"></div>
-          </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 dark:border-slate-800 dark:bg-slate-950">
+          <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Total Pembelajaran</p>
+          <p class="mt-1 text-3xl font-black text-slate-900 dark:text-white">3</p>
+          <p class="mt-1 text-xs font-semibold text-slate-400">Program tersedia</p>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- LOAD PARTIAL -->
-  <script>
-  async function loadPartials() {
-    const includes = document.querySelectorAll('include');
+    <!-- LEARNING MENU -->
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 
-    for (let el of includes) {
-      const file = el.getAttribute('src');
+      <!-- ARDUINO -->
+      <div class="learning-menu-card overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+        <div class="h-2 bg-red-500"></div>
 
-      try {
-        const res = await fetch(file);
-        const html = await res.text();
-        el.outerHTML = html;
-      } catch (err) {
-        console.error("Gagal load partial:", file, err);
-      }
-    }
-  }
-  </script>
-
-  <!-- SCRIPT -->
-  <script>
-const PRODUCTION_API_BASE = 'https://api.tech-c.my.id/api';
-const LOCAL_API_BASE = 'http://127.0.0.1:8000/api';
-
-function isLocalFrontend() {
-  return (
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1' ||
-    window.location.hostname === ''
-  );
-}
-
-function getApiBase() {
-  const saved = localStorage.getItem('api_base');
-
-  if (isLocalFrontend()) {
-    return saved || LOCAL_API_BASE;
-  }
-
-  if (
-    saved &&
-    !saved.includes('127.0.0.1') &&
-    !saved.includes('localhost')
-  ) {
-    return saved;
-  }
-
-  localStorage.setItem('api_base', PRODUCTION_API_BASE);
-  return PRODUCTION_API_BASE;
-}
-
-const API_BASE = getApiBase();
-
-  let allLessons = [];
-  let activeCategory = 'Semua';
-
-  const IMG = {
-    scratch: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=80',
-    game: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80',
-    pictoblox: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=1200&q=80',
-    python: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&w=1200&q=80',
-    arduino: 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1200&q=80',
-    esp32: 'https://images.unsplash.com/photo-1553406830-ef2513450d76?auto=format&fit=crop&w=1200&q=80',
-    robot: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=80',
-    ai: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80',
-    cv: 'https://images.unsplash.com/photo-1535378917042-10a22c95931a?auto=format&fit=crop&w=1200&q=80',
-    iot: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80'
-  };
-
-  const staticLessons = [
-    {
-      id: 1,
-      title: "Scratch Dasar: Sprite, Motion, dan Event",
-      category: "Scratch Game",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.scratch,
-      tools: ["Scratch", "Block Coding", "Sprite"],
-      output: "Siswa membuat animasi karakter bergerak dengan tombol dan event.",
-      description: "Materi awal untuk mengenalkan konsep coding visual. Siswa belajar sprite, background, motion block, event when green flag clicked, dan koordinat panggung Scratch.",
-      topics: ["Mengenal interface Scratch", "Sprite dan backdrop", "Motion block", "Event green flag", "Koordinat X dan Y"]
-    },
-    {
-      id: 2,
-      title: "Scratch Animation: Cerita Interaktif",
-      category: "Scratch Game",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.scratch,
-      tools: ["Scratch", "Animation", "Storytelling"],
-      output: "Animasi cerita pendek dengan dialog, gerakan, dan pergantian backdrop.",
-      description: "Siswa belajar membuat cerita interaktif dengan percakapan antar karakter, timing, wait block, broadcast, dan pergantian scene.",
-      topics: ["Say block", "Wait block", "Broadcast message", "Scene transition", "Dialog antar karakter"]
-    },
-    {
-      id: 3,
-      title: "Scratch Game: Pong Starter",
-      category: "Scratch Game",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.game,
-      tools: ["Scratch", "Game Logic", "Keyboard"],
-      output: "Game Pong sederhana dengan paddle, bola, skor, dan game over.",
-      description: "Siswa membuat game Pong dari awal. Materi ini melatih logika collision, input keyboard, variabel skor, dan kondisi menang/kalah.",
-      topics: ["Keyboard control", "Collision detection", "Variable score", "If touching", "Game over logic"]
-    },
-    {
-      id: 4,
-      title: "Scratch Game: Maze Runner",
-      category: "Scratch Game",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.game,
-      tools: ["Scratch", "Maze", "Game Design"],
-      output: "Game labirin dengan garis pembatas, start, finish, dan restart.",
-      description: "Siswa belajar membuat game maze. Fokus materi ada pada warna sebagai sensor, aturan kalah, titik finish, dan desain level.",
-      topics: ["Touching color", "Start finish logic", "Level design", "Reset position", "Win condition"]
-    },
-    {
-      id: 5,
-      title: "Scratch Game: Catch The Fruit",
-      category: "Scratch Game",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.game,
-      tools: ["Scratch", "Random", "Variable"],
-      output: "Game menangkap buah jatuh dengan skor dan timer.",
-      description: "Siswa belajar random position, clone sederhana, timer, skor, dan kontrol karakter untuk menangkap objek.",
-      topics: ["Random x position", "Falling object", "Timer", "Score variable", "Simple clone"]
-    },
-    {
-      id: 6,
-      title: "Scratch Game: Platformer Basic",
-      category: "Scratch Game",
-      level: "Intermediate",
-      duration: "2 Pertemuan",
-      image: IMG.game,
-      tools: ["Scratch", "Gravity", "Platformer"],
-      output: "Game platformer dengan karakter lompat, gravitasi, platform, dan checkpoint.",
-      description: "Materi intermediate untuk membuat game platformer. Siswa mulai memahami konsep velocity, gravity, collision, dan level progression.",
-      topics: ["Gravity logic", "Jump velocity", "Platform collision", "Checkpoint", "Next level"]
-    },
-    {
-      id: 7,
-      title: "Scratch Game: Quiz Battle",
-      category: "Scratch Game",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.scratch,
-      tools: ["Scratch", "Quiz", "Logic"],
-      output: "Game kuis interaktif dengan pertanyaan, jawaban, skor, dan feedback benar/salah.",
-      description: "Siswa membuat kuis edukatif. Materi ini melatih penggunaan list pertanyaan, input jawaban, percabangan, dan skor.",
-      topics: ["Ask and answer", "If else", "Question list", "Score", "Feedback"]
-    },
-    {
-      id: 8,
-      title: "Scratch Final Project: Arcade Game",
-      category: "Scratch Game",
-      level: "Project",
-      duration: "2 Pertemuan",
-      image: IMG.game,
-      tools: ["Scratch", "Game Project", "Presentation"],
-      output: "Final game arcade lengkap dengan menu, skor, level, sound, dan presentasi.",
-      description: "Project akhir track Scratch. Siswa menggabungkan semua materi menjadi satu game utuh yang bisa dipresentasikan.",
-      topics: ["Main menu", "Level system", "Sound effect", "Scoring", "Presentation"]
-    },
-
-    {
-      id: 9,
-      title: "PictoBlox Dasar: Block Coding",
-      category: "PictoBlox",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.pictoblox,
-      tools: ["PictoBlox", "Block Coding", "Sprite"],
-      output: "Project animasi dan interaksi sederhana menggunakan PictoBlox.",
-      description: "Siswa mengenal PictoBlox sebagai platform coding berbasis blok untuk membuat animasi, game, robotik, dan AI sederhana.",
-      topics: ["Interface PictoBlox", "Sprite", "Motion", "Looks", "Events"]
-    },
-    {
-      id: 10,
-      title: "PictoBlox Game: Character Controller",
-      category: "PictoBlox",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.game,
-      tools: ["PictoBlox", "Keyboard", "Game"],
-      output: "Game karakter bergerak dengan keyboard dan aturan sederhana.",
-      description: "Materi ini menghubungkan logika game Scratch dengan PictoBlox. Siswa belajar kontrol karakter, batas layar, dan skor.",
-      topics: ["Keyboard event", "Movement", "Border logic", "Score", "Simple game rule"]
-    },
-    {
-      id: 11,
-      title: "PictoBlox Robotics Simulation",
-      category: "PictoBlox",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.robot,
-      tools: ["PictoBlox", "Robotics", "Simulation"],
-      output: "Simulasi robot bergerak berdasarkan input dan kondisi.",
-      description: "Siswa belajar konsep robotik melalui simulasi sebelum masuk ke hardware. Cocok untuk pengantar sensor dan aktuator.",
-      topics: ["Robot movement", "Condition block", "Sensor concept", "Actuator concept", "Simulation logic"]
-    },
-    {
-      id: 12,
-      title: "PictoBlox AI: Face Detection",
-      category: "PictoBlox",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.ai,
-      tools: ["PictoBlox", "AI", "Camera"],
-      output: "Program deteksi wajah sederhana menggunakan kamera.",
-      description: "Siswa mulai mengenal AI visual dengan deteksi wajah. Materi ini menjadi jembatan sebelum masuk computer vision Python.",
-      topics: ["Camera input", "Face detection", "AI extension", "Condition response", "Interactive project"]
-    },
-    {
-      id: 13,
-      title: "PictoBlox AI: Object Recognition",
-      category: "PictoBlox",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.ai,
-      tools: ["PictoBlox", "Machine Learning", "Object Detection"],
-      output: "Project mengenali objek dan memberi respon otomatis.",
-      description: "Siswa belajar konsep dataset sederhana, model AI, prediksi objek, dan respon program berdasarkan hasil deteksi.",
-      topics: ["Object recognition", "Prediction result", "Confidence", "AI response", "Project testing"]
-    },
-    {
-      id: 14,
-      title: "PictoBlox + Arduino Blocks",
-      category: "PictoBlox",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.arduino,
-      tools: ["PictoBlox", "Arduino", "LED"],
-      output: "Kontrol LED dan buzzer Arduino menggunakan block coding.",
-      description: "Materi transisi dari block coding ke hardware. Siswa belajar upload program ke Arduino dengan cara visual.",
-      topics: ["Connect board", "Digital output", "LED control", "Buzzer", "Upload program"]
-    },
-
-    {
-      id: 15,
-      title: "Python Dasar: Print, Variable, dan Input",
-      category: "Python",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.python,
-      tools: ["Python", "VS Code", "Terminal"],
-      output: "Program biodata dan kalkulator sederhana.",
-      description: "Siswa mulai belajar Python dari dasar. Fokus pada print, variable, input, tipe data, dan operasi sederhana.",
-      topics: ["Print", "Variable", "Input", "String", "Number"]
-    },
-    {
-      id: 16,
-      title: "Python Logic: If Else dan Operator",
-      category: "Python",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.python,
-      tools: ["Python", "Logic", "Condition"],
-      output: "Program cek nilai, cek usia, dan sistem login sederhana.",
-      description: "Siswa belajar pengambilan keputusan di Python menggunakan if, elif, else, operator pembanding, dan operator logika.",
-      topics: ["If else", "Comparison", "Logical operator", "Nested condition", "Login logic"]
-    },
-    {
-      id: 17,
-      title: "Python Loop: For, While, dan Pattern",
-      category: "Python",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.python,
-      tools: ["Python", "Loop", "Pattern"],
-      output: "Program tabel perkalian dan pola bintang.",
-      description: "Materi pengulangan untuk melatih logika. Siswa belajar for loop, while loop, range, dan break/continue.",
-      topics: ["For loop", "While loop", "Range", "Break continue", "Pattern"]
-    },
-    {
-      id: 18,
-      title: "Python Function dan Modular Code",
-      category: "Python",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.python,
-      tools: ["Python", "Function", "Clean Code"],
-      output: "Program kasir mini dengan function.",
-      description: "Siswa belajar membuat kode lebih rapi dengan function, parameter, return value, dan pemisahan proses.",
-      topics: ["Function", "Parameter", "Return", "Reusable code", "Mini cashier"]
-    },
-    {
-      id: 19,
-      title: "Python Turtle: Drawing and Mini Game",
-      category: "Python",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.game,
-      tools: ["Python", "Turtle", "Game"],
-      output: "Game sederhana dengan Turtle, karakter bergerak, dan skor.",
-      description: "Siswa belajar visual programming di Python menggunakan Turtle. Cocok sebagai jembatan dari Scratch ke Python visual.",
-      topics: ["Turtle screen", "Keyboard event", "Drawing", "Movement", "Score"]
-    },
-    {
-      id: 20,
-      title: "Python Game: Pygame Catcher",
-      category: "Python",
-      level: "Intermediate",
-      duration: "2 Pertemuan",
-      image: IMG.game,
-      tools: ["Python", "Pygame", "Game Loop"],
-      output: "Game menangkap objek dengan Pygame.",
-      description: "Siswa mengenal game loop, event, sprite, collision, dan basic rendering menggunakan Pygame.",
-      topics: ["Game loop", "Event handling", "Sprite", "Collision", "Score"]
-    },
-    {
-      id: 21,
-      title: "Python Data: List, Dictionary, JSON",
-      category: "Python",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.python,
-      tools: ["Python", "JSON", "Data"],
-      output: "Program database siswa sederhana berbasis JSON.",
-      description: "Siswa belajar struktur data Python untuk menyimpan data siswa, nilai, kelas, dan export sederhana.",
-      topics: ["List", "Dictionary", "JSON file", "CRUD mini", "Data search"]
-    },
-    {
-      id: 22,
-      title: "Python Automation: File and Report",
-      category: "Python",
-      level: "Advanced",
-      duration: "1 Pertemuan",
-      image: IMG.python,
-      tools: ["Python", "Automation", "Report"],
-      output: "Program otomatis membuat laporan data sederhana.",
-      description: "Siswa belajar konsep automation untuk membaca data, mengolah teks, dan membuat output laporan.",
-      topics: ["File read write", "Data processing", "Report text", "Automation flow", "Error handling"]
-    },
-
-    {
-      id: 23,
-      title: "Arduino Dasar: LED Blink",
-      category: "Arduino",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.arduino,
-      tools: ["Arduino UNO", "LED", "Resistor"],
-      output: "Rangkaian LED berkedip dengan delay.",
-      description: "Materi awal hardware. Siswa belajar pin digital, output, breadboard, LED, resistor, dan upload program Arduino.",
-      topics: ["Arduino IDE", "Digital pin", "LED", "Resistor", "Delay"]
-    },
-    {
-      id: 24,
-      title: "Arduino Traffic Light",
-      category: "Arduino",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.arduino,
-      tools: ["Arduino", "LED", "Traffic Light"],
-      output: "Simulasi lampu lalu lintas merah, kuning, hijau.",
-      description: "Siswa menggabungkan beberapa LED untuk membuat traffic light. Materi ini melatih urutan logika dan timing.",
-      topics: ["Multiple LED", "Sequence", "Timing", "Output logic", "Traffic simulation"]
-    },
-    {
-      id: 25,
-      title: "Arduino Input: Push Button",
-      category: "Arduino",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.arduino,
-      tools: ["Arduino", "Button", "LED"],
-      output: "LED menyala berdasarkan input tombol.",
-      description: "Siswa belajar input digital, pullup/pulldown, membaca kondisi tombol, dan membuat aksi berdasarkan input.",
-      topics: ["Digital input", "Button", "Pullup", "If condition", "LED response"]
-    },
-    {
-      id: 26,
-      title: "Arduino Buzzer Melody",
-      category: "Arduino",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.arduino,
-      tools: ["Arduino", "Buzzer", "Tone"],
-      output: "Buzzer memainkan nada atau alarm sederhana.",
-      description: "Siswa belajar output suara dengan buzzer, tone frequency, noTone, dan alarm logic.",
-      topics: ["Buzzer", "Tone", "Frequency", "Alarm", "Melody"]
-    },
-    {
-      id: 27,
-      title: "Arduino Servo Motor",
-      category: "Arduino",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.robot,
-      tools: ["Arduino", "Servo", "Motor"],
-      output: "Servo bergerak ke sudut tertentu dan merespon input.",
-      description: "Siswa belajar aktuator servo, sudut, library Servo, dan membuat mekanisme sederhana seperti palang pintu.",
-      topics: ["Servo library", "Angle", "Sweep", "Input response", "Door gate project"]
-    },
-    {
-      id: 28,
-      title: "Arduino Ultrasonic Sensor",
-      category: "Arduino",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.arduino,
-      tools: ["Arduino", "HC-SR04", "Sensor"],
-      output: "Alat pengukur jarak dengan sensor ultrasonic.",
-      description: "Siswa belajar membaca sensor jarak, trigger, echo, konversi waktu ke jarak, dan kondisi alarm.",
-      topics: ["Trigger echo", "Distance calculation", "Sensor reading", "Serial monitor", "Alarm condition"]
-    },
-    {
-      id: 29,
-      title: "Arduino LCD I2C Display",
-      category: "Arduino",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.arduino,
-      tools: ["Arduino", "LCD I2C", "Display"],
-      output: "LCD menampilkan nama, sensor, dan status project.",
-      description: "Siswa belajar menggunakan LCD I2C untuk menampilkan informasi dari program atau sensor.",
-      topics: ["I2C address", "LCD library", "Print text", "Cursor", "Sensor display"]
-    },
-    {
-      id: 30,
-      title: "Arduino Line Follower Robot",
-      category: "Arduino",
-      level: "Advanced",
-      duration: "2 Pertemuan",
-      image: IMG.robot,
-      tools: ["Arduino", "IR Sensor", "L298N", "DC Motor"],
-      output: "Robot line follower sederhana mengikuti garis hitam.",
-      description: "Siswa menggabungkan sensor IR, motor driver, DC motor, dan logika gerak robot.",
-      topics: ["IR sensor", "L298N", "Motor direction", "Line logic", "Robot calibration"]
-    },
-    {
-      id: 31,
-      title: "Arduino Final Project: Smart Trash Bin",
-      category: "Arduino",
-      level: "Project",
-      duration: "2 Pertemuan",
-      image: IMG.robot,
-      tools: ["Arduino", "Servo", "Ultrasonic"],
-      output: "Tempat sampah otomatis yang terbuka saat objek terdeteksi.",
-      description: "Project akhir Arduino. Siswa membuat sistem otomatis dengan sensor jarak dan servo.",
-      topics: ["Sensor integration", "Servo mechanism", "Automation", "Project casing", "Presentation"]
-    },
-
-    {
-      id: 32,
-      title: "ESP32 Dasar: Board, Pin, dan LED",
-      category: "ESP32",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.esp32,
-      tools: ["ESP32", "Arduino IDE", "LED"],
-      output: "LED kontrol dasar menggunakan ESP32.",
-      description: "Siswa mengenal ESP32, pin GPIO, upload program, serial monitor, dan perbedaan dasar ESP32 dengan Arduino UNO.",
-      topics: ["ESP32 board setup", "GPIO", "Upload", "Serial monitor", "LED blink"]
-    },
-    {
-      id: 33,
-      title: "ESP32 WiFi Web Server",
-      category: "ESP32",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.iot,
-      tools: ["ESP32", "WiFi", "Web Server"],
-      output: "Website lokal dari ESP32 untuk menampilkan status device.",
-      description: "Siswa belajar membuat ESP32 tersambung WiFi dan menjalankan web server sederhana.",
-      topics: ["WiFi connect", "IP address", "Web server", "HTML response", "Client request"]
-    },
-    {
-      id: 34,
-      title: "ESP32 Web Control LED",
-      category: "ESP32",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.iot,
-      tools: ["ESP32", "Web Control", "LED"],
-      output: "LED bisa ON/OFF dari halaman web.",
-      description: "Siswa membuat kontrol perangkat melalui website. Materi ini menjadi dasar smart home dan IoT dashboard.",
-      topics: ["Route URL", "Button control", "Digital output", "HTML UI", "IoT control"]
-    },
-    {
-      id: 35,
-      title: "ESP32 Sensor Dashboard",
-      category: "ESP32",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.iot,
-      tools: ["ESP32", "Sensor", "Dashboard"],
-      output: "Dashboard suhu/jarak/status sensor berbasis web.",
-      description: "Siswa belajar membaca sensor dan menampilkannya di halaman web ESP32.",
-      topics: ["Sensor reading", "Realtime refresh", "HTML dashboard", "JSON concept", "Monitoring"]
-    },
-    {
-      id: 36,
-      title: "ESP32 Robot Car L298N",
-      category: "ESP32",
-      level: "Advanced",
-      duration: "2 Pertemuan",
-      image: IMG.robot,
-      tools: ["ESP32", "L298N", "DC Motor"],
-      output: "Robot car dikontrol lewat web: maju, mundur, kiri, kanan.",
-      description: "Siswa membuat robot mobil berbasis ESP32 dengan motor driver L298N dan interface web control.",
-      topics: ["Motor driver", "Direction control", "Web button", "PWM speed", "Robot testing"]
-    },
-    {
-      id: 37,
-      title: "ESP32-CAM Streaming",
-      category: "ESP32",
-      level: "Advanced",
-      duration: "2 Pertemuan",
-      image: IMG.iot,
-      tools: ["ESP32-CAM", "Camera", "Streaming"],
-      output: "Streaming kamera dari ESP32-CAM ke browser.",
-      description: "Siswa belajar konsep kamera IoT, streaming MJPEG, IP address, resolusi, dan troubleshooting koneksi.",
-      topics: ["ESP32-CAM pin", "Camera init", "Streaming server", "Resolution", "Browser preview"]
-    },
-    {
-      id: 38,
-      title: "ESP32 Final Project: Smart Classroom IoT",
-      category: "ESP32",
-      level: "Project",
-      duration: "2 Pertemuan",
-      image: IMG.iot,
-      tools: ["ESP32", "Sensor", "Web Dashboard"],
-      output: "Prototype smart classroom: monitoring sensor dan kontrol perangkat.",
-      description: "Project akhir ESP32. Siswa menggabungkan sensor, dashboard web, kontrol output, dan presentasi sistem IoT.",
-      topics: ["IoT architecture", "Sensor dashboard", "Device control", "Project integration", "Presentation"]
-    },
-
-    {
-      id: 39,
-      title: "AI Engineering Dasar: Prompt dan Chatbot",
-      category: "AI Engineering",
-      level: "Beginner",
-      duration: "1 Pertemuan",
-      image: IMG.ai,
-      tools: ["AI", "Prompt", "Chatbot"],
-      output: "Chatbot sederhana dengan prompt yang rapi.",
-      description: "Siswa mengenal konsep AI, prompt engineering, instruksi sistem, konteks, dan cara membuat jawaban AI lebih terarah.",
-      topics: ["AI concept", "Prompting", "Context", "Instruction", "Chatbot role"]
-    },
-    {
-      id: 40,
-      title: "Python AI Chatbot",
-      category: "AI Engineering",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.ai,
-      tools: ["Python", "AI API", "Chatbot"],
-      output: "Program chatbot berbasis Python.",
-      description: "Siswa membuat chatbot dengan Python, input user, response AI, dan struktur percakapan sederhana.",
-      topics: ["Python input", "API request", "Response handling", "Chat loop", "Error handling"]
-    },
-    {
-      id: 41,
-      title: "Computer Vision: OpenCV Dasar",
-      category: "AI Engineering",
-      level: "Intermediate",
-      duration: "1 Pertemuan",
-      image: IMG.cv,
-      tools: ["Python", "OpenCV", "Camera"],
-      output: "Program membuka kamera, membaca frame, dan menampilkan video realtime.",
-      description: "Siswa belajar dasar computer vision: frame kamera, image processing, warna, resize, dan display.",
-      topics: ["OpenCV", "Camera capture", "Frame", "Resize", "Color conversion"]
-    },
-    {
-      id: 42,
-      title: "AI Vision: Object Detection YOLO",
-      category: "AI Engineering",
-      level: "Advanced",
-      duration: "2 Pertemuan",
-      image: IMG.cv,
-      tools: ["Python", "YOLO", "Object Detection"],
-      output: "Program deteksi objek realtime dari kamera.",
-      description: "Siswa belajar konsep object detection, confidence, bounding box, class label, dan realtime inference.",
-      topics: ["YOLO model", "Bounding box", "Confidence", "Class label", "Realtime detection"]
-    },
-    {
-      id: 43,
-      title: "Voice Assistant: Speech to Text dan TTS",
-      category: "AI Engineering",
-      level: "Advanced",
-      duration: "1 Pertemuan",
-      image: IMG.ai,
-      tools: ["Python", "STT", "TTS"],
-      output: "Asisten suara sederhana yang bisa menerima perintah dan membalas suara.",
-      description: "Siswa belajar membuat AI assistant berbasis suara dengan speech recognition, text processing, dan text to speech.",
-      topics: ["Microphone input", "Speech recognition", "Text command", "TTS", "Assistant flow"]
-    },
-    {
-      id: 44,
-      title: "AI OCR: Baca Dokumen dan Form",
-      category: "AI Engineering",
-      level: "Advanced",
-      duration: "1 Pertemuan",
-      image: IMG.ai,
-      tools: ["Python", "OCR", "Document AI"],
-      output: "Program ekstraksi teks dari gambar dokumen.",
-      description: "Siswa belajar konsep OCR untuk membaca teks pada gambar, form, nota, atau laporan.",
-      topics: ["OCR concept", "Image preprocessing", "Text extraction", "JSON output", "Validation"]
-    },
-    {
-      id: 45,
-      title: "AI + IoT Integration",
-      category: "AI Engineering",
-      level: "Advanced",
-      duration: "2 Pertemuan",
-      image: IMG.iot,
-      tools: ["Python", "ESP32", "AI"],
-      output: "Prototype ESP32 yang dikontrol atau dianalisis oleh AI.",
-      description: "Siswa menghubungkan AI dengan hardware IoT untuk membuat sistem pintar seperti deteksi objek yang memicu output ESP32.",
-      topics: ["AI inference", "Serial communication", "ESP32 command", "IoT trigger", "Automation"]
-    },
-    {
-      id: 46,
-      title: "Final Capstone: Smart AI Robot Project",
-      category: "Final Project",
-      level: "Project",
-      duration: "3 Pertemuan",
-      image: IMG.robot,
-      tools: ["Scratch/Python", "Arduino/ESP32", "AI", "Presentation"],
-      output: "Project akhir bebas: game, robot, IoT, atau AI vision lengkap dengan presentasi.",
-      description: "Final project gabungan seluruh track. Siswa memilih ide, membuat prototype, testing, dokumentasi, dan presentasi hasil.",
-      topics: ["Ide project", "Prototype", "Testing", "Documentation", "Presentation"]
-    }
-  ];
-
-  function setText(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.innerText = value;
-  }
-
-  function setApiStatus(text, type = 'loading') {
-    const el = document.getElementById('apiStatus');
-    if (!el) return;
-
-    el.innerText = text;
-    el.className = 'mt-1 text-sm font-black';
-
-    if (type === 'success') {
-      el.classList.add('text-green-500');
-    } else if (type === 'error') {
-      el.classList.add('text-red-500');
-    } else {
-      el.classList.add('text-yellow-500');
-    }
-  }
-
-  function updateLastUpdate() {
-    const now = new Date();
-
-    setText('lastUpdate', now.toLocaleTimeString('id-ID', {
-      hour: '2-digit',
-      minute: '2-digit'
-    }));
-  }
-
-  function escapeHtml(value) {
-    return String(value ?? '')
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
-  }
-
-  function normalizeLesson(item, index) {
-    return {
-      id: item.id ?? index + 1,
-      title: item.title || item.nama || item.name || 'Tanpa Judul',
-      category: item.category || item.kategori || 'General',
-      level: item.level || item.tingkat || 'Beginner',
-      duration: item.duration || item.durasi || item.pertemuan || '1 Pertemuan',
-      image: item.image || item.gambar || item.photo || IMG.scratch,
-      tools: Array.isArray(item.tools) ? item.tools : (item.tools ? String(item.tools).split(',') : ['TECH-C']),
-      output: item.output || item.project || item.hasil || 'Project pembelajaran TECH-C.',
-      description: item.description || item.deskripsi || 'Materi pembelajaran robotic dan coding.',
-      topics: Array.isArray(item.topics) ? item.topics : (item.topics ? String(item.topics).split(',') : ['Coding', 'Logic', 'Project'])
-    };
-  }
-
-  function getCategoryIcon(category) {
-    const map = {
-      "Scratch Game": "🐱",
-      "PictoBlox": "🧩",
-      "Python": "🐍",
-      "Arduino": "🔌",
-      "ESP32": "📡",
-      "AI Engineering": "🤖",
-      "Final Project": "🏆"
-    };
-
-    return map[category] || "📚";
-  }
-
-  function getLevelColor(level) {
-    if (level === 'Beginner') return 'bg-green-50 text-green-600 dark:bg-green-950 dark:text-green-300';
-    if (level === 'Intermediate') return 'bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300';
-    if (level === 'Advanced') return 'bg-violet-50 text-violet-600 dark:bg-violet-950 dark:text-violet-300';
-    if (level === 'Project') return 'bg-orange-50 text-orange-600 dark:bg-orange-950 dark:text-orange-300';
-    return 'bg-slate-50 text-slate-600 dark:bg-slate-950 dark:text-slate-300';
-  }
-
-  function showSkeleton() {
-    const container = document.getElementById('lessonList');
-    if (!container) return;
-
-    container.innerHTML = Array.from({ length: 9 }).map(() => `
-      <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 dark:border-slate-800 dark:bg-slate-900/90">
-        <div class="animate-pulse">
-          <div class="h-44 rounded-[1.4rem] bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mt-5 h-5 w-44 rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mt-3 h-4 w-full rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mt-2 h-4 w-2/3 rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mt-5 grid grid-cols-2 gap-3">
-            <div class="h-12 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
-            <div class="h-12 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
+        <div class="p-6 sm:p-7">
+          <div class="learning-icon mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-red-50 text-5xl dark:bg-red-950/50">
+            🔌
           </div>
+
+          <p class="text-xs font-black uppercase tracking-wider text-red-500">Hardware & Programming</p>
+          <h2 class="mt-2 text-2xl font-black text-slate-900 dark:text-white">Arduino</h2>
+
+          <p class="mt-3 min-h-[84px] text-sm leading-7 text-slate-500 dark:text-slate-400">
+            Pelajari dasar pemrograman mikrokontroler, sensor, aktuator, LED, motor, dan pembuatan project elektronik sederhana.
+          </p>
+
+          <div class="mt-5 flex flex-wrap gap-2">
+            <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-600 dark:bg-red-950 dark:text-red-300">Arduino UNO</span>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">Sensor</span>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">Robotik</span>
+          </div>
+
+          <a href="arduino.html" class="mt-7 flex w-full items-center justify-center rounded-2xl bg-red-500 px-5 py-3.5 text-sm font-black text-white shadow-lg shadow-red-500/20 transition hover:bg-red-600">
+            Buka Pembelajaran Arduino
+          </a>
         </div>
       </div>
-    `).join('');
-  }
 
-  function renderCategoryTabs() {
-    const wrapper = document.getElementById('categoryTabs');
-    if (!wrapper) return;
+      <!-- ESP32 -->
+      <div class="learning-menu-card overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+        <div class="h-2 bg-blue-600"></div>
 
-    const categories = ['Semua', ...new Set(allLessons.map(item => item.category))];
-
-    wrapper.innerHTML = categories.map(category => {
-      const active = category === activeCategory;
-
-      return `
-        <button
-          onclick="setCategory('${escapeHtml(category)}')"
-          class="rounded-2xl px-5 py-3 text-sm font-black transition ${
-            active
-              ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-xl shadow-blue-500/25'
-              : 'bg-white/90 text-slate-500 shadow-lg shadow-slate-200/60 hover:-translate-y-0.5 hover:text-slate-900 dark:bg-slate-900/90 dark:text-slate-400 dark:shadow-black/20 dark:hover:text-white'
-          }"
-        >
-          ${category === 'Semua' ? '🌐' : getCategoryIcon(category)} ${category}
-        </button>
-      `;
-    }).join('');
-  }
-
-  function setCategory(category) {
-    activeCategory = category;
-    renderCategoryTabs();
-    applyFilter();
-  }
-
-  function updateStats(shownLessons) {
-    const total = allLessons.length;
-    const categoryCount = new Set(allLessons.map(item => item.category)).size;
-    const shown = shownLessons.length;
-
-    setText('statTotal', total);
-    setText('statCategory', categoryCount);
-    setText('statShown', shown);
-    setText('totalLessonHero', total);
-    setText('totalLessonCard', total);
-    setText('coverageText', `${categoryCount} kategori`);
-
-    const bar = document.getElementById('coverageBar');
-    if (bar) {
-      const percent = Math.min(100, Math.round((categoryCount / 7) * 100));
-      bar.style.width = `${percent}%`;
-    }
-  }
-
-  function renderLessons(lessons) {
-    const container = document.getElementById('lessonList');
-    const emptyState = document.getElementById('emptyState');
-
-    if (!container) return;
-
-    updateStats(lessons);
-
-    if (!lessons.length) {
-      container.innerHTML = "";
-      if (emptyState) emptyState.classList.remove('hidden');
-      return;
-    }
-
-    if (emptyState) emptyState.classList.add('hidden');
-
-    container.innerHTML = lessons.map(lesson => {
-      const safeTitle = escapeHtml(lesson.title);
-      const safeCategory = escapeHtml(lesson.category);
-      const safeLevel = escapeHtml(lesson.level);
-      const safeDuration = escapeHtml(lesson.duration);
-      const safeDescription = escapeHtml(lesson.description);
-      const icon = getCategoryIcon(lesson.category);
-      const levelColor = getLevelColor(lesson.level);
-
-      return `
-        <div
-          onclick="openLessonModal(${lesson.id})"
-          class="lesson-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
-        >
-          <div class="relative h-48 overflow-hidden">
-            <img
-              src="${lesson.image}"
-              onerror="this.src='${IMG.scratch}'"
-              class="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-              alt="${safeTitle}"
-            />
-
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-
-            <div class="absolute left-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-black text-white backdrop-blur">
-              ${icon} ${safeCategory}
-            </div>
-
-            <div class="absolute bottom-4 left-4 right-4">
-              <h2 class="text-xl font-black leading-7 text-white">
-                ${safeTitle}
-              </h2>
-            </div>
+        <div class="p-6 sm:p-7">
+          <div class="learning-icon mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-blue-50 text-5xl dark:bg-blue-950/50">
+            📡
           </div>
 
-          <div class="p-5">
-            <div class="mb-4 flex flex-wrap gap-2">
-              <span class="rounded-full px-3 py-1 text-xs font-black ${levelColor}">
-                ${safeLevel}
-              </span>
+          <p class="text-xs font-black uppercase tracking-wider text-blue-600">IoT & Connectivity</p>
+          <h2 class="mt-2 text-2xl font-black text-slate-900 dark:text-white">ESP32</h2>
 
-              <span class="rounded-full bg-slate-50 px-3 py-1 text-xs font-black text-slate-500 dark:bg-slate-950 dark:text-slate-300">
-                ⏱️ ${safeDuration}
-              </span>
-            </div>
+          <p class="mt-3 min-h-[84px] text-sm leading-7 text-slate-500 dark:text-slate-400">
+            Pelajari mikrokontroler berbasis WiFi dan Bluetooth, web server, kontrol perangkat, sensor, serta project Internet of Things.
+          </p>
 
-            <p class="min-h-[72px] text-sm leading-6 text-slate-500 dark:text-slate-400">
-              ${safeDescription.length > 150 ? safeDescription.slice(0, 150) + '...' : safeDescription}
-            </p>
-
-            <div class="mt-5 rounded-2xl bg-slate-50 p-4 dark:bg-slate-950">
-              <p class="mb-2 text-xs font-black text-slate-400">Output Project</p>
-              <p class="text-sm font-bold leading-6 text-slate-700 dark:text-slate-300">
-                ${escapeHtml(lesson.output)}
-              </p>
-            </div>
-
-            <div class="mt-5 flex flex-wrap gap-2">
-              ${lesson.tools.slice(0, 3).map(tool => `
-                <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">
-                  ${escapeHtml(tool)}
-                </span>
-              `).join('')}
-            </div>
-
-            <button
-              type="button"
-              class="mt-5 w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-950 dark:text-slate-300"
-            >
-              Lihat Detail Materi
-            </button>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600 dark:bg-blue-950 dark:text-blue-300">WiFi</span>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">IoT</span>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">Web Server</span>
           </div>
+
+          <a href="esp32.html" class="mt-7 flex w-full items-center justify-center rounded-2xl bg-blue-600 px-5 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700">
+            Buka Pembelajaran ESP32
+          </a>
         </div>
-      `;
-    }).join('');
-  }
+      </div>
 
-  function applyFilter() {
-    const search = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
-    const level = document.getElementById('levelInput')?.value || 'all';
-    const sort = document.getElementById('sortInput')?.value || 'default';
+      <!-- SCRATCH -->
+      <div class="learning-menu-card overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+        <div class="h-2 bg-orange-500"></div>
 
-    let filtered = allLessons.filter(lesson => {
-      const matchCategory = activeCategory === 'Semua' || lesson.category === activeCategory;
-      const matchLevel = level === 'all' || lesson.level === level;
-
-      const target = [
-        lesson.title,
-        lesson.category,
-        lesson.level,
-        lesson.description,
-        lesson.output,
-        lesson.tools.join(' '),
-        lesson.topics.join(' ')
-      ].join(' ').toLowerCase();
-
-      return matchCategory && matchLevel && target.includes(search);
-    });
-
-    filtered.sort((a, b) => {
-      if (sort === 'az') return a.title.localeCompare(b.title);
-      if (sort === 'za') return b.title.localeCompare(a.title);
-      if (sort === 'level') return a.level.localeCompare(b.level);
-      return Number(a.id || 0) - Number(b.id || 0);
-    });
-
-    renderLessons(filtered);
-  }
-
-  async function apiGetLessons() {
-    const res = await fetch(`${API_BASE}/lessons`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-
-    if (res.status === 401) {
-      localStorage.clear();
-      window.location.href = './login.html';
-      return [];
-    }
-
-    const raw = await res.text();
-    let data;
-
-    try {
-      data = JSON.parse(raw);
-    } catch (err) {
-      throw new Error("API /lessons bukan JSON");
-    }
-
-    if (!res.ok) {
-      throw new Error(data.message || `HTTP Error ${res.status}`);
-    }
-
-    if (Array.isArray(data)) return data;
-    if (Array.isArray(data.data)) return data.data;
-    if (Array.isArray(data.lessons)) return data.lessons;
-    if (Array.isArray(data.pelajaran)) return data.pelajaran;
-
-    return [];
-  }
-
-  async function loadHeaderUser() {
-    try {
-      const res = await fetch(`${API_BASE}/profile`, {
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (!res.ok) return;
-
-      const data = await res.json();
-
-      const name = data.name || localStorage.getItem('name') || 'Admin';
-      const email = data.email || localStorage.getItem('email') || '';
-
-      setText('header_name', name);
-      setText('dropdown_name', name);
-      setText('dropdown_email', email);
-
-      const avatar = document.getElementById('header_avatar');
-
-      if (avatar) {
-        avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
-      }
-
-    } catch (err) {
-      console.warn("Header profile gagal:", err);
-    }
-  }
-
-  async function loadLessons() {
-    try {
-      setApiStatus('Loading...', 'loading');
-      showSkeleton();
-
-      let data = [];
-
-      try {
-        data = await apiGetLessons();
-
-        if (data.length) {
-          setText('sourceStatus', 'Laravel');
-        } else {
-          data = staticLessons;
-          setText('sourceStatus', 'Static');
-        }
-
-      } catch (apiErr) {
-        console.warn("API lessons belum siap, pakai static:", apiErr.message);
-        data = staticLessons;
-        setText('sourceStatus', 'Static');
-      }
-
-      allLessons = data.map(normalizeLesson);
-
-      renderCategoryTabs();
-      applyFilter();
-
-      setApiStatus('Connected', 'success');
-      updateLastUpdate();
-
-    } catch (err) {
-      console.error("Error load lessons:", err);
-
-      setApiStatus('Disconnected', 'error');
-
-      const container = document.getElementById('lessonList');
-      if (container) {
-        container.innerHTML = `
-          <div class="col-span-full rounded-[2rem] border border-red-200 bg-red-50 p-8 text-center shadow-xl shadow-red-100 dark:border-red-900 dark:bg-red-950/40 dark:shadow-black/20">
-            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-100 text-3xl dark:bg-red-950">
-              ⚠️
-            </div>
-
-            <h3 class="text-xl font-black text-red-600 dark:text-red-300">
-              Gagal mengambil data pelajaran
-            </h3>
-
-            <p class="mt-2 text-sm font-semibold text-red-500 dark:text-red-300">
-              ${escapeHtml(err.message || 'Cek Laravel API /api/lessons')}
-            </p>
-
-            <button
-              onclick="loadLessons()"
-              class="mt-5 rounded-2xl bg-red-600 px-5 py-3 text-sm font-black text-white transition hover:bg-red-700"
-            >
-              Coba Lagi
-            </button>
+        <div class="p-6 sm:p-7">
+          <div class="learning-icon mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-orange-50 text-5xl dark:bg-orange-950/50">
+            🐱
           </div>
-        `;
-      }
-    }
-  }
 
-  function openLessonModal(id) {
-    const lesson = allLessons.find(item => Number(item.id) === Number(id));
-    if (!lesson) return;
+          <p class="text-xs font-black uppercase tracking-wider text-orange-500">Visual Programming</p>
+          <h2 class="mt-2 text-2xl font-black text-slate-900 dark:text-white">Scratch</h2>
 
-    document.getElementById('modalImage').src = lesson.image;
-    setText('modalCategory', `${getCategoryIcon(lesson.category)} ${lesson.category}`);
-    setText('modalLevel', lesson.level);
-    setText('modalDuration', lesson.duration);
-    setText('modalTitle', lesson.title);
-    setText('modalDescription', lesson.description);
-    setText('modalProject', lesson.output);
+          <p class="mt-3 min-h-[84px] text-sm leading-7 text-slate-500 dark:text-slate-400">
+            Pelajari logika pemrograman melalui block coding, animasi, game interaktif, storytelling, dan project kreatif untuk pemula.
+          </p>
 
-    const topics = document.getElementById('modalTopics');
-    if (topics) {
-      topics.innerHTML = lesson.topics.map(topic => `
-        <li class="flex gap-2">
-          <span class="text-blue-500">✓</span>
-          <span>${escapeHtml(topic)}</span>
-        </li>
-      `).join('');
-    }
+          <div class="mt-5 flex flex-wrap gap-2">
+            <span class="rounded-full bg-orange-50 px-3 py-1 text-xs font-bold text-orange-600 dark:bg-orange-950 dark:text-orange-300">Block Coding</span>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">Game</span>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">Animation</span>
+          </div>
 
-    const tools = document.getElementById('modalTools');
-    if (tools) {
-      tools.innerHTML = lesson.tools.map(tool => `
-        <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-300">
-          ${escapeHtml(tool)}
+          <a href="scratch.html" class="mt-7 flex w-full items-center justify-center rounded-2xl bg-orange-500 px-5 py-3.5 text-sm font-black text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600">
+            Buka Pembelajaran Scratch
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- INFORMATION -->
+    <div class="mt-7 rounded-[1.7rem] border border-slate-200 bg-white/90 p-5 shadow-lg shadow-slate-200/50 dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20 sm:p-6">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 class="font-black text-slate-900 dark:text-white">Pilih materi untuk mulai belajar</h3>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Setiap menu akan memiliki halaman HTML tersendiri untuk daftar materi dan aktivitas pembelajaran.
+          </p>
+        </div>
+
+        <span class="inline-flex w-fit rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-500 dark:bg-slate-800 dark:text-slate-300">
+          3 Learning Track
         </span>
-      `).join('');
-    }
+      </div>
+    </div>
 
-    const modal = document.getElementById('lessonModal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
+  </section>
+</main>
+
+</div>
+</div>
+
+<!-- LOAD PARTIAL -->
+<script>
+async function loadPartials() {
+  const includes = document.querySelectorAll('include');
+
+  for (let el of includes) {
+    const file = el.getAttribute('src');
+
+    try {
+      const res = await fetch(file);
+      const html = await res.text();
+      el.outerHTML = html;
+    } catch (err) {
+      console.error('Gagal load partial:', file, err);
+    }
   }
+}
 
-  function closeLessonModal() {
-    const modal = document.getElementById('lessonModal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeLessonModal();
-    }
-  });
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    await loadPartials();
-    await loadHeaderUser();
-    await loadLessons();
-
-    const searchInput = document.getElementById('searchInput');
-    const levelInput = document.getElementById('levelInput');
-    const sortInput = document.getElementById('sortInput');
-
-    if (searchInput) {
-      searchInput.addEventListener('input', applyFilter);
-    }
-
-    if (levelInput) {
-      levelInput.addEventListener('change', applyFilter);
-    }
-
-    if (sortInput) {
-      sortInput.addEventListener('change', applyFilter);
-    }
-  });
-  </script>
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadPartials();
+});
+</script>
 
 </body>
 </html>
