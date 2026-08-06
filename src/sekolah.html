@@ -758,12 +758,12 @@ const API_BASE = getApiBase();
     localStorage.setItem('school_id', id);
     localStorage.setItem('school_name', name);
 
-    // Kalau mau setelah klik sekolah masuk ke halaman pelajar:
-    window.location.href = "pelajar.html";
-
-    // Kalau mau balik ke dashboard admin, ganti jadi:
-    // window.location.href = "index.html";
-  }
+    if (name === "MIN 1 Cilegon") {
+        window.location.href = "min1cilegon.html";
+    } else {
+        window.location.href = "pelajar.html";
+    }
+}
 
   document.addEventListener('DOMContentLoaded', async () => {
     await loadPartials();
