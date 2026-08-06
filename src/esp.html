@@ -100,14 +100,14 @@
   class="bg-slate-50"
 >
 
-  <include src="./partials/preloader.html"></include>
+  <div data-include="./partials/preloader.html"></div>
 
   <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
-    <include src="./partials/sidebar.html"></include>
+    <div data-include="./partials/sidebar.html"></div>
 
     <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
-      <include src="./partials/overlay.html"></include>
-      <include src="./partials/header.html"></include>
+      <div data-include="./partials/overlay.html"></div>
+      <div data-include="./partials/header.html"></div>
 
       <main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
         <div class="pointer-events-none absolute inset-0 overflow-hidden">
@@ -324,7 +324,7 @@
   <div id="lessonModal" class="fixed inset-0 z-[999999] hidden items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
     <div class="max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-[2rem] bg-white shadow-2xl dark:bg-slate-900">
       <div class="relative">
-        <img id="modalImage" src="" class="h-72 w-full rounded-t-[2rem] bg-slate-100 object-cover dark:bg-slate-800" alt="Lesson Image" />
+        <img id="modalImage" data-image-placeholder="true" class="h-72 w-full rounded-t-[2rem] bg-slate-100 object-cover dark:bg-slate-800" alt="Lesson Image" />
         <button onclick="closeLessonModal()" class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/90 text-xl font-black text-slate-800 shadow-lg backdrop-blur hover:bg-white">×</button>
       </div>
 
@@ -373,9 +373,9 @@
 
   <script>
   async function loadPartials() {
-    const includes = document.querySelectorAll('include');
+    const includes = document.querySelectorAll('[data-include]');
     for (let el of includes) {
-      const file = el.getAttribute('src');
+      const file = el.getAttribute('data-include');
       try {
         const res = await fetch(file);
         const html = await res.text();
@@ -397,6 +397,9 @@
 
     // Fallback memakai logo lokal agar tidak diproses sebagai inline SVG oleh HTML/Webpack loader.
     const FALLBACK_IMG = './images/logo.png';
+
+    const modalImage = document.getElementById('modalImage');
+    if (modalImage) modalImage.src = FALLBACK_IMG;
 
     const lessons = [
       {
