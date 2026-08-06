@@ -751,19 +751,22 @@ const API_BASE = getApiBase();
       }
     }
   }
-
-  function pilihSekolah(id, encodedName) {
+  
+function pilihSekolah(id, encodedName) {
     const name = decodeURIComponent(encodedName || '');
 
     localStorage.setItem('school_id', id);
     localStorage.setItem('school_name', name);
 
-    if (name === "MIN 1 Cilegon") {
-        window.location.href = "min1cilegon.html";
-    } else {
-        window.location.href = "pelajar.html";
-    }
+    // ubah nama jadi format file
+    const fileName = name
+        .toLowerCase()
+        .replace(/\s+/g, '')
+        .replace(/[^a-z0-9]/g, '');
+
+    window.location.href = `sekolah/${fileName}.html`;
 }
+
 
   document.addEventListener('DOMContentLoaded', async () => {
     await loadPartials();
