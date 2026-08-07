@@ -1,297 +1,370 @@
-<!-- DASHBOARD MIN 1 CILEGON -->
-<section class="relative z-10 mx-auto max-w-7xl">
+<!DOCTYPE html>
+<html lang="id">
+<head>
 
-    <!-- HEADER SEKOLAH -->
-    <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <div class="relative p-8">
+<title>MIN 1 Cilegon</title>
 
-            <div class="absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-green-600/10 via-blue-500/5 to-transparent"></div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-            <div class="relative flex flex-col lg:flex-row justify-between items-center gap-6">
+<style>
 
-                <div>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,Arial,sans-serif;
+}
 
-                    <div class="inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
-                        🏫 Sekolah Aktif
-                    </div>
+body{
+background:#f3f4f6;
+}
 
-                    <h1 class="mt-4 text-4xl font-black text-slate-900 dark:text-white">
-                        MIN 1 Cilegon
-                    </h1>
+header{
 
-                    <p class="mt-2 text-slate-500 dark:text-slate-400">
-                        Dashboard Absensi Pelajar
-                    </p>
+background:#2563eb;
+color:white;
 
-                </div>
+padding:20px 40px;
 
-                <div class="rounded-3xl bg-gradient-to-br from-green-500 to-blue-600 p-8 text-white shadow-xl">
+display:flex;
 
-                    <h2 class="text-sm font-bold opacity-80">
-                        Hari Ini
-                    </h2>
+justify-content:space-between;
+align-items:center;
 
-                    <h1 class="text-5xl font-black">
-                        32
-                    </h1>
+}
 
-                    <p>Total Pelajar</p>
+header h1{
 
-                </div>
+font-size:30px;
 
-            </div>
+}
 
-        </div>
+header a{
 
-    </div>
+color:white;
+text-decoration:none;
 
+background:white;
+color:#2563eb;
 
+padding:10px 18px;
 
-<!-- STATISTIK -->
+border-radius:10px;
 
-<div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-7">
+font-weight:bold;
 
-<div class="rounded-3xl bg-white p-6 shadow-lg">
+}
 
-<p class="text-slate-500 font-semibold">
-Total Siswa
+.container{
+
+width:95%;
+max-width:1400px;
+
+margin:auto;
+
+padding:30px;
+
+}
+
+.info{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+margin-bottom:30px;
+
+box-shadow:0 10px 20px rgba(0,0,0,.08);
+
+}
+
+.info h2{
+
+font-size:35px;
+
+color:#2563eb;
+
+margin-bottom:10px;
+
+}
+
+.info p{
+
+color:#666;
+
+}
+
+.cards{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:20px;
+
+margin-bottom:35px;
+
+}
+
+.card{
+
+background:white;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:0 10px 20px rgba(0,0,0,.08);
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-5px);
+
+}
+
+.card i{
+
+font-size:40px;
+
+margin-bottom:20px;
+
+}
+
+.card h1{
+
+font-size:45px;
+
+margin-bottom:10px;
+
+}
+
+.blue{
+
+color:#2563eb;
+
+}
+
+.green{
+
+color:#16a34a;
+
+}
+
+.orange{
+
+color:#f59e0b;
+
+}
+
+.red{
+
+color:#dc2626;
+
+}
+
+.menu{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+gap:20px;
+
+}
+
+.box{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:0 10px 20px rgba(0,0,0,.08);
+
+transition:.3s;
+
+cursor:pointer;
+
+}
+
+.box:hover{
+
+background:#2563eb;
+color:white;
+
+}
+
+.box i{
+
+font-size:55px;
+
+margin-bottom:20px;
+
+}
+
+.box h2{
+
+margin-bottom:10px;
+
+}
+
+.box p{
+
+color:#777;
+
+}
+
+.box:hover p{
+
+color:white;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>MIN 1 Cilegon</h1>
+
+<a href="sekolah.html">
+← Kembali
+</a>
+
+</header>
+
+<div class="container">
+
+<div class="info">
+
+<h2>Dashboard Sekolah</h2>
+
+<p>
+Selamat datang di Dashboard Absensi MIN 1 Cilegon.
 </p>
 
-<h1 class="text-4xl font-black text-blue-600">
-32
+</div>
+
+<div class="cards">
+
+<div class="card">
+
+<i class="fa-solid fa-user-graduate blue"></i>
+
+<h1 class="blue">
+320
 </h1>
+
+<p>Total Pelajar</p>
 
 </div>
 
-<div class="rounded-3xl bg-white p-6 shadow-lg">
+<div class="card">
 
-<p class="text-slate-500 font-semibold">
-Hadir
+<i class="fa-solid fa-circle-check green"></i>
+
+<h1 class="green">
+298
+</h1>
+
+<p>Hadir Hari Ini</p>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-clock orange"></i>
+
+<h1 class="orange">
+15
+</h1>
+
+<p>Belum Absen</p>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-circle-xmark red"></i>
+
+<h1 class="red">
+7
+</h1>
+
+<p>Tidak Hadir</p>
+
+</div>
+
+</div>
+
+<div class="menu">
+
+<div class="box" onclick="location.href='absensi.html'">
+
+<i class="fa-solid fa-calendar-check"></i>
+
+<h2>Absensi</h2>
+
+<p>
+Input absensi siswa
 </p>
 
-<h1 class="text-4xl font-black text-green-600">
-20
-</h1>
-
 </div>
 
-<div class="rounded-3xl bg-white p-6 shadow-lg">
+<div class="box">
 
-<p class="text-slate-500 font-semibold">
-Izin
+<i class="fa-solid fa-users"></i>
+
+<h2>Pelajar</h2>
+
+<p>
+Data seluruh siswa
 </p>
 
-<h1 class="text-4xl font-black text-yellow-500">
-4
-</h1>
-
 </div>
 
-<div class="rounded-3xl bg-white p-6 shadow-lg">
+<div class="box">
 
-<p class="text-slate-500 font-semibold">
-Belum Absen
+<i class="fa-solid fa-chart-column"></i>
+
+<h2>Laporan</h2>
+
+<p>
+Rekap absensi
 </p>
 
-<h1 class="text-4xl font-black text-red-500">
-8
-</h1>
+</div>
+
+<div class="box">
+
+<i class="fa-solid fa-gear"></i>
+
+<h2>Pengaturan</h2>
+
+<p>
+Pengaturan sekolah
+</p>
 
 </div>
 
 </div>
 
-
-
-<!-- FILTER -->
-
-<div class="mb-6 rounded-3xl bg-white p-5 shadow-lg">
-
-<div class="grid md:grid-cols-3 gap-4">
-
-<input
-type="date"
-class="rounded-xl border border-slate-300 p-3 outline-none focus:border-blue-500">
-
-<select
-class="rounded-xl border border-slate-300 p-3">
-
-<option>Semua Kelas</option>
-<option>1A</option>
-<option>1B</option>
-<option>2A</option>
-<option>2B</option>
-<option>3A</option>
-<option>4A</option>
-<option>5A</option>
-<option>6A</option>
-
-</select>
-
-<input
-
-type="text"
-
-placeholder="Cari Nama Pelajar..."
-
-class="rounded-xl border border-slate-300 p-3 outline-none focus:border-blue-500">
-
 </div>
 
-</div>
-
-
-
-<!-- TABEL ABSENSI -->
-
-<div class="overflow-hidden rounded-3xl bg-white shadow-xl">
-
-<div class="overflow-x-auto">
-
-<table class="w-full">
-
-<thead class="bg-blue-600 text-white">
-
-<tr>
-
-<th class="p-4 text-left">No</th>
-
-<th class="p-4 text-left">Nama</th>
-
-<th class="p-4 text-left">Kelas</th>
-
-<th class="p-4 text-center">Status</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr class="border-b">
-
-<td class="p-4">1</td>
-
-<td class="p-4 font-semibold">Ahmad Fauzan</td>
-
-<td class="p-4">4A</td>
-
-<td class="p-4 text-center">
-
-<select class="rounded-lg border p-2">
-
-<option>Hadir</option>
-
-<option>Izin</option>
-
-<option>Sakit</option>
-
-<option>Alfa</option>
-
-</select>
-
-</td>
-
-</tr>
-
-<tr class="border-b">
-
-<td class="p-4">2</td>
-
-<td class="p-4 font-semibold">Budi Santoso</td>
-
-<td class="p-4">4A</td>
-
-<td class="p-4 text-center">
-
-<select class="rounded-lg border p-2">
-
-<option>Hadir</option>
-
-<option>Izin</option>
-
-<option>Sakit</option>
-
-<option>Alfa</option>
-
-</select>
-
-</td>
-
-</tr>
-
-<tr class="border-b">
-
-<td class="p-4">3</td>
-
-<td class="p-4 font-semibold">Citra Amelia</td>
-
-<td class="p-4">5B</td>
-
-<td class="p-4 text-center">
-
-<select class="rounded-lg border p-2">
-
-<option>Hadir</option>
-
-<option>Izin</option>
-
-<option>Sakit</option>
-
-<option>Alfa</option>
-
-</select>
-
-</td>
-
-</tr>
-
-<tr class="border-b">
-
-<td class="p-4">4</td>
-
-<td class="p-4 font-semibold">Dimas Pratama</td>
-
-<td class="p-4">6A</td>
-
-<td class="p-4 text-center">
-
-<select class="rounded-lg border p-2">
-
-<option>Hadir</option>
-
-<option>Izin</option>
-
-<option>Sakit</option>
-
-<option>Alfa</option>
-
-</select>
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-
-
-<div class="mt-8 flex justify-end">
-
-<button
-class="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-8 py-4 text-white font-black shadow-xl hover:scale-105 transition">
-
-💾 Simpan Absensi
-
-</button>
-
-</div>
-
-</section>
+</body>
+</html>
