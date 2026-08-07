@@ -1,3 +1,4 @@
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -96,13 +97,27 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    ...generateHTMLPlugins(),
-    new MiniCssExtractPlugin({
-      filename: "style.css",
-      chunkFilename: "style.css",
-    }),
-  ],
+plugins: [
+  ...generateHTMLPlugins(),
+
+  new MiniCssExtractPlugin({
+    filename: "style.css",
+    chunkFilename: "style.css",
+  }),
+
+  new CopyWebpackPlugin({
+    patterns: [
+      {
+        from: "src/data.json",
+        to: "data.json",
+      },
+      {
+        from: "src/assets",
+        to: "assets",
+      },
+    ],
+  }),
+],
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "build"),
