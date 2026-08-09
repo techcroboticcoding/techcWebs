@@ -192,6 +192,68 @@ header h1{
     color:#dc2626;
 }
 
+  /* =========================
+   TABEL ABSENSI
+========================= */
+
+.attendance-table {
+    width: 100%;
+    min-width: 1450px;
+    border-collapse: collapse;
+    background: white;
+}
+
+.attendance-table th {
+    background: #2563eb;
+    color: white;
+    padding: 14px 10px;
+    border: 1px solid #dbe3ef;
+    text-align: center;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.attendance-table td {
+    padding: 8px;
+    border: 1px solid #dbe3ef;
+    text-align: center;
+    height: 58px;
+}
+
+.attendance-table .col-no {
+    width: 55px;
+    min-width: 55px;
+}
+
+.attendance-table .col-name {
+    width: 250px;
+    min-width: 250px;
+    text-align: left;
+}
+
+.attendance-table .col-class {
+    width: 80px;
+    min-width: 80px;
+}
+
+.attendance-table th:not(.col-no):not(.col-name):not(.col-class) {
+    width: 60px;
+    min-width: 60px;
+}
+
+.attendance-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.attendance-table input {
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.attendance-table select {
+    cursor: pointer;
+}
+
 </style>
 
 </head>
@@ -393,7 +455,7 @@ header h1{
                     cursor:pointer;
                     font-weight:bold;
                 "
-            >
+             >
                 + Tambah Siswa
             </button>
 
@@ -438,22 +500,59 @@ header h1{
 
     </div>
 
-    <div style="overflow-x:auto;">
+         <div style="
+    overflow-x:auto;
+    width:100%;
+">
 
-       <table style="width:100%;border-collapse:collapse;min-width:1700px;">
+    <table class="attendance-table">
 
-          <thead>
-          ...
-          </thead>
+        <thead>
+            <tr>
 
-          <tbody id="studentTableBody">
-          </tbody>
+                <th class="col-no">
+                    No
+                </th>
 
-        </table>
+                <th class="col-name">
+                    Nama
+                </th>
+
+                <th class="col-class">
+                    Kelas
+                </th>
+
+                <th>P1</th>
+                <th>P2</th>
+                <th>P3</th>
+                <th>P4</th>
+                <th>P5</th>
+                <th>P6</th>
+                <th>P7</th>
+                <th>P8</th>
+                <th>P9</th>
+                <th>P10</th>
+                <th>P11</th>
+                <th>P12</th>
+                <th>P13</th>
+                <th>P14</th>
+                <th>P15</th>
+                <th>P16</th>
+                <th>P17</th>
+                <th>P18</th>
+
+            </tr>
+        </thead>
+
+        <tbody id="studentTableBody">
+        </tbody>
+
+    </table>
 
     </div>
 
 </div>
+
 
 <!-- ==========================
      FOOTER DASHBOARD
