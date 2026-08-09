@@ -436,43 +436,14 @@ header h1{
 
     <div style="overflow-x:auto;">
 
-        <table style="width:100%;border-collapse:collapse;min-width:1700px;">
+       <table style="width:100%;border-collapse:collapse;min-width:1700px;">
 
-            <thead>
+          <thead>
+          ...
+          </thead>
 
-                <tr style="background:#2563eb;color:white;">
-
-                    <th style="padding:12px;border:1px solid #ddd;width:60px;">No</th>
-
-                    <th style="padding:12px;border:1px solid #ddd;width:260px;">Nama</th>
-
-                    <th style="padding:12px;border:1px solid #ddd;width:90px;">Kelas</th>
-
-                        <th>P1</th>
-                        <th>P2</th>
-                        <th>P3</th>
-                        <th>P4</th>
-                        <th>P5</th>
-                        <th>P6</th>
-                        <th>P7</th>
-                        <th>P8</th>
-                        <th>P9</th>
-                        <th>P10</th>
-                        <th>P11</th>
-                        <th>P12</th>
-                        <th>P13</th>
-                        <th>P14</th>
-                        <th>P15</th>
-                        <th>P16</th>
-                        <th>P17</th>
-                        <th>P18</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody id="studentTableBody">
-            </tbody>
+          <tbody id="studentTableBody">
+          </tbody>
 
         </table>
 
@@ -536,11 +507,25 @@ let students = [];
 
 function loadStudents() {
 
-    const savedStudents = localStorage.getItem('min1cilegon_students');
+    const savedStudents =
+        localStorage.getItem('min1cilegon_students');
 
     if (savedStudents) {
 
-        students = JSON.parse(savedStudents);
+        try {
+
+            students = JSON.parse(savedStudents);
+
+        } catch (error) {
+
+            console.error(
+                'Data siswa rusak:',
+                error
+            );
+
+            students = [];
+
+        }
 
     } else {
 
@@ -554,7 +539,7 @@ function loadStudents() {
 
 
 /* =========================
-   SIMPAN DATA SISWA
+   SIMPAN DATA
 ========================= */
 
 function saveStudents() {
@@ -568,27 +553,84 @@ function saveStudents() {
 
 
 /* =========================
-   TAMPILKAN DATA SISWA
+   RENDER TABEL
 ========================= */
 
 function renderStudents() {
 
-    const tbody = document.getElementById('studentTableBody');
+    const tbody =
+        document.getElementById(
+            'studentTableBody'
+        );
 
-    if (!tbody) return;
+    if (!tbody) {
+
+        console.error(
+            'studentTableBody tidak ditemukan'
+        );
+
+        return;
+
+    }
+
 
     tbody.innerHTML = '';
 
+
     for (let i = 0; i < MAX_STUDENTS; i++) {
 
-        const student = students[i] || {
-            nama: '',
-            kelas: '',
-            absensi: []
-        };
+        const student =
+            students[i] || null;
 
+
+        /* =========================
+           BARIS KOSONG
+        ========================= */
+
+        if (!student) {
+
+            tbody.innerHTML += `
+
+                <tr>
+
+                    <td style="
+                        padding:10px;
+                        border:1px solid #ddd;
+                        text-align:center;
+                        color:#999;
+                    ">
+                        ${i + 1}
+                    </td>
+
+                    <td style="
+                        padding:10px;
+                        border:1px solid #ddd;
+                    ">
+                    </td>
+
+                    <td style="
+                        padding:10px;
+                        border:1px solid #ddd;
+                    ">
+                    </td>
+
+                    ${buatKolomAbsensiKosong()}
+
+                </tr>
+
+            `;
+
+            continue;
+
+        }
+
+
+        /* =========================
+           BARIS SISWA
+        ========================= */
 
         let row = `
+
             <tr>
 
                 <td style="
@@ -604,11 +646,20 @@ function renderStudents() {
                     padding:10px;
                     border:1px solid #ddd;
                 ">
+
                     <input
                         type="text"
-                        value="${student.nama || ''}"
+                        value="${escapeHTML(student.nama)}"
                         placeholder="Nama siswa"
-                        onchange="updateStudent(${i}, 'nama', this.value)"
+
+                        onchange="
+                            updateStudent(
+                                ${i},
+                                'nama',
+                                this.value
+                            )
+                        "
+
                         style="
                             width:100%;
                             padding:8px;
@@ -616,6 +667,7 @@ function renderStudents() {
                             border-radius:6px;
                         "
                     >
+
                 </td>
 
 
@@ -623,11 +675,20 @@ function renderStudents() {
                     padding:10px;
                     border:1px solid #ddd;
                 ">
+
                     <input
                         type="text"
-                        value="${student.kelas || ''}"
+                        value="${escapeHTML(student.kelas)}"
                         placeholder="Kelas"
-                        onchange="updateStudent(${i}, 'kelas', this.value)"
+
+                        onchange="
+                            updateStudent(
+                                ${i},
+                                'kelas',
+                                this.value
+                            )
+                        "
+
                         style="
                             width:70px;
                             padding:8px;
@@ -636,12 +697,14 @@ function renderStudents() {
                             text-align:center;
                         "
                     >
+
                 </td>
+
         `;
 
 
         /* =========================
-           KOLOM P1 - P18
+           P1 - P18
         ========================= */
 
         for (let p = 0; p < 18; p++) {
@@ -652,7 +715,9 @@ function renderStudents() {
                     ? student.absensi[p]
                     : '';
 
+
             row += `
+
                 <td style="
                     padding:8px;
                     border:1px solid #ddd;
@@ -660,7 +725,14 @@ function renderStudents() {
                 ">
 
                     <select
-                        onchange="updateAttendance(${i}, ${p}, this.value)"
+                        onchange="
+                            updateAttendance(
+                                ${i},
+                                ${p},
+                                this.value
+                            )
+                        "
+
                         style="
                             padding:6px;
                             border:1px solid #ddd;
@@ -696,13 +768,16 @@ function renderStudents() {
                     </select>
 
                 </td>
+
             `;
 
         }
 
 
         row += `
+
             </tr>
+
         `;
 
 
@@ -714,22 +789,78 @@ function renderStudents() {
 
 
 /* =========================
-   UPDATE DATA SISWA
+   KOLOM ABSENSI KOSONG
 ========================= */
 
-function updateStudent(index, field, value) {
+function buatKolomAbsensiKosong() {
+
+    let html = '';
+
+
+    for (let i = 0; i < 18; i++) {
+
+        html += `
+
+            <td style="
+                padding:8px;
+                border:1px solid #ddd;
+                text-align:center;
+                color:#aaa;
+            ">
+                -
+            </td>
+
+        `;
+
+    }
+
+
+    return html;
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHTML(value) {
+
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+}
+
+
+/* =========================
+   UPDATE NAMA / KELAS
+========================= */
+
+function updateStudent(
+    index,
+    field,
+    value
+) {
 
     if (!students[index]) {
 
         students[index] = {
+
             nama: '',
             kelas: '',
             absensi: []
+
         };
 
     }
 
+
     students[index][field] = value;
+
 
     saveStudents();
 
@@ -740,14 +871,20 @@ function updateStudent(index, field, value) {
    UPDATE ABSENSI
 ========================= */
 
-function updateAttendance(index, pertemuan, value) {
+function updateAttendance(
+    index,
+    pertemuan,
+    value
+) {
 
     if (!students[index]) {
 
         students[index] = {
+
             nama: '',
             kelas: '',
             absensi: []
+
         };
 
     }
@@ -760,7 +897,9 @@ function updateAttendance(index, pertemuan, value) {
     }
 
 
-    students[index].absensi[pertemuan] = value;
+    students[index]
+        .absensi[pertemuan] = value;
+
 
     saveStudents();
 
@@ -775,7 +914,9 @@ function tambahSiswa() {
 
     if (students.length >= MAX_STUDENTS) {
 
-        alert('Maksimal 30 siswa.');
+        alert(
+            'Maksimal 30 siswa sudah tercapai.'
+        );
 
         return;
 
@@ -797,33 +938,83 @@ function tambahSiswa() {
 
     renderStudents();
 
+
+    /*
+       Scroll otomatis
+       ke baris siswa baru
+    */
+
+    setTimeout(() => {
+
+        const tbody =
+            document.getElementById(
+                'studentTableBody'
+            );
+
+        if (tbody) {
+
+            const rows =
+                tbody.querySelectorAll('tr');
+
+            const lastRow =
+                rows[students.length - 1];
+
+            if (lastRow) {
+
+                lastRow.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+            }
+
+        }
+
+    }, 100);
+
 }
 
 
 /* =========================
-   HAPUS SISWA TERAKHIR
+   HAPUS SISWA
 ========================= */
 
 function hapusSiswa() {
 
     if (students.length === 0) {
 
-        alert('Belum ada siswa.');
+        alert(
+            'Belum ada siswa yang ditambahkan.'
+        );
 
         return;
 
     }
 
 
-    const konfirmasi = confirm(
-        'Hapus siswa terakhir?'
-    );
+    const siswa =
+        students[students.length - 1];
 
 
-    if (!konfirmasi) return;
+    const nama =
+        siswa.nama || 'siswa terakhir';
+
+
+    const yakin =
+        confirm(
+            `Apakah kamu yakin ingin menghapus ${nama}?`
+        );
+
+
+    if (!yakin) {
+
+        return;
+
+    }
 
 
     students.pop();
+
 
     saveStudents();
 
@@ -833,7 +1024,7 @@ function hapusSiswa() {
 
 
 /* =========================
-   JALANKAN SAAT HALAMAN DIBUKA
+   LOAD SAAT HALAMAN DIBUKA
 ========================= */
 
 document.addEventListener(
