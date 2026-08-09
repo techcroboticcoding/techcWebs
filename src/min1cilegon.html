@@ -616,82 +616,75 @@ function renderStudents() {
 
         }
 
-
         /* =========================
-           BARIS SISWA
-        ========================= */
+   BARIS SISWA
+========================= */
 
-        let row = `
+let row = `
 
-            <tr>
+    <tr>
 
-                <td style="
-                    padding:10px;
-                    border:1px solid #ddd;
-                    text-align:center;
-                ">
-                    ${i + 1}
-                </td>
+           <td style="
+                padding:10px;
+                border:1px solid #ddd;
+                text-align:center;
+             ">
 
-
-                <td style="
-                    padding:10px;
-                    border:1px solid #ddd;
-                ">
-
-                    <input
-                        type="text"
-                        value="${escapeHTML(student.nama)}"
-                        placeholder="Nama siswa"
-
-                        onchange="
-                            updateStudent(
-                                ${i},
-                                'nama',
-                                this.value
-                            )
-                        "
-
+               ${
+                  deleteMode
+                  ? `
+                    <button
+                        type="button"
+                        onclick="hapusSiswa(${i})"
                         style="
-                            width:100%;
-                            padding:8px;
-                            border:1px solid #ddd;
-                            border-radius:6px;
+                            background:#dc2626;
+                            color:white;
+                            border:none;
+                            width:35px;
+                            height:35px;
+                            border-radius:8px;
+                            cursor:pointer;
+                            font-size:16px;
                         "
-                    >
+                        title="Hapus siswa"
+                     >
+                        🗑️
+                    </button>
+                 `
+                 : i + 1
+                }
 
-                </td>
+            </td>
 
 
-                <td style="
-                    padding:10px;
+            <td style="
+               padding:10px;
+               border:1px solid #ddd;
+             ">
+
+                <input
+                type="text"
+                value="${escapeHTML(student.nama)}"
+                placeholder="Nama siswa"
+
+                onchange="
+                    updateStudent(
+                        ${i},
+                        'nama',
+                        this.value
+                    )
+                "
+
+                style="
+                    width:100%;
+                    padding:8px;
                     border:1px solid #ddd;
-                ">
+                    border-radius:6px;
+                "
+             >
 
-                    <input
-                        type="text"
-                        value="${escapeHTML(student.kelas)}"
-                        placeholder="Kelas"
-
-                        onchange="
-                            updateStudent(
-                                ${i},
-                                'kelas',
-                                this.value
-                            )
-                        "
-
-                        style="
-                            width:70px;
-                            padding:8px;
-                            border:1px solid #ddd;
-                            border-radius:6px;
-                            text-align:center;
-                        "
-                    >
-
-                </td>
-
+            </td>
+        
         `;
 
 
