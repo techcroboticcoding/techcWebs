@@ -297,7 +297,7 @@ header h1{
 
         <i class="fa-solid fa-user-graduate blue"></i>
 
-        <h2 class="blue">
+        <h2 class="blue" id="totalStudents">
             0
         </h2>
 
@@ -680,6 +680,7 @@ function renderStudents() {
 
     tbody.innerHTML = '';
 
+    updateTotalStudents();
 
     for (let i = 0; i < MAX_STUDENTS; i++) {
 
@@ -1069,6 +1070,18 @@ function tambahSiswa() {
 
     }, 100);
 
+}
+
+function updateTotalStudents() {
+
+    const totalElement =
+        document.getElementById('totalStudents');
+
+    if (!totalElement) {
+        return;
+    }
+
+    totalElement.textContent = students.length;
 }
 
  /* =========================
