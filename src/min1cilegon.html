@@ -310,7 +310,7 @@ header h1{
 
         <i class="fa-solid fa-circle-check green"></i>
 
-        <h2 class="green">
+        <h2 class="green"   id="totalHadir">
             0
         </h2>
 
@@ -323,7 +323,7 @@ header h1{
 
         <i class="fa-solid fa-envelope orange"></i>
 
-        <h2 class="orange">
+        <h2 class="orange" id="totalIzin">
             0
         </h2>
 
@@ -336,7 +336,7 @@ header h1{
 
         <i class="fa-solid fa-notes-medical red"></i>
 
-        <h2 class="red">
+        <h2 class="red" id="totalSakit">
             0
         </h2>
 
@@ -349,7 +349,7 @@ header h1{
 
         <i class="fa-solid fa-circle-xmark red"></i>
 
-        <h2 class="red">
+        <h2 class="red" id="totalAlpa">
             0
         </h2>
 
@@ -520,6 +520,10 @@ header h1{
 
                 <th class="col-class">
                     Kelas
+                </th>
+
+                <th class="col-attendance">
+                  Kehadiran
                 </th>
 
                 <th>P1</th>
@@ -729,7 +733,7 @@ function renderStudents() {
 
         }
 
-        /* =========================
+/* =========================
    BARIS SISWA
 ========================= */
 
@@ -820,50 +824,52 @@ let row = `
                     padding:8px;
                     border:1px solid #ddd;
                     text-align:center;
-                ">
+                 ">
 
                     <select
-                        onchange="
-                            updateAttendance(
-                                ${i},
-                                ${p},
-                                this.value
-                            )
+                         onchange="
+                         updateKehadiran(
+                         ${i},
+                         this.value
+                        )
                         "
 
-                        style="
-                            padding:6px;
-                            border:1px solid #ddd;
-                            border-radius:6px;
-                        "
-                    >
+                         style="
+                         width:100%;
+                         padding:8px;
+                         border:1px solid #ddd;
+                         border-radius:7px;
+                         cursor:pointer;
+                 "
+                 >
 
                         <option value=""
-                            ${value === '' ? 'selected' : ''}>
-                            -
+                          ${!student.kehadiran ? 'selected' : ''}>
+                           Pilih
                         </option>
 
-                        <option value="H"
-                            ${value === 'H' ? 'selected' : ''}>
-                            H
+                        <option value="Hadir"
+                           ${student.kehadiran === 'Hadir' ? 'selected' : ''}>
+                           Hadir
                         </option>
 
-                        <option value="I"
-                            ${value === 'I' ? 'selected' : ''}>
-                            I
+                        <option value="Sakit"
+                           ${student.kehadiran === 'Sakit' ? 'selected' : ''}>
+                           Sakit
                         </option>
 
-                        <option value="S"
-                            ${value === 'S' ? 'selected' : ''}>
-                            S
+                        <option value="Izin"
+                           ${student.kehadiran === 'Izin' ? 'selected' : ''}>
+                           Izin
                         </option>
 
-                        <option value="A"
-                            ${value === 'A' ? 'selected' : ''}>
-                            A
+                        <option value="Alpa"
+                           ${student.kehadiran === 'Alpa' ? 'selected' : ''}>
+                           Alpa
                         </option>
 
-                    </select>
+                   </select>
+
 
                 </td>
 
@@ -1082,6 +1088,82 @@ function updateTotalStudents() {
     }
 
     totalElement.textContent = students.length;
+}
+
+function updateKehadiran(index, value) {
+
+    if (!students[index]) {
+        return;
+    }
+
+    students[index].kehadiran = value;
+
+    saveStudents();
+
+    updateKehadiranDashboard();
+
+    renderStudents();
+}
+
+function updateKehadiranDashboard() {
+
+    let hadir = 0;
+    let sakit = 0;
+    let izin = 0;
+    let alpa = 0;
+
+    students.forEach(function(student) {
+
+        switch (student.kehadiran) {
+
+            case 'Hadir':
+                hadir++;
+                break;
+
+            case 'Sakit':
+                sakit++;
+                break;
+
+            case 'Izin':
+                izin++;
+                break;
+
+            case 'Alpa':
+                alpa++;
+                break;
+
+        }
+
+    });
+
+    const hadirElement =
+        document.getElementById('totalHadir');
+
+    const sakitElement =
+        document.getElementById('totalSakit');
+
+    const izinElement =
+        document.getElementById('totalIzin');
+
+    const alpaElement =
+        document.getElementById('totalAlpa');
+
+
+    if (hadirElement) {
+        hadirElement.textContent = hadir;
+    }
+
+    if (sakitElement) {
+        sakitElement.textContent = sakit;
+    }
+
+    if (izinElement) {
+        izinElement.textContent = izin;
+    }
+
+    if (alpaElement) {
+        alpaElement.textContent = alpa;
+    }
 }
 
  /* =========================
