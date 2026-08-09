@@ -824,52 +824,50 @@ let row = `
                     padding:8px;
                     border:1px solid #ddd;
                     text-align:center;
-                 ">
+                ">
 
                     <select
-                         onchange="
-                         updateKehadiran(
-                         ${i},
-                         this.value
-                        )
+                        onchange="
+                            updateAttendance(
+                                ${i},
+                                ${p},
+                                this.value
+                            )
                         "
 
-                         style="
-                         width:100%;
-                         padding:8px;
-                         border:1px solid #ddd;
-                         border-radius:7px;
-                         cursor:pointer;
-                 "
-                 >
+                        style="
+                            padding:6px;
+                            border:1px solid #ddd;
+                            border-radius:6px;
+                        "
+                    >
 
                         <option value=""
-                          ${!student.kehadiran ? 'selected' : ''}>
-                           Pilih
+                            ${value === '' ? 'selected' : ''}>
+                            -
                         </option>
 
-                        <option value="Hadir"
-                           ${student.kehadiran === 'Hadir' ? 'selected' : ''}>
-                           Hadir
+                        <option value="H"
+                            ${value === 'H' ? 'selected' : ''}>
+                            H
                         </option>
 
-                        <option value="Sakit"
-                           ${student.kehadiran === 'Sakit' ? 'selected' : ''}>
-                           Sakit
+                        <option value="I"
+                            ${value === 'I' ? 'selected' : ''}>
+                            I
                         </option>
 
-                        <option value="Izin"
-                           ${student.kehadiran === 'Izin' ? 'selected' : ''}>
-                           Izin
+                        <option value="S"
+                            ${value === 'S' ? 'selected' : ''}>
+                            S
                         </option>
 
-                        <option value="Alpa"
-                           ${student.kehadiran === 'Alpa' ? 'selected' : ''}>
-                           Alpa
+                        <option value="A"
+                            ${value === 'A' ? 'selected' : ''}>
+                            A
                         </option>
 
-                   </select>
-
+                    </select>
 
                 </td>
 
