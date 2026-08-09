@@ -500,6 +500,7 @@ const MAX_STUDENTS = 30;
 
 let students = [];
 
+let deleteMode = false;
 
 /* =========================
    LOAD DATA SISWA
@@ -978,45 +979,29 @@ function tambahSiswa() {
    HAPUS SISWA
 ========================= */
 
-function hapusSiswa(index) {
-
-    // Cek apakah siswa tersedia
+ function hapusSiswa(index) {
     if (!students[index]) {
-
-        alert('Siswa tidak ditemukan.');
-
         return;
-
     }
 
-    // Ambil nama siswa
-    const nama =
-        students[index].nama ||
-        `siswa nomor ${index + 1}`;
+    const nama = students[index].nama || `siswa nomor ${index + 1}`;
 
-    // Konfirmasi penghapusan
     const yakin = confirm(
         `Apakah kamu yakin ingin menghapus ${nama}?`
     );
 
-    // Jika memilih Cancel
     if (!yakin) {
-
         return;
-
     }
 
-    // Hapus siswa berdasarkan index
     students.splice(index, 1);
 
-    // Simpan perubahan
     saveStudents();
 
-    // Tampilkan ulang tabel
-    renderStudents();
+    deleteMode = false;
 
+    renderStudents();
 }
- 
 
 /* =========================
    LOAD SAAT HALAMAN DIBUKA
