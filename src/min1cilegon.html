@@ -979,7 +979,29 @@ function tambahSiswa() {
    HAPUS SISWA
 ========================= */
 
- 
+ function hapusSiswa(index) {
+    if (!students[index]) {
+        return;
+    }
+
+    const nama = students[index].nama || `siswa nomor ${index + 1}`;
+
+    const yakin = confirm(
+        `Apakah kamu yakin ingin menghapus ${nama}?`
+    );
+
+    if (!yakin) {
+        return;
+    }
+
+    students.splice(index, 1);
+
+    saveStudents();
+
+    deleteMode = false;
+
+    renderStudents();
+}
 
 /* =========================
    LOAD SAAT HALAMAN DIBUKA
