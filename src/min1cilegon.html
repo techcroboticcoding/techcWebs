@@ -978,6 +978,7 @@ function tambahSiswa() {
  /* =========================
    HAPUS SISWA
 ========================= */
+
 function hapusSiswa(index) {
     if (!students[index]) {
         return;
@@ -1000,6 +1001,15 @@ function hapusSiswa(index) {
     deleteMode = false;
 
     renderStudents();
+}
+
+
+function aktifkanModeHapus() {
+
+    deleteMode = !deleteMode;
+
+    renderStudents();
+
 }
 
 /* =========================
