@@ -974,54 +974,49 @@ function tambahSiswa() {
 
 }
 
-
-/* =========================
+ /* =========================
    HAPUS SISWA
 ========================= */
 
-function hapusSiswa() {
+function hapusSiswa(index) {
 
-    if (students.length === 0) {
+    // Cek apakah siswa tersedia
+    if (!students[index]) {
 
-        alert(
-            'Belum ada siswa yang ditambahkan.'
-        );
+        alert('Siswa tidak ditemukan.');
 
         return;
 
     }
 
-
-    const siswa =
-        students[students.length - 1];
-
-
+    // Ambil nama siswa
     const nama =
-        siswa.nama || 'siswa terakhir';
+        students[index].nama ||
+        `siswa nomor ${index + 1}`;
 
+    // Konfirmasi penghapusan
+    const yakin = confirm(
+        `Apakah kamu yakin ingin menghapus ${nama}?`
+    );
 
-    const yakin =
-        confirm(
-            `Apakah kamu yakin ingin menghapus ${nama}?`
-        );
-
-
+    // Jika memilih Cancel
     if (!yakin) {
 
         return;
 
     }
 
+    // Hapus siswa berdasarkan index
+    students.splice(index, 1);
 
-    students.pop();
-
-
+    // Simpan perubahan
     saveStudents();
 
+    // Tampilkan ulang tabel
     renderStudents();
 
 }
-
+ 
 
 /* =========================
    LOAD SAAT HALAMAN DIBUKA
