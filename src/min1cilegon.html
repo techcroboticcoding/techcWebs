@@ -483,6 +483,7 @@ header h1{
 
             <button
                 type="button"
+                onclick="simpanSiswaKeDatabase()"
                 style="
                     background:#2563eb;
                     color:white;
@@ -602,6 +603,8 @@ box-shadow:0 10px 20px rgba(0,0,0,.08);
     </button>
 
 </div>
+
+
 
 <script>
 
@@ -1115,6 +1118,131 @@ function tambahSiswa() {
     }, 100);
 
 }
+
+/* =========================
+   SIMPAN SISWA KE LARAVEL
+========================= */
+
+async function simpanSiswaKeDatabase() {
+
+    // Ambil school_id
+    const schoolId =
+        localStorage.getItem('school_id');
+
+    if (!schoolId) {
+
+        alert('School ID tidak ditemukan.');
+
+        return;
+    }
+
+
+    // Ambil hanya siswa yang memiliki nama
+    const siswaTerdaftar =
+        students.filter(function(student) {
+
+            return student.nama &&
+                   student.nama.trim() !== '';
+
+        });
+
+
+    // Cek apakah ada siswa
+    if (siswaTerdaftar.length === 0) {
+
+        alert(
+            'Belum ada siswa yang terdaftar.'
+        );
+
+        return;
+    }
+
+
+    // Data yang akan dikirim
+    const data = {
+
+        school_id: schoolId,
+
+        students: siswaTerdaftar.map(function(student) {
+
+            return {
+
+                nama: student.nama.trim(),
+
+                kelas: student.kelas
+                    ? student.kelas.trim()
+                    : ''
+
+            };
+
+        })
+
+    };
+
+
+    try {
+
+        const response =
+            await fetch('/api/students/sync', {
+
+                method: 'POST',
+
+                headers: {
+
+                    'Content-Type':
+                        'application/json',
+
+                    'Accept':
+                        'application/json',
+
+                    'X-CSRF-TOKEN':
+                        document
+                        .querySelector(
+                            'meta[name="csrf-token"]'
+                        )
+                        ?.getAttribute('content')
+
+                },
+
+                body: JSON.stringify(data)
+
+            });
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                'Gagal menyimpan siswa.'
+            );
+
+        }
+
+
+        alert(
+            `Berhasil menyimpan ${result.total} siswa.`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            'Error:',
+            error
+        );
+
+        alert(
+            'Gagal menyimpan data siswa ke server.'
+        );
+
+    }
+
+}
+
 
 function updateTotalStudents() {
 
