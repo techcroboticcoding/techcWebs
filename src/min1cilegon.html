@@ -801,6 +801,38 @@ let row = `
              >
 
             </td>
+
+            
+            <td style="
+                padding:10px;
+                border:1px solid #ddd;
+                text-align:center;
+            ">
+
+                <input
+                    type="text"
+                    value="${escapeHTML(student.kelas || '')}"
+                    placeholder="Kelas"
+
+                    onchange="
+                        updateStudent(
+                            ${i},
+                            'kelas',
+                            this.value
+                        )
+                    "
+
+                    style="
+                        width:70px;
+                        padding:8px;
+                        border:1px solid #ddd;
+                        border-radius:6px;
+                        text-align:center;
+                    "
+                >
+
+             </td>
+
         
         `;
 
@@ -954,7 +986,8 @@ function updateStudent(
 
             nama: '',
             kelas: '',
-            absensi: []
+            absensi: [],
+            kehadiran: ''
 
         };
 
@@ -985,7 +1018,8 @@ function updateAttendance(
 
             nama: '',
             kelas: '',
-            absensi: []
+            absensi: [],
+            kehadiran:''
 
         };
 
