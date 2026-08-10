@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dashboard MTsN 1 kota Serang</title>
+<title>Dashboard MTsN 1 Kota Serang</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -192,6 +192,68 @@ header h1{
     color:#dc2626;
 }
 
+  /* =========================
+   TABEL ABSENSI
+========================= */
+
+.attendance-table {
+    width: 100%;
+    min-width: 1450px;
+    border-collapse: collapse;
+    background: white;
+}
+
+.attendance-table th {
+    background: #2563eb;
+    color: white;
+    padding: 14px 10px;
+    border: 1px solid #dbe3ef;
+    text-align: center;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.attendance-table td {
+    padding: 8px;
+    border: 1px solid #dbe3ef;
+    text-align: center;
+    height: 58px;
+}
+
+.attendance-table .col-no {
+    width: 55px;
+    min-width: 55px;
+}
+
+.attendance-table .col-name {
+    width: 250px;
+    min-width: 250px;
+    text-align: left;
+}
+
+.attendance-table .col-class {
+    width: 80px;
+    min-width: 80px;
+}
+
+.attendance-table th:not(.col-no):not(.col-name):not(.col-class) {
+    width: 60px;
+    min-width: 60px;
+}
+
+.attendance-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.attendance-table input {
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.attendance-table select {
+    cursor: pointer;
+}
+
 </style>
 
 </head>
@@ -235,7 +297,7 @@ header h1{
 
         <i class="fa-solid fa-user-graduate blue"></i>
 
-        <h2 class="blue">
+        <h2 class="blue" id="totalStudents">
             0
         </h2>
 
@@ -248,7 +310,7 @@ header h1{
 
         <i class="fa-solid fa-circle-check green"></i>
 
-        <h2 class="green">
+        <h2 class="green"   id="totalHadir">
             0
         </h2>
 
@@ -261,7 +323,7 @@ header h1{
 
         <i class="fa-solid fa-envelope orange"></i>
 
-        <h2 class="orange">
+        <h2 class="orange" id="totalIzin">
             0
         </h2>
 
@@ -274,7 +336,7 @@ header h1{
 
         <i class="fa-solid fa-notes-medical red"></i>
 
-        <h2 class="red">
+        <h2 class="red" id="totalSakit">
             0
         </h2>
 
@@ -287,7 +349,7 @@ header h1{
 
         <i class="fa-solid fa-circle-xmark red"></i>
 
-        <h2 class="red">
+        <h2 class="red" id="totalAlpa">
             0
         </h2>
 
@@ -378,126 +440,125 @@ header h1{
 
         </div>
 
-        <button style="
-            background:#2563eb;
-            color:white;
-            border:none;
-            padding:12px 20px;
-            border-radius:10px;
-            cursor:pointer;
-            font-weight:bold;
-        ">
-            Simpan Absensi
-        </button>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+            <button
+                type="button"
+                onclick="tambahSiswa()"
+                style="
+                    background:#16a34a;
+                    color:white;
+                    border:none;
+                    padding:12px 20px;
+                    border-radius:10px;
+                    cursor:pointer;
+                    font-weight:bold;
+                "
+             >
+                + Tambah Siswa
+            </button>
+
+
+            <button
+                  type="button"
+                  onclick="aktifkanModeHapus()"
+                  style="
+                  background:#dc2626;
+                  color:white;
+                  border:none;
+                  padding:14px 22px;
+                  border-radius:10px;
+                  cursor:pointer;
+                  font-weight:bold;
+                  font-size:16px;
+                  transition:0.2s;
+                 "
+                  onmouseover="this.style.background='#b91c1c'"
+                 onmouseout="this.style.background='#dc2626'"
+                 >
+                <i class="fa-solid fa-trash"></i>
+                  Hapus Siswa
+            </button>
+
+            <button
+                type="button"
+                style="
+                    background:#2563eb;
+                    color:white;
+                    border:none;
+                    padding:12px 20px;
+                    border-radius:10px;
+                    cursor:pointer;
+                    font-weight:bold;
+                "
+            >
+                Simpan Absensi
+            </button>
+
+        </div>
 
     </div>
 
-    <div style="overflow-x:auto;">
+         <div style="
+    overflow-x:auto;
+    width:100%;
+">
 
-        <table style="width:100%;border-collapse:collapse;min-width:1700px;">
+    <table class="attendance-table">
 
-            <thead>
 
-                <tr style="background:#2563eb;color:white;">
+        <thead>
 
-                    <th style="padding:12px;border:1px solid #ddd;width:60px;">No</th>
+            <tr style="background:#2563eb;color:white;">
 
-                    <th style="padding:12px;border:1px solid #ddd;width:260px;">Nama</th>
+                <th rowspan="2">No</th>
 
-                    <th style="padding:12px;border:1px solid #ddd;width:90px;">Kelas</th>
+                <th rowspan="2">Nama</th>
 
-                        <th>P1</th>
-                        <th>P2</th>
-                        <th>P3</th>
-                        <th>P4</th>
-                        <th>P5</th>
-                        <th>P6</th>
-                        <th>P7</th>
-                        <th>P8</th>
-                        <th>P9</th>
-                        <th>P10</th>
-                        <th>P11</th>
-                        <th>P12</th>
-                        <th>P13</th>
-                        <th>P14</th>
-                        <th>P15</th>
-                        <th>P16</th>
-                        <th>P17</th>
-                        <th>P18</th>
+                <th rowspan="2">Kelas</th>
 
-                </tr>
+                <th colspan="18">
+                    Kehadiran
+                </th>
 
-            </thead>
+            </tr>
 
-           <tbody>
+            <tr style="background:#2563eb;color:white;">
 
-                <tr><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <th>P1</th>
+                <th>P2</th>
+                <th>P3</th>
+                <th>P4</th>
+                <th>P5</th>
+                <th>P6</th>
+                <th>P7</th>
+                <th>P8</th>
+                <th>P9</th>
+                <th>P10</th>
+                <th>P11</th>
+                <th>P12</th>
+                <th>P13</th>
+                <th>P14</th>
+                <th>P15</th>
+                <th>P16</th>
+                <th>P17</th>
+                <th>P18</th>      
 
-                <tr><td>2</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            </tr>
 
-                <tr><td>3</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </thead>
 
-                <tr><td>4</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
-                <tr><td>5</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tbody id="studentTableBody">
+        </tbody>
 
-                <tr><td>6</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>9</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>11</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>12</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>13</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>14</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>15</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>16</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>17</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>18</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>19</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>20</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>21</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>22</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>23</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>24</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>25</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>26</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>27</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>28</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>29</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-                <tr><td>30</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-            </tbody>
-
-        </table>
+    </table>
 
     </div>
 
 </div>
+
 
 <!-- ==========================
      FOOTER DASHBOARD
@@ -527,6 +588,673 @@ box-shadow:0 10px 20px rgba(0,0,0,.08);
 </footer>
 
 </div>
+
+<div class="student-toolbar">
+
+    <div>
+        <h2>Data Pelajar</h2>
+        <p>Kelola data siswa MTsN 1 kota Serang</p>
+    </div>
+
+    <button onclick="bukaFormSiswa()" class="btn-tambah">
+        <i class="fa-solid fa-user-plus"></i>
+        Tambah Siswa
+    </button>
+
+</div>
+
+<script>
+
+const MAX_STUDENTS = 30;
+
+let students = [];
+
+let deleteMode = false;
+
+/* =========================
+   LOAD DATA SISWA
+========================= */
+
+function loadStudents() {
+
+    const savedStudents =
+        localStorage.getItem('min1cilegon_students');
+
+    if (savedStudents) {
+
+        try {
+
+            students = JSON.parse(savedStudents);
+
+        } catch (error) {
+
+            console.error(
+                'Data siswa rusak:',
+                error
+            );
+
+            students = [];
+
+        }
+
+    } else {
+
+        students = [];
+
+    }
+
+    renderStudents();
+
+}
+
+
+/* =========================
+   SIMPAN DATA
+========================= */
+
+function saveStudents() {
+
+    localStorage.setItem(
+        'min1cilegon_students',
+        JSON.stringify(students)
+    );
+
+}
+
+
+/* =========================
+   RENDER TABEL
+========================= */
+
+function renderStudents() {
+
+    const tbody =
+        document.getElementById(
+            'studentTableBody'
+        );
+
+    if (!tbody) {
+
+        console.error(
+            'studentTableBody tidak ditemukan'
+        );
+
+        return;
+
+    }
+
+
+    tbody.innerHTML = '';
+
+    updateTotalStudents();
+
+    for (let i = 0; i < MAX_STUDENTS; i++) {
+
+        const student =
+            students[i] || null;
+
+
+        /* =========================
+           BARIS KOSONG
+        ========================= */
+
+        if (!student) {
+
+            tbody.innerHTML += `
+
+                <tr>
+
+                    <td style="
+                        padding:10px;
+                        border:1px solid #ddd;
+                        text-align:center;
+                        color:#999;
+                    ">
+                        ${i + 1}
+                    </td>
+
+                    <td style="
+                        padding:10px;
+                        border:1px solid #ddd;
+                    ">
+                    </td>
+
+                    <td style="
+                        padding:10px;
+                        border:1px solid #ddd;
+                    ">
+                    </td>
+
+                    ${buatKolomAbsensiKosong()}
+
+                </tr>
+
+            `;
+
+            continue;
+
+        }
+
+/* =========================
+   BARIS SISWA
+========================= */
+
+let row = `
+
+    <tr>
+
+           <td style="
+                padding:10px;
+                border:1px solid #ddd;
+                text-align:center;
+             ">
+
+               ${
+                  deleteMode
+                  ? `
+                    <button
+                        type="button"
+                        onclick="hapusSiswa(${i})"
+                        style="
+                            background:#dc2626;
+                            color:white;
+                            border:none;
+                            width:35px;
+                            height:35px;
+                            border-radius:8px;
+                            cursor:pointer;
+                            font-size:16px;
+                        "
+                        title="Hapus siswa"
+                     >
+                        🗑️
+                    </button>
+                 `
+                 : i + 1
+                }
+
+            </td>
+
+
+            <td style="
+               padding:10px;
+               border:1px solid #ddd;
+               width:300px;
+                min-width:300px;
+             ">
+
+                <input
+                type="text"
+                value="${escapeHTML(student.nama)}"
+                placeholder="Nama siswa"
+
+                onchange="
+                    updateStudent(
+                        ${i},
+                        'nama',
+                        this.value
+                    )
+                "
+
+                style="
+                    width:100%;
+                    padding:8px;
+                    border:1px solid #ddd;
+                    border-radius:6px;
+                "
+             >
+
+            </td>
+
+            
+            <td style="
+                padding:10px;
+                border:1px solid #ddd;
+                text-align:center;
+            ">
+
+                <input
+                    type="text"
+                    value="${escapeHTML(student.kelas || '')}"
+                    placeholder="Kelas"
+
+                    onchange="
+                        updateStudent(
+                            ${i},
+                            'kelas',
+                            this.value
+                        )
+                    "
+
+                    style="
+                        width:70px;
+                        padding:8px;
+                        border:1px solid #ddd;
+                        border-radius:6px;
+                        text-align:center;
+                    "
+                >
+
+             </td>
+
+        
+        `;
+
+
+        /* =========================
+           P1 - P18
+        ========================= */
+
+        for (let p = 0; p < 18; p++) {
+
+            const value =
+                student.absensi &&
+                student.absensi[p]
+                    ? student.absensi[p]
+                    : '';
+
+
+            row += `
+
+                <td style="
+                    padding:8px;
+                    border:1px solid #ddd;
+                    text-align:center;
+                ">
+
+                    <select
+                        onchange="
+                            updateAttendance(
+                                ${i},
+                                ${p},
+                                this.value
+                            )
+                        "
+
+                        style="
+                            padding:6px;
+                            border:1px solid #ddd;
+                            border-radius:6px;
+                        "
+                    >
+
+                        <option value=""
+                            ${value === '' ? 'selected' : ''}>
+                            -
+                        </option>
+
+                        <option value="H"
+                            ${value === 'H' ? 'selected' : ''}>
+                            H
+                        </option>
+
+                        <option value="I"
+                            ${value === 'I' ? 'selected' : ''}>
+                            I
+                        </option>
+
+                        <option value="S"
+                            ${value === 'S' ? 'selected' : ''}>
+                            S
+                        </option>
+
+                        <option value="A"
+                            ${value === 'A' ? 'selected' : ''}>
+                            A
+                        </option>
+
+                    </select>
+
+                </td>
+
+            `;
+
+        }
+
+
+        row += `
+
+            </tr>
+
+        `;
+
+
+        tbody.innerHTML += row;
+
+    }
+
+}
+
+
+/* =========================
+   KOLOM ABSENSI KOSONG
+========================= */
+
+function buatKolomAbsensiKosong() {
+
+    let html = '';
+
+
+    for (let i = 0; i < 18; i++) {
+
+        html += `
+
+            <td style="
+                padding:8px;
+                border:1px solid #ddd;
+                text-align:center;
+                color:#aaa;
+            ">
+                -
+            </td>
+
+        `;
+
+    }
+
+
+    return html;
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHTML(value) {
+
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+}
+
+
+/* =========================
+   UPDATE NAMA / KELAS
+========================= */
+
+function updateStudent(
+    index,
+    field,
+    value
+) {
+
+    if (!students[index]) {
+
+        students[index] = {
+
+            nama: '',
+            kelas: '',
+            absensi: [],
+            kehadiran: ''
+
+        };
+
+    }
+
+
+    students[index][field] = value;
+
+
+    saveStudents();
+
+}
+
+
+/* =========================
+   UPDATE ABSENSI
+========================= */
+
+function updateAttendance(
+    index,
+    pertemuan,
+    value
+) {
+
+    if (!students[index]) {
+
+        students[index] = {
+
+            nama: '',
+            kelas: '',
+            absensi: [],
+            kehadiran:''
+
+        };
+
+    }
+
+
+    if (!students[index].absensi) {
+
+        students[index].absensi = [];
+
+    }
+
+
+    students[index]
+        .absensi[pertemuan] = value;
+
+
+    saveStudents();
+
+}
+
+
+/* =========================
+   TAMBAH SISWA
+========================= */
+
+function tambahSiswa() {
+
+    if (students.length >= MAX_STUDENTS) {
+
+        alert(
+            'Maksimal 30 siswa sudah tercapai.'
+        );
+
+        return;
+
+    }
+
+
+    students.push({
+
+        nama: '',
+
+        kelas: '',
+
+        kehadiran:'',
+
+        absensi: []
+
+    });
+
+
+    saveStudents();
+
+    renderStudents();
+
+
+    /*
+       Scroll otomatis
+       ke baris siswa baru
+    */
+
+    setTimeout(() => {
+
+        const tbody =
+            document.getElementById(
+                'studentTableBody'
+            );
+
+        if (tbody) {
+
+            const rows =
+                tbody.querySelectorAll('tr');
+
+            const lastRow =
+                rows[students.length - 1];
+
+            if (lastRow) {
+
+                lastRow.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+            }
+
+        }
+
+    }, 100);
+
+}
+
+function updateTotalStudents() {
+
+    const totalElement =
+        document.getElementById('totalStudents');
+
+    if (!totalElement) {
+        return;
+    }
+
+    totalElement.textContent = students.length;
+}
+
+function updateKehadiran(index, value) {
+
+    if (!students[index]) {
+        return;
+    }
+
+    students[index].kehadiran = value;
+
+    saveStudents();
+
+    updateKehadiranDashboard();
+
+    renderStudents();
+}
+
+function updateKehadiranDashboard() {
+
+    let hadir = 0;
+    let sakit = 0;
+    let izin = 0;
+    let alpa = 0;
+
+    students.forEach(function(student) {
+
+        switch (student.kehadiran) {
+
+            case 'Hadir':
+                hadir++;
+                break;
+
+            case 'Sakit':
+                sakit++;
+                break;
+
+            case 'Izin':
+                izin++;
+                break;
+
+            case 'Alpa':
+                alpa++;
+                break;
+
+        }
+
+    });
+
+    const hadirElement =
+        document.getElementById('totalHadir');
+
+    const sakitElement =
+        document.getElementById('totalSakit');
+
+    const izinElement =
+        document.getElementById('totalIzin');
+
+    const alpaElement =
+        document.getElementById('totalAlpa');
+
+
+    if (hadirElement) {
+        hadirElement.textContent = hadir;
+    }
+
+    if (sakitElement) {
+        sakitElement.textContent = sakit;
+    }
+
+    if (izinElement) {
+        izinElement.textContent = izin;
+    }
+
+    if (alpaElement) {
+        alpaElement.textContent = alpa;
+    }
+}
+
+ /* =========================
+   HAPUS SISWA
+========================= */
+
+function hapusSiswa(index) {
+    if (!students[index]) {
+        return;
+    }
+
+    const nama = students[index].nama || `siswa nomor ${index + 1}`;
+
+    const yakin = confirm(
+        `Apakah kamu yakin ingin menghapus ${nama}?`
+    );
+
+    if (!yakin) {
+        return;
+    }
+
+    students.splice(index, 1);
+
+    saveStudents();
+
+    deleteMode = false;
+
+    renderStudents();
+}
+
+
+function aktifkanModeHapus() {
+
+    deleteMode = !deleteMode;
+
+    renderStudents();
+
+}
+
+/* =========================
+   LOAD SAAT HALAMAN DIBUKA
+========================= */
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function() {
+
+        loadStudents();
+
+    }
+);
+
+</script>
 
 </body>
 
