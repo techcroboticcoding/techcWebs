@@ -346,6 +346,8 @@ if (!token) {
 
   <!-- SCRIPT -->
   <script>
+
+
 const PRODUCTION_API_BASE = 'https://api.tech-c.my.id/api';
 const LOCAL_API_BASE = 'http://127.0.0.1:8000/api';
 
@@ -519,7 +521,96 @@ const API_BASE = getApiBase();
   }
 
 
+  function getLocalStudentCount(schoolName) {
 
+    console.log('Mengecek sekolah:', schoolName);
+
+
+    /* =========================
+       NORMALISASI NAMA SEKOLAH
+    ========================= */
+
+    const name =
+        String(schoolName || '')
+            .trim()
+            .toLowerCase();
+
+
+    /* =========================
+       MIN 1 CILEGON
+    ========================= */
+
+    if (name === 'min 1 cilegon') {
+
+        const data =
+            localStorage.getItem(
+                'min1cilegon_students'
+            );
+
+
+        console.log(
+            'Data MIN 1 Cilegon:',
+            data
+        );
+
+
+        if (!data) {
+
+            console.log(
+                'Data min1cilegon_students tidak ditemukan'
+            );
+
+            return 0;
+
+        }
+
+
+        try {
+
+            const students =
+                JSON.parse(data);
+
+
+            const jumlah =
+                students.filter(function(student) {
+
+                    return student &&
+                           student.nama &&
+                           String(student.nama).trim() !== '';
+
+                }).length;
+
+
+            console.log(
+                'Jumlah siswa MIN 1 Cilegon:',
+                jumlah
+            );
+
+
+            return jumlah;
+
+
+        } catch (error) {
+
+            console.error(
+                'Gagal membaca data MIN 1 Cilegon:',
+                error
+            );
+
+            return 0;
+
+        }
+
+    }
+
+
+    /* =========================
+       SEKOLAH LAIN
+    ========================= */
+
+    return 0;
+
+  }
 
 
   function renderSekolah(schools) {
@@ -549,81 +640,10 @@ const API_BASE = getApiBase();
       const name = getSchoolName(school);
       const logo = getSchoolLogo(school);
       const status = getSchoolStatus(school);
-      
+      const totalSiswa = getLocalStudentCount(name);
+           
 
-      let totalSiswa =
-        school.total_siswa ||
-        school.totalPelajar ||
-        school.students_count ||
-      0;
-
-    if (String(school.id) === '10') {
-
-      const dataSiswa =
-        localStorage.getItem(
-            'min1cilegon_students'
-        );
-
-
-      console.log(
-        'MIN 1 Cilegon ditemukan'
-      );
-
-      console.log(
-        'ID sekolah:',
-        school.id
-      );
-
-      console.log(
-        'Data siswa:',
-        dataSiswa
-      );
-
-
-      if (dataSiswa) {
-
-        try {
-
-          const siswa =
-            JSON.parse(dataSiswa);
-
-
-            totalSiswa =
-            siswa.filter(function(student) {
-
-              return student &&
-              student.nama &&
-              student.nama.trim() !== '';
-
-            }).length;
-
-
-            console.log(
-              'TOTAL SISWA MIN 1:',
-                totalSiswa
-            );
-
-
-        } catch (error) {
-
-                console.error(
-                    'Gagal membaca data siswa:',
-                    error
-                );
-
-            }
-
-        } else {
-
-          console.log(
-            'localStorage min1cilegon_students tidak ditemukan'
-          );
-
-        }
-
-    }
-
-      
+            
       const safeName = escapeHtml(name);
       const safeStatus = escapeHtml(status);
 
