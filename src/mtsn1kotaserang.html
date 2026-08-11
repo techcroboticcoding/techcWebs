@@ -615,6 +615,36 @@ let deleteMode = false;
    LOAD DATA SISWA
 ========================= */
 
+function loadStudents() {
+
+    const savedStudents =
+        localStorage.getItem('mtsn1kotaserang_students');
+
+    if (savedStudents) {
+
+        try {
+
+            students = JSON.parse(savedStudents);
+
+        } catch (error) {
+
+            console.error(
+                'Data siswa rusak:',
+                error
+            );
+
+            students = [];
+
+        }
+
+    } else {
+
+        students = [];
+
+    }
+
+    renderStudents();
+}
 
 /* =========================
    SIMPAN DATA
