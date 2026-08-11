@@ -535,7 +535,10 @@ const API_BASE = getApiBase();
             "mtsn2cilegon_students",
         
         "MTsN 3 Cilegon":
-            "mtsn3cilegon_students"
+            "mtsn3cilegon_students",
+
+        "SD Bosowa":
+            "sdbosowa_students"
 
     };
 
@@ -839,6 +842,11 @@ function pilihSekolah(id, encodedName) {
         case "MTsN 3 Cilegon":
             window.location.href = "mtsn3cilegon.html";
             break;
+
+        case "SD Bosowa":
+            window.location.href = "sdbosowa.html";
+            break;
+
 
         default:
             alert("Halaman sekolah belum tersedia.");
