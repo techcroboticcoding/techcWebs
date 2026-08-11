@@ -539,7 +539,54 @@ const API_BASE = getApiBase();
       const name = getSchoolName(school);
       const logo = getSchoolLogo(school);
       const status = getSchoolStatus(school);
-      const totalSiswa = school.total_siswa || school.totalPelajar || school.students_count || 0;
+      
+      let totalSiswa =
+        school.total_siswa ||
+        school.totalPelajar ||
+        school.students_count ||
+        0;
+
+
+        /* =========================
+          JUMLAH SISWA MIN 1 CILEGON
+        ========================= */
+
+        if (name.toLowerCase() === 'min 1 cilegon') {
+
+            const savedStudents =
+                localStorage.getItem(
+                    'min1cilegon_students'
+                );
+
+            if (savedStudents) {
+
+                try {
+
+                    const students =
+                        JSON.parse(savedStudents);
+
+                    totalSiswa =
+                        students.filter(function(student) {
+
+                            return student &&
+                                  student.nama &&
+                                  student.nama.trim() !== '';
+
+                        }).length;
+
+                } catch (error) {
+
+                    console.error(
+                        'Data siswa MIN 1 Cilegon rusak:',
+                        error
+                    );
+
+                }
+
+            }
+
+        }
+
       const safeName = escapeHtml(name);
       const safeStatus = escapeHtml(status);
 
