@@ -519,6 +519,12 @@ const API_BASE = getApiBase();
   }
 
   function renderSekolah(schools) {
+
+    console.log(
+      'DATA MIN 1:',
+      localStorage.getItem('min1cilegon_students')
+    );
+
     const container = document.getElementById('schoolList');
     const emptyState = document.getElementById('emptyState');
 
@@ -551,39 +557,65 @@ const API_BASE = getApiBase();
           JUMLAH SISWA MIN 1 CILEGON
         ========================= */
 
-        if (name.trim().toLowerCase() === 'min 1 cilegon') { 
+        if (name && name.toLowerCase().includes('min 1 cilegon')) { 
 
-            const dataSiswa =
-                localStorage.getItem('min1cilegon_students');
+          const dataSiswa =
+            localStorage.getItem(
+              'min1cilegon_students'
+            );
+
+            console.log(
+              'Nama sekolah:',
+              name
+            );
+
+            console.log(
+              'Data localStorage MIN 1:',
+              dataSiswa
+            );
+
 
             if (dataSiswa) {
 
-                try {
+              try {
 
-                    const students =
-                        JSON.parse(dataSiswa);
+                const siswa =
+                  JSON.parse(dataSiswa);
 
-                    totalSiswa =
-                        students.filter(function(student) {
+                  console.log(
+                    'Jumlah data siswa:',
+                    siswa.length
+                  );
 
-                            return student &&
-                                  student.nama &&
-                                  student.nama.trim() !== '';
 
-                        }).length;
+                  totalSiswa =
+                  siswa.filter(function(student) {
 
-                } catch (error) {
+                    return student &&
+                    student.nama &&
+                    student.nama.trim() !== '';
 
-                    console.error(
-                        'Data siswa MIN 1 Cilegon rusak:',
-                        error
-                    );
+                  }).length;
 
-                }
+
+                  console.log(
+                    'Total siswa MIN 1:',
+                      totalSiswa
+                  );
+
+              } catch (error) {
+
+                  console.error(
+                    'Gagal membaca data siswa:',
+                    error
+                  );
+
+              }
 
             }
 
         }
+
 
       const safeName = escapeHtml(name);
       const safeStatus = escapeHtml(status);
