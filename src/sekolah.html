@@ -557,41 +557,72 @@ const API_BASE = getApiBase();
         school.students_count ||
       0;
 
-      if (school.id === 10) {
+    if (String(school.id) === '10') {
 
-        const dataSiswa =
-          localStorage.getItem(
-          'min1cilegon_students'
+      const dataSiswa =
+        localStorage.getItem(
+            'min1cilegon_students'
         );
 
-          if (dataSiswa) {
 
-            try {
+      console.log(
+        'MIN 1 Cilegon ditemukan'
+      );
 
-              const siswa =
-                JSON.parse(dataSiswa);
+      console.log(
+        'ID sekolah:',
+        school.id
+      );
 
-                totalSiswa =
-              siswa.filter(function(student) {
+      console.log(
+        'Data siswa:',
+        dataSiswa
+      );
 
-                return student &&
-                  student.nama &&
-                  student.nama.trim() !== '';
 
-              }).length;
+      if (dataSiswa) {
 
-            } catch (error) {
+        try {
 
-                  console.error(
-                      'Gagal membaca data siswa MIN 1 Cilegon:',
-                      error
-                  );
+          const siswa =
+            JSON.parse(dataSiswa);
 
-              }
 
-          }
+            totalSiswa =
+            siswa.filter(function(student) {
 
-      }
+              return student &&
+              student.nama &&
+              student.nama.trim() !== '';
+
+            }).length;
+
+
+            console.log(
+              'TOTAL SISWA MIN 1:',
+                totalSiswa
+            );
+
+
+        } catch (error) {
+
+                console.error(
+                    'Gagal membaca data siswa:',
+                    error
+                );
+
+            }
+
+        } else {
+
+          console.log(
+            'localStorage min1cilegon_students tidak ditemukan'
+          );
+
+        }
+
+    }
+
       
       const safeName = escapeHtml(name);
       const safeStatus = escapeHtml(status);
