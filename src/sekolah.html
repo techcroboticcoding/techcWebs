@@ -518,6 +518,31 @@ const API_BASE = getApiBase();
     }
   }
 
+
+  function getLocalStudentCount(schoolName) {
+
+    const keys = {
+      "MIN 1 Cilegon": "min1cilegon_students",
+      "MTSN 1 Kota Serang": "mtsn1kotaserang_students",
+      "MTSN 2 Cilegon": "mtsn2cilegon_students"
+    };
+
+    const key = keys[schoolName];
+
+    if (!key) return 0;
+
+    const data = localStorage.getItem(key);
+
+    if (!data) return 0;
+
+    try {
+      return JSON.parse(data).filter(s => s && s.nama && s.nama.trim() !== "").length;
+    } catch {
+      return 0;
+    }
+  }
+
+
   function renderSekolah(schools) {
 
     console.log(
@@ -545,78 +570,9 @@ const API_BASE = getApiBase();
       const name = getSchoolName(school);
       const logo = getSchoolLogo(school);
       const status = getSchoolStatus(school);
+      const totalSiswa = getLocalStudentCount(name);
       
-      let totalSiswa =
-        school.total_siswa ||
-        school.totalPelajar ||
-        school.students_count ||
-        0;
-
-
-        /* =========================
-          JUMLAH SISWA MIN 1 CILEGON
-        ========================= */
-
-        if (name && name.toLowerCase().includes('min 1 cilegon')) { 
-
-          const dataSiswa =
-            localStorage.getItem(
-              'min1cilegon_students'
-            );
-
-            console.log(
-              'Nama sekolah:',
-              name
-            );
-
-            console.log(
-              'Data localStorage MIN 1:',
-              dataSiswa
-            );
-
-
-            if (dataSiswa) {
-
-              try {
-
-                const siswa =
-                  JSON.parse(dataSiswa);
-
-                  console.log(
-                    'Jumlah data siswa:',
-                    siswa.length
-                  );
-
-
-                  totalSiswa =
-                  siswa.filter(function(student) {
-
-                    return student &&
-                    student.nama &&
-                    student.nama.trim() !== '';
-
-                  }).length;
-
-
-                  console.log(
-                    'Total siswa MIN 1:',
-                      totalSiswa
-                  );
-
-              } catch (error) {
-
-                  console.error(
-                    'Gagal membaca data siswa:',
-                    error
-                  );
-
-              }
-
-            }
-
-        }
-
-
+      
       const safeName = escapeHtml(name);
       const safeStatus = escapeHtml(status);
 
