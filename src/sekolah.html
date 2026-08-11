@@ -541,8 +541,10 @@ const API_BASE = getApiBase();
             "sdbosowa_students",
 
         "SD Daar El-Latif":
-            "sd-daar-el-latif_students"    
-
+            "sd-daar-el-latif_students", 
+            
+        "SD Peradaban":
+            "sdperadaban_students",
     };
 
     const key = storageKeys[schoolName];
@@ -854,6 +856,9 @@ function pilihSekolah(id, encodedName) {
             window.location.href = "sd-daar-el-latif.html";
             break;
 
+        case "SD Peradaban":
+            window.location.href = "sdperadaban.html";
+            break;
 
         default:
             alert("Halaman sekolah belum tersedia.");
