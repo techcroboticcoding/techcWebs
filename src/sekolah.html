@@ -523,93 +523,54 @@ const API_BASE = getApiBase();
 
   function getLocalStudentCount(schoolName) {
 
-    console.log('Mengecek sekolah:', schoolName);
+    const storageKeys = {
 
+        "MIN 1 Cilegon":
+            "min1cilegon_students",
 
-    /* =========================
-       NORMALISASI NAMA SEKOLAH
-    ========================= */
+        "MTsN 1 Kota Serang":
+            "mtsn1kotaserang_students",
 
-    const name =
-        String(schoolName || '')
-            .trim()
-            .toLowerCase();
+        "MTsN 2 Cilegon":
+            "mtsn2cilegon_students"
 
+    };
 
-    /* =========================
-       MIN 1 CILEGON
-    ========================= */
+    const key = storageKeys[schoolName];
 
-    if (name === 'min 1 cilegon') {
-
-        const data =
-            localStorage.getItem(
-                'min1cilegon_students'
-            );
-
-
-        console.log(
-            'Data MIN 1 Cilegon:',
-            data
-        );
-
-
-        if (!data) {
-
-            console.log(
-                'Data min1cilegon_students tidak ditemukan'
-            );
-
-            return 0;
-
-        }
-
-
-        try {
-
-            const students =
-                JSON.parse(data);
-
-
-            const jumlah =
-                students.filter(function(student) {
-
-                    return student &&
-                           student.nama &&
-                           String(student.nama).trim() !== '';
-
-                }).length;
-
-
-            console.log(
-                'Jumlah siswa MIN 1 Cilegon:',
-                jumlah
-            );
-
-
-            return jumlah;
-
-
-        } catch (error) {
-
-            console.error(
-                'Gagal membaca data MIN 1 Cilegon:',
-                error
-            );
-
-            return 0;
-
-        }
-
+    if (!key) {
+        return 0;
     }
 
+    const data =
+        localStorage.getItem(key);
 
-    /* =========================
-       SEKOLAH LAIN
-    ========================= */
+    if (!data) {
+        return 0;
+    }
 
-    return 0;
+    try {
 
+        const students =
+            JSON.parse(data);
+
+        return students.filter(function(student) {
+
+            return student &&
+                   student.nama &&
+                   student.nama.trim() !== '';
+
+        }).length;
+
+    } catch (error) {
+
+        console.error(
+            'Gagal membaca data siswa:',
+            error
+        );
+
+        return 0;
+    }
   }
 
 
