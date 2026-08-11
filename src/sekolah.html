@@ -553,15 +553,15 @@ const API_BASE = getApiBase();
 
         if (name.trim().toLowerCase() === 'min 1 cilegon') { 
 
-            const savedStudents =
+            const dataSiswa =
                 localStorage.getItem('min1cilegon_students');
 
-            if (savedStudents) {
+            if (dataSiswa) {
 
                 try {
 
                     const students =
-                        JSON.parse(savedStudents);
+                        JSON.parse(dataSiswa);
 
                     totalSiswa =
                         students.filter(function(student) {
