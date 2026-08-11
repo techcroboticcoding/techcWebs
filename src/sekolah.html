@@ -551,12 +551,10 @@ const API_BASE = getApiBase();
           JUMLAH SISWA MIN 1 CILEGON
         ========================= */
 
-        if (name.trim().toLowerCase().includes('min 1 cilegon')) { 
+        if (name.trim().toLowerCase() === 'min 1 cilegon') { 
 
             const savedStudents =
-                localStorage.getItem(
-                    'min1cilegon_students'
-                );
+                localStorage.getItem('min1cilegon_students');
 
             if (savedStudents) {
 
