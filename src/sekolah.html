@@ -544,7 +544,10 @@ const API_BASE = getApiBase();
             "sd-daar-el-latif_students", 
             
         "SD Peradaban":
-            "sdperadaban_students"
+            "sdperadaban_students",
+
+        "SD Al Hanif":
+            "sd-al-hanif_students"
     };
 
     const key = storageKeys[schoolName];
@@ -858,6 +861,10 @@ function pilihSekolah(id, encodedName) {
 
         case "SD Peradaban":
             window.location.href = "sdperadaban.html";
+            break;
+
+        case "SD Al Hanif":
+            window.location.href = "sd-al-hanif.html";
             break;
 
         default:
