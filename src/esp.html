@@ -351,6 +351,10 @@ footer{text-align:center;padding:30px;color:#64748b}
     box-shadow: 0 5px 12px rgba(37, 99, 235, 0.25);
 }
 
+#materiPage {
+    display: none;
+}
+
 </style>
 </head>
 <body>
@@ -366,35 +370,64 @@ footer{text-align:center;padding:30px;color:#64748b}
     Mulai Belajar
 </a>
 </section>
-<div class="container">
-<aside class="sidebar">
-<h3>Progress</h3>
-<div class="progress"><div id="bar"></div></div>
-<p>0% selesai</p>
-<h3>Daftar Materi</h3>
+
 <div
-    class="lesson active"
-    onclick="bukaMateri(1)"
+    class="container"
+    id="materiPage"
 >
-    1. Pengenalan ESP32
-</div>
-<div class="lesson" onclick="bukaMateri(2)">
-    2. Mengenal Board
-</div>
 
-<div class="lesson" onclick="bukaMateri(3)">
-    3. Install PictoBlox
-</div>
+    <aside class="sidebar">
 
-<div class="lesson" onclick="bukaMateri(4)">
-    4. Install Driver
-</div>
+        <h3>Progress</h3>
 
-<div class="lesson" onclick="bukaMateri(5)">
-    5. Koneksi Board
-</div>
-<p><b>Part 1 berakhir di sini.</b></p>
-</aside>
+        <div class="progress">
+            <div id="bar"></div>
+        </div>
+
+        <p>0% selesai</p>
+
+        <h3>Daftar Materi</h3>
+
+        <div
+            class="lesson"
+            onclick="bukaMateri(1)"
+        >
+            1. Pengenalan ESP32
+        </div>
+
+        <div
+            class="lesson"
+            onclick="bukaMateri(2)"
+        >
+            2. Mengenal Board
+        </div>
+
+        <div
+            class="lesson"
+            onclick="bukaMateri(3)"
+        >
+            3. Install PictoBlox
+        </div>
+
+        <div
+            class="lesson"
+            onclick="bukaMateri(4)"
+        >
+            4. Install Driver
+        </div>
+
+        <div
+            class="lesson"
+            onclick="bukaMateri(5)"
+        >
+            5. Koneksi Board
+        </div>
+
+        <p>
+            <b>Part 1 berakhir di sini.</b>
+        </p>
+
+    </aside>
 
 <main
     class="content"
@@ -974,39 +1007,42 @@ footer{text-align:center;padding:30px;color:#64748b}
 
 function mulaiBelajar() {
 
-    // Sembunyikan dashboard
-    document.getElementById('dashboardCourse').style.display = 'none';
+    // Sembunyikan halaman awal
+    document.getElementById(
+        'dashboardCourse'
+    ).style.display = 'none';
 
-    // Tampilkan materi
-    const content =
-        document.getElementById('materiContent');
 
-    content.style.display = 'block';
+    // Tampilkan halaman materi
+    const materiPage =
+        document.getElementById(
+            'materiPage'
+        );
 
-    // Tandai materi nomor 1 sebagai aktif
+    materiPage.style.display = 'grid';
+
+
+    // Hapus semua tanda aktif
     const lessons =
         document.querySelectorAll('.lesson');
 
     lessons.forEach(function(lesson) {
+
         lesson.classList.remove('active');
-        lesson.innerHTML =
-            lesson.innerHTML.replace(
-                ' • Sedang Dipelajari',
-                ''
-            );
+
     });
 
+
+    // Tandai Materi 1
     if (lessons[0]) {
 
         lessons[0].classList.add('active');
 
-        lessons[0].innerHTML +=
-            ' • Sedang Dipelajari';
-
     }
 
-    // Scroll ke materi
-    content.scrollIntoView({
+
+    // Scroll ke halaman materi
+    materiPage.scrollIntoView({
         behavior: 'smooth'
     });
 
@@ -1017,12 +1053,21 @@ function bukaMateri(nomor) {
     const lessons =
         document.querySelectorAll('.lesson');
 
+
+    // Hapus warna aktif dari semua materi
     lessons.forEach(function(lesson) {
+
         lesson.classList.remove('active');
+
     });
 
+
+    // Berikan warna aktif
     if (lessons[nomor - 1]) {
-        lessons[nomor - 1].classList.add('active');
+
+        lessons[nomor - 1]
+            .classList.add('active');
+
     }
 
 }
