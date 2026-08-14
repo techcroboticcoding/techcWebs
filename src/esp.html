@@ -361,7 +361,7 @@ footer{text-align:center;padding:30px;color:#64748b}
 <a
     class="btn"
     href="#"
-    onclick="bukaMateri(1); return false;"
+    onclick="mulaiBelajar(); return false;"
 >
     Mulai Belajar
 </a>
@@ -1025,75 +1025,9 @@ function bukaMateri(nomor) {
         lessons[nomor - 1].classList.add('active');
     }
 
-
-    if (nomor === 1) {
-
-        document.getElementById('materiContent').innerHTML = `
-
-            <div class="lesson-header">
-
-                <span class="lesson-number">
-                    MATERI 1
-                </span>
-
-                <h2>
-                    Pengenalan ESP32
-                </h2>
-
-                <p>
-                    Mengenal ESP32, fungsi, kemampuan,
-                    dan penggunaannya dalam berbagai
-                    proyek elektronik.
-                </p>
-
-            </div>
-
-
-            <section class="materi-section">
-
-                <h3>
-                    1. Apa itu ESP32?
-                </h3>
-
-                <p>
-                    ESP32 adalah sebuah mikrokontroler
-                    yang dapat digunakan untuk mengendalikan
-                    berbagai perangkat elektronik.
-                </p>
-
-                <p>
-                    ESP32 banyak digunakan dalam proyek
-                    <b>robotik, otomasi, elektronik,
-                    dan Internet of Things (IoT)</b>.
-                </p>
-
-            </section>
-
-
-            <section class="materi-section">
-
-                <h3>
-                    2. Apa itu Mikrokontroler?
-                </h3>
-
-                <p>
-                    Sebelum mempelajari ESP32, kita perlu
-                    memahami istilah mikrokontroler.
-                </p>
-
-                <p>
-                    Mikrokontroler adalah perangkat elektronik
-                    yang dapat diprogram untuk menjalankan
-                    tugas tertentu.
-                </p>
-
-            </section>
-
-        `;
-
-    }
-
 }
+
+
 
 
 </script>
