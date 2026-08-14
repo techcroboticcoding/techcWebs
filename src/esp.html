@@ -335,10 +335,13 @@ footer{text-align:center;padding:30px;color:#64748b}
 </head>
 <body>
 <header><h2>TECH-C ESP32 Course</h2><nav><a href="#">Home</a><a href="#">Materi</a><a href="#">Quiz</a></nav></header>
-<section class="hero">
+<section class="hero" id="dashboardCourse">
 <h1>Belajar ESP32 dengan PictoBlox</h1>
 <p>Mulai dari pengenalan, instalasi, koneksi board, sensor, hingga proyek IoT.</p>
-<a class="btn" href="#">Mulai Belajar</a>
+<a class="btn" href="#"
+   onclick="mulaiBelajar(); return false;">
+    Mulai Belajar
+</a>
 </section>
 <div class="container">
 <aside class="sidebar">
@@ -924,6 +927,51 @@ footer{text-align:center;padding:30px;color:#64748b}
 </main>
 
 </div>
+
+<script>
+
+function mulaiBelajar() {
+
+    // Sembunyikan dashboard
+    document.getElementById('dashboardCourse').style.display = 'none';
+
+    // Tampilkan materi
+    const content =
+        document.getElementById('materiContent');
+
+    content.style.display = 'block';
+
+    // Tandai materi nomor 1 sebagai aktif
+    const lessons =
+        document.querySelectorAll('.lesson');
+
+    lessons.forEach(function(lesson) {
+        lesson.classList.remove('active');
+        lesson.innerHTML =
+            lesson.innerHTML.replace(
+                ' • Sedang Dipelajari',
+                ''
+            );
+    });
+
+    if (lessons[0]) {
+
+        lessons[0].classList.add('active');
+
+        lessons[0].innerHTML +=
+            ' • Sedang Dipelajari';
+
+    }
+
+    // Scroll ke materi
+    content.scrollIntoView({
+        behavior: 'smooth'
+    });
+
+}
+
+</script>
+
 <footer>© Tech-C Robotic & Coding</footer>
 </body></html>
 
