@@ -18,6 +18,319 @@ nav a{color:#fff;text-decoration:none;margin-left:18px;font-weight:600}
 .progress{height:10px;background:#ddd;border-radius:10px;overflow:hidden}.progress div{width:0%;height:100%;background:#22c55e}
 .lesson{padding:10px;border-radius:10px;background:#f1f5f9;margin:8px 0}
 footer{text-align:center;padding:30px;color:#64748b}
+
+/* =========================
+   MATERI ESP32
+========================= */
+
+.lesson-header {
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.lesson-number {
+    display: inline-block;
+    background: #dbeafe;
+    color: #2563eb;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.lesson-header h2 {
+    font-size: 30px;
+    margin: 10px 0 5px;
+}
+
+.lesson-header p {
+    color: #64748b;
+}
+
+
+/* =========================
+   SECTION
+========================= */
+
+.materi-section {
+    margin-bottom: 35px;
+}
+
+.materi-section h3 {
+    color: #1e40af;
+    font-size: 21px;
+    margin-bottom: 12px;
+}
+
+.materi-section p {
+    color: #475569;
+}
+
+
+/* =========================
+   INFO BOX
+========================= */
+
+.info-box {
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    padding: 18px;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.info-box p {
+    margin-bottom: 0;
+}
+
+
+/* =========================
+   TOPIC CARD
+========================= */
+
+.topic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.topic-card {
+    padding: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+}
+
+.topic-icon {
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.topic-card h4 {
+    margin: 5px 0;
+}
+
+.topic-card p {
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+
+/* =========================
+   FEATURE
+========================= */
+
+.feature-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.feature-item {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+
+.feature-item > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 28px;
+    height: 28px;
+
+    background: #22c55e;
+    color: white;
+
+    border-radius: 50%;
+
+    font-weight: bold;
+}
+
+.feature-item strong {
+    display: block;
+    margin-bottom: 3px;
+}
+
+.feature-item p {
+    margin: 0;
+    font-size: 14px;
+}
+
+
+/* =========================
+   COMPARISON TABLE
+========================= */
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.comparison-table th {
+    background: #2563eb;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.comparison-table td {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+}
+
+
+/* =========================
+   ISTILAH
+========================= */
+
+.term-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.term-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.term-item strong {
+    color: #2563eb;
+}
+
+.term-item p {
+    font-size: 14px;
+    margin: 5px 0 0;
+}
+
+
+/* =========================
+   FLOW
+========================= */
+
+.flow-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+
+    margin: 25px 0;
+    padding: 20px;
+
+    background: #f8fafc;
+    border-radius: 15px;
+}
+
+.flow-box div {
+    background: #2563eb;
+    color: white;
+
+    padding: 12px 20px;
+
+    border-radius: 10px;
+
+    font-weight: 600;
+}
+
+.flow-box span {
+    font-size: 24px;
+    color: #64748b;
+}
+
+
+/* =========================
+   SUMMARY
+========================= */
+
+.summary-box {
+    background: #ecfdf5;
+    border-left: 5px solid #22c55e;
+
+    padding: 20px;
+    border-radius: 12px;
+
+    margin-top: 30px;
+}
+
+.summary-box h3 {
+    margin-top: 0;
+    color: #166534;
+}
+
+.summary-box p {
+    color: #166534;
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+.lesson-navigation {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 30px;
+    padding-top: 20px;
+
+    border-top: 1px solid #e2e8f0;
+}
+
+.lesson-navigation button {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.nav-disabled {
+    background: #e2e8f0;
+    color: #94a3b8;
+}
+
+.nav-next {
+    background: #2563eb;
+    color: white;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+
+    .topic-grid,
+    .term-list {
+        grid-template-columns: 1fr;
+    }
+
+    .flow-box {
+        flex-direction: column;
+    }
+
+    .lesson-navigation {
+        gap: 10px;
+    }
+
+}
+
 </style>
 </head>
 <body>
@@ -40,10 +353,576 @@ footer{text-align:center;padding:30px;color:#64748b}
 <div class="lesson">5. Koneksi Board</div>
 <p><b>Part 1 berakhir di sini.</b></p>
 </aside>
+
 <main class="content">
-<h2>Selamat Datang</h2>
-<p>Ini adalah kerangka awal <b>esp.html</b>. Pada Part 2 akan mulai ditambahkan konten materi 1–5 lengkap beserta gambar, blok PictoBlox, wiring, quiz, dan navigasi.</p>
+
+    <!-- =========================
+         MATERI 1
+    ========================== -->
+
+    <div class="lesson-header">
+
+        <span class="lesson-number">
+            MATERI 1
+        </span>
+
+        <h2>
+            Pengenalan ESP32
+        </h2>
+
+        <p>
+            Mengenal ESP32, fungsi, kemampuan, dan
+            penggunaannya dalam berbagai proyek elektronik.
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         1. APA ITU ESP32
+    ========================== -->
+
+    <section class="materi-section">
+
+        <h3>
+            1. Apa itu ESP32?
+        </h3>
+
+        <p>
+            ESP32 adalah sebuah mikrokontroler yang dapat
+            digunakan untuk mengendalikan berbagai perangkat
+            elektronik seperti LED, tombol, sensor, buzzer,
+            motor, dan perangkat lainnya.
+        </p>
+
+        <p>
+            ESP32 banyak digunakan dalam proyek
+            <b>robotik, otomasi, elektronik, dan Internet of Things
+            (IoT)</b>.
+        </p>
+
+        <div class="info-box">
+
+            <strong>Intinya:</strong>
+
+            <p>
+                ESP32 dapat menerima data dari sensor,
+                memproses data tersebut, kemudian memberikan
+                perintah kepada perangkat lain.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         2. MIKROKONTROLER
+    ========================== -->
+
+    <section class="materi-section">
+
+        <h3>
+            2. Apa itu Mikrokontroler?
+        </h3>
+
+        <p>
+            Sebelum mempelajari ESP32, kita perlu memahami
+            istilah <b>mikrokontroler</b>.
+        </p>
+
+        <p>
+            Mikrokontroler adalah sebuah perangkat elektronik
+            yang dapat diprogram untuk menjalankan suatu tugas
+            tertentu.
+        </p>
+
+        <p>
+            Contohnya, kita dapat memberikan program kepada
+            ESP32 untuk:
+        </p>
+
+        <ul>
+
+            <li>
+                Menyalakan dan mematikan LED.
+            </li>
+
+            <li>
+                Membaca tombol.
+            </li>
+
+            <li>
+                Membaca sensor.
+            </li>
+
+            <li>
+                Mengontrol servo.
+            </li>
+
+            <li>
+                Mengontrol motor.
+            </li>
+
+            <li>
+                Mengirim data melalui WiFi.
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <!-- =========================
+         3. FUNGSI ESP32
+    ========================== -->
+
+    <section class="materi-section">
+
+        <h3>
+            3. ESP32 Digunakan Untuk Apa?
+        </h3>
+
+        <p>
+            ESP32 dapat digunakan untuk berbagai macam
+            proyek.
+        </p>
+
+        <div class="topic-grid">
+
+            <div class="topic-card">
+
+                <div class="topic-icon">
+                    🤖
+                </div>
+
+                <h4>
+                    Robotik
+                </h4>
+
+                <p>
+                    Mengontrol motor, sensor, servo,
+                    dan berbagai komponen robot.
+                </p>
+
+            </div>
+
+
+            <div class="topic-card">
+
+                <div class="topic-icon">
+                    🌐
+                </div>
+
+                <h4>
+                    IoT
+                </h4>
+
+                <p>
+                    Menghubungkan perangkat dengan jaringan
+                    dan mengirim data melalui internet.
+                </p>
+
+            </div>
+
+
+            <div class="topic-card">
+
+                <div class="topic-icon">
+                    💡
+                </div>
+
+                <h4>
+                    Otomasi
+                </h4>
+
+                <p>
+                    Mengendalikan perangkat secara otomatis
+                    berdasarkan kondisi tertentu.
+                </p>
+
+            </div>
+
+
+            <div class="topic-card">
+
+                <div class="topic-icon">
+                    📡
+                </div>
+
+                <h4>
+                    Komunikasi
+                </h4>
+
+                <p>
+                    Digunakan untuk komunikasi dengan perangkat
+                    lain melalui berbagai antarmuka.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         4. KELEBIHAN ESP32
+    ========================== -->
+
+    <section class="materi-section">
+
+        <h3>
+            4. Mengapa Menggunakan ESP32?
+        </h3>
+
+        <p>
+            Salah satu alasan ESP32 banyak digunakan adalah
+            karena ESP32 memiliki kemampuan yang cukup lengkap
+            untuk berbagai proyek mikrokontroler dan IoT.
+        </p>
+
+        <div class="feature-list">
+
+            <div class="feature-item">
+
+                <span>✓</span>
+
+                <div>
+
+                    <strong>
+                        Banyak GPIO
+                    </strong>
+
+                    <p>
+                        Dapat digunakan untuk menghubungkan
+                        berbagai sensor dan perangkat.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="feature-item">
+
+                <span>✓</span>
+
+                <div>
+
+                    <strong>
+                        WiFi
+                    </strong>
+
+                    <p>
+                        Memungkinkan ESP32 terhubung ke
+                        jaringan WiFi.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="feature-item">
+
+                <span>✓</span>
+
+                <div>
+
+                    <strong>
+                        Bluetooth
+                    </strong>
+
+                    <p>
+                        Beberapa varian ESP32 mendukung
+                        komunikasi Bluetooth.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="feature-item">
+
+                <span>✓</span>
+
+                <div>
+
+                    <strong>
+                        Dapat Diprogram
+                    </strong>
+
+                    <p>
+                        ESP32 dapat diprogram untuk menjalankan
+                        berbagai tugas sesuai kebutuhan proyek.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         5. ESP32 VS ARDUINO
+    ========================== -->
+
+    <section class="materi-section">
+
+        <h3>
+            5. ESP32 dan Arduino
+        </h3>
+
+        <p>
+            ESP32 dan Arduino sama-sama dapat digunakan
+            sebagai pengendali pada proyek elektronik.
+            Namun keduanya memiliki kemampuan dan
+            karakteristik yang berbeda.
+        </p>
+
+        <table class="comparison-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Arduino Uno
+                    </th>
+
+                    <th>
+                        ESP32
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>
+                        Cocok untuk mempelajari dasar
+                        mikrokontroler.
+                    </td>
+
+                    <td>
+                        Cocok untuk mikrokontroler,
+                        komunikasi, dan proyek IoT.
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>
+                        Tidak memiliki WiFi bawaan.
+                    </td>
+
+                    <td>
+                        Memiliki WiFi bawaan.
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>
+                        Umumnya digunakan untuk proyek
+                        elektronik dasar.
+                    </td>
+
+                    <td>
+                        Dapat digunakan untuk proyek yang
+                        membutuhkan konektivitas jaringan.
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- =========================
+         6. ISTILAH DASAR
+    ========================== -->
+
+    <section class="materi-section">
+
+        <h3>
+            6. Istilah yang Perlu Dipahami
+        </h3>
+
+        <div class="term-list">
+
+            <div class="term-item">
+
+                <strong>
+                    GPIO
+                </strong>
+
+                <p>
+                    Pin yang dapat digunakan sebagai
+                    input atau output.
+                </p>
+
+            </div>
+
+
+            <div class="term-item">
+
+                <strong>
+                    Input
+                </strong>
+
+                <p>
+                    Data yang dibaca oleh ESP32,
+                    misalnya dari tombol atau sensor.
+                </p>
+
+            </div>
+
+
+            <div class="term-item">
+
+                <strong>
+                    Output
+                </strong>
+
+                <p>
+                    Perintah yang diberikan ESP32 kepada
+                    perangkat seperti LED, buzzer, atau motor.
+                </p>
+
+            </div>
+
+
+            <div class="term-item">
+
+                <strong>
+                    Program
+                </strong>
+
+                <p>
+                    Instruksi yang diberikan kepada ESP32
+                    agar dapat menjalankan suatu tugas.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         7. CONTOH SEDERHANA
+    ========================== -->
+
+    <section class="materi-section">
+
+        <h3>
+            7. Contoh Penggunaan ESP32
+        </h3>
+
+        <p>
+            Misalnya kita ingin membuat lampu otomatis.
+            ESP32 dapat membaca sebuah sensor kemudian
+            menentukan apakah LED harus menyala atau mati.
+        </p>
+
+        <div class="flow-box">
+
+            <div>
+                Sensor
+            </div>
+
+            <span>
+                →
+            </span>
+
+            <div>
+                ESP32
+            </div>
+
+            <span>
+                →
+            </span>
+
+            <div>
+                LED
+            </div>
+
+        </div>
+
+        <p>
+            Pada contoh tersebut, sensor bertindak sebagai
+            <b>input</b>, ESP32 sebagai pengolah data,
+            dan LED sebagai <b>output</b>.
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         KESIMPULAN
+    ========================== -->
+
+    <section class="summary-box">
+
+        <h3>
+            🎯 Kesimpulan Materi 1
+        </h3>
+
+        <p>
+            ESP32 adalah mikrokontroler yang dapat digunakan
+            untuk berbagai proyek elektronik, robotik,
+            otomasi, dan IoT.
+        </p>
+
+        <p>
+            Pada materi berikutnya kita akan mengenal
+            <b>bagian-bagian board ESP32 dan fungsi
+            pin-pin yang terdapat pada board.</b>
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         NAVIGASI
+    ========================== -->
+
+    <div class="lesson-navigation">
+
+        <button
+            class="nav-disabled"
+            disabled
+        >
+            ← Sebelumnya
+        </button>
+
+        <button
+            class="nav-next"
+            onclick="alert('Materi 2 akan segera dibuka.')"
+        >
+            Materi Berikutnya →
+        </button>
+
+    </div>
+
+
 </main>
+
 </div>
 <footer>© Tech-C Robotic & Coding</footer>
 </body></html>
