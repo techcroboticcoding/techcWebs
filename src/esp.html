@@ -998,6 +998,434 @@ footer{text-align:center;padding:30px;color:#64748b}
 
     </div>
 
+    <div class="lesson-header">
+
+    <span class="lesson-number">
+        MATERI 2
+    </span>
+
+    <h2>
+        Mengenal Board ESP32
+    </h2>
+
+    <p>
+        Mengenal bagian-bagian board ESP32,
+        fungsi pin, tombol, port, dan cara
+        memberikan sumber daya pada ESP32.
+    </p>
+
+</div>
+
+
+<!-- =========================
+     1. APA ITU BOARD ESP32
+========================== -->
+
+<section class="materi-section">
+
+    <h3>
+        1. Apa itu Board ESP32?
+    </h3>
+
+    <p>
+        Pada materi sebelumnya kita telah mengenal
+        ESP32 sebagai sebuah mikrokontroler.
+        Sekarang kita akan mengenal lebih jauh
+        mengenai board ESP32 yang digunakan untuk
+        membuat berbagai proyek elektronik.
+    </p>
+
+    <p>
+        Board ESP32 merupakan sebuah papan
+        pengembangan yang menggunakan chip ESP32
+        sebagai mikrokontroler utamanya.
+        Board ini menyediakan berbagai pin dan
+        konektor sehingga ESP32 dapat dihubungkan
+        dengan komponen elektronik lainnya.
+    </p>
+
+    <p>
+        Dengan menggunakan board ESP32, kita dapat
+        menghubungkan berbagai perangkat seperti
+        LED, tombol, sensor, buzzer, servo, motor,
+        dan berbagai modul lainnya.
+    </p>
+
+    <div class="info-box">
+
+        <strong>Intinya:</strong>
+
+        <p>
+            Chip ESP32 adalah mikrokontrolernya,
+            sedangkan board ESP32 membantu kita
+            menggunakan mikrokontroler tersebut
+            dengan lebih mudah.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     2. BAGIAN BOARD ESP32
+========================== -->
+
+<section class="materi-section">
+
+    <h3>
+        2. Mengenal Bagian-Bagian Board ESP32
+    </h3>
+
+    <p>
+        Sebelum mulai melakukan pemrograman,
+        kita perlu mengenali bagian-bagian yang
+        terdapat pada board ESP32.
+    </p>
+
+    <p>
+        Setiap bagian memiliki fungsi yang berbeda.
+        Dengan mengenal bagian tersebut, kita akan
+        lebih mudah menentukan kabel dan pin yang
+        digunakan ketika membuat rangkaian.
+    </p>
+
+    <ul>
+
+        <li>
+            Chip ESP32 sebagai mikrokontroler utama.
+        </li>
+
+        <li>
+            Pin GPIO untuk menghubungkan komponen
+            elektronik.
+        </li>
+
+        <li>
+            Pin 3.3V untuk sumber tegangan 3.3 volt.
+        </li>
+
+        <li>
+            Pin GND sebagai ground.
+        </li>
+
+        <li>
+            Port USB untuk menghubungkan board
+            dengan komputer.
+        </li>
+
+        <li>
+            Tombol EN atau Reset.
+        </li>
+
+        <li>
+            Tombol BOOT untuk proses pemrograman
+            pada kondisi tertentu.
+        </li>
+
+    </ul>
+
+</section>
+
+
+<!-- =========================
+     3. CHIP ESP32
+========================== -->
+
+<section class="materi-section">
+
+    <h3>
+        3. Chip ESP32
+    </h3>
+
+    <p>
+        Chip ESP32 merupakan bagian utama yang
+        menjalankan program yang kita buat.
+        Program tersebut akan diproses oleh
+        mikrokontroler untuk mengendalikan
+        perangkat yang terhubung dengannya.
+    </p>
+
+    <p>
+        Contohnya, kita dapat membuat program
+        yang membaca sebuah sensor. ESP32 akan
+        menerima data dari sensor tersebut,
+        memprosesnya, kemudian menjalankan
+        perintah sesuai dengan program.
+    </p>
+
+    <div class="info-box">
+
+        <strong>Contoh sederhana:</strong>
+
+        <p>
+            Sensor memberikan data →
+            ESP32 memproses data →
+            ESP32 memberikan perintah →
+            perangkat melakukan tindakan.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     4. GPIO
+========================== -->
+
+<section class="materi-section">
+
+    <h3>
+        4. Pin GPIO
+    </h3>
+
+    <p>
+        GPIO merupakan singkatan dari
+        <b>General Purpose Input/Output</b>.
+        Pin GPIO dapat digunakan sebagai
+        input maupun output sesuai dengan
+        kebutuhan program.
+    </p>
+
+    <p>
+        Sebagai input, GPIO dapat digunakan
+        untuk membaca kondisi tombol atau
+        sensor.
+    </p>
+
+    <p>
+        Sebagai output, GPIO dapat digunakan
+        untuk mengendalikan LED, buzzer,
+        relay, dan berbagai perangkat lainnya.
+    </p>
+
+    <div class="info-box">
+
+        <strong>Contoh:</strong>
+
+        <p>
+            Tombol → GPIO sebagai input
+        </p>
+
+        <p>
+            LED → GPIO sebagai output
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     5. SUMBER DAYA
+========================== -->
+
+<section class="materi-section">
+
+    <h3>
+        5. Pin 3.3V, VIN, dan GND
+    </h3>
+
+    <p>
+        Board ESP32 memiliki beberapa pin yang
+        berhubungan dengan sumber daya.
+        Pin tersebut perlu dikenali sebelum
+        kita menghubungkan komponen elektronik.
+    </p>
+
+    <h4>
+        Pin 3.3V
+    </h4>
+
+    <p>
+        Pin 3.3V menyediakan tegangan sekitar
+        3.3 volt untuk perangkat yang sesuai
+        dengan tegangan tersebut.
+    </p>
+
+    <h4>
+        Pin GND
+    </h4>
+
+    <p>
+        GND atau Ground merupakan titik referensi
+        tegangan pada rangkaian. Komponen yang
+        terhubung dengan ESP32 biasanya membutuhkan
+        hubungan ground yang sama.
+    </p>
+
+    <h4>
+        Pin VIN
+    </h4>
+
+    <p>
+        VIN merupakan pin yang berkaitan dengan
+        masukan tegangan board. Penggunaan pin
+        ini harus memperhatikan sumber tegangan
+        dan karakteristik board ESP32 yang digunakan.
+    </p>
+
+</section>
+
+
+<!-- =========================
+     6. PORT USB
+========================== -->
+
+<section class="materi-section">
+
+    <h3>
+        6. Port USB
+    </h3>
+
+    <p>
+        Port USB digunakan untuk menghubungkan
+        board ESP32 dengan komputer.
+    </p>
+
+    <p>
+        Melalui koneksi USB, kita dapat melakukan
+        pemrograman board dan memberikan daya
+        kepada board selama sumber daya dari USB
+        mencukupi.
+    </p>
+
+</section>
+
+
+<!-- =========================
+     7. TOMBOL EN
+========================== -->
+
+<section class="materi-section">
+
+    <h3>
+        7. Tombol EN / Reset
+    </h3>
+
+    <p>
+        Tombol EN atau tombol Reset digunakan
+        untuk melakukan reset pada ESP32.
+    </p>
+
+    <p>
+        Ketika tombol reset ditekan, ESP32 akan
+        menjalankan kembali program dari awal.
+    </p>
+
+</section>
+
+
+<!-- =========================
+     8. TOMBOL BOOT
+========================== -->
+
+<section class="materi-section">
+
+    <h3>
+        8. Tombol BOOT
+    </h3>
+
+    <p>
+        Tombol BOOT digunakan pada proses tertentu
+        ketika ESP32 perlu masuk ke mode pemrograman.
+    </p>
+
+    <p>
+        Pada penggunaan normal, kita tidak selalu
+        perlu menekan tombol BOOT. Cara penggunaannya
+        dapat bergantung pada jenis board ESP32
+        yang digunakan.
+    </p>
+
+</section>
+
+
+<!-- =========================
+     9. PERBANDINGAN
+========================== -->
+
+<section class="materi-section">
+
+    <h3>
+        9. ESP32 dan Arduino Uno
+    </h3>
+
+    <p>
+        ESP32 dan Arduino Uno sama-sama dapat
+        digunakan sebagai mikrokontroler untuk
+        membuat proyek elektronik. Namun,
+        keduanya memiliki kemampuan dan
+        karakteristik yang berbeda.
+    </p>
+
+    <ul>
+
+        <li>
+            ESP32 memiliki konektivitas WiFi
+            dan Bluetooth.
+        </li>
+
+        <li>
+            ESP32 memiliki kemampuan pemrosesan
+            yang lebih tinggi dibandingkan
+            Arduino Uno pada banyak penggunaan.
+        </li>
+
+        <li>
+            Arduino Uno menggunakan logika 5V,
+            sedangkan ESP32 menggunakan logika
+            3.3V pada GPIO.
+        </li>
+
+        <li>
+            ESP32 sangat cocok untuk proyek
+            Internet of Things (IoT).
+        </li>
+
+    </ul>
+
+</section>
+
+
+<!-- =========================
+     10. KESIMPULAN
+========================== -->
+
+<section class="materi-section">
+
+    <h3>
+        10. Kesimpulan
+    </h3>
+
+    <p>
+        Board ESP32 menyediakan berbagai bagian
+        yang memungkinkan kita menghubungkan
+        mikrokontroler dengan perangkat elektronik.
+    </p>
+
+    <p>
+        Setelah memahami fungsi GPIO, sumber daya,
+        USB, tombol EN, dan tombol BOOT, kita akan
+        lebih siap untuk melakukan praktik menggunakan
+        ESP32.
+    </p>
+
+    <div class="info-box">
+
+        <strong>Selanjutnya:</strong>
+
+        <p>
+            Pada materi berikutnya kita akan mulai
+            mengenal dan menggunakan PictoBlox untuk
+            memprogram ESP32.
+        </p>
+
+    </div>
+
+</section>
+
 
 </main>
 
@@ -1050,11 +1478,44 @@ function mulaiBelajar() {
 
 function bukaMateri(nomor) {
 
+    // =========================
+    // SEMBUNYIKAN SEMUA MATERI
+    // =========================
+
+    const materi =
+        document.querySelectorAll('.materi-page');
+
+    materi.forEach(function(page) {
+
+        page.style.display = 'none';
+
+    });
+
+
+    // =========================
+    // TAMPILKAN MATERI DIPILIH
+    // =========================
+
+    const halaman =
+        document.getElementById(
+            'materi' + nomor
+        );
+
+    if (halaman) {
+
+        halaman.style.display = 'block';
+
+    }
+
+
+    // =========================
+    // UPDATE WARNA SIDEBAR
+    // =========================
+
     const lessons =
         document.querySelectorAll('.lesson');
 
-
-    // Hapus warna aktif dari semua materi
+        
     lessons.forEach(function(lesson) {
 
         lesson.classList.remove('active');
@@ -1062,7 +1523,7 @@ function bukaMateri(nomor) {
     });
 
 
-    // Berikan warna aktif
+
     if (lessons[nomor - 1]) {
 
         lessons[nomor - 1]
@@ -1070,6 +1531,7 @@ function bukaMateri(nomor) {
 
     }
 
+    
 }
 
 
