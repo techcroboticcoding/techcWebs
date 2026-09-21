@@ -15,14 +15,14 @@ nav a{color:#fff;text-decoration:none;margin-left:18px;font-weight:600}
 .btn{display:inline-block;background:#2563eb;color:#fff;padding:14px 28px;border-radius:12px;text-decoration:none;cursor:pointer}
 .container{display:grid;grid-template-columns:280px 1fr;gap:20px;padding:20px}
 .sidebar,.content{background:var(--card);border-radius:18px;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,.08)}
-.progress{height:10px;background:#ddd;border-radius:10px;overflow:hidden}.progress div{width:0%;height:100%;background:#22c55e;transition:0.3s ease}
+.progress{height:10px;background:#ddd;border-radius:10px;overflow:hidden}.progress div{width:0%;height:100%;background:#22c55e;transition:width 0.3s ease}
 .lesson{padding:10px;border-radius:10px;background:#f1f5f9;margin:8px 0;cursor:pointer;transition:0.2s}
 .lesson:hover{background:#dbeafe}
 .lesson.active{background:#2563eb;color:white;font-weight:600;box-shadow:0 5px 12px rgba(37,99,235,0.25)}
 footer{text-align:center;padding:30px;color:#64748b}
 
 /* =========================
-   MATERI ESP32
+   PENGATUR HALAMAN MATERI
 ========================= */
 .materi-page {
     display: none;
@@ -30,6 +30,10 @@ footer{text-align:center;padding:30px;color:#64748b}
 .materi-page.active {
     display: block;
 }
+
+/* =========================
+   MATERI ESP32
+========================= */
 
 .lesson-header {
     border-bottom: 1px solid #e2e8f0;
@@ -59,6 +63,7 @@ footer{text-align:center;padding:30px;color:#64748b}
 /* =========================
    SECTION
 ========================= */
+
 .materi-section {
     margin-bottom: 35px;
 }
@@ -71,11 +76,13 @@ footer{text-align:center;padding:30px;color:#64748b}
 
 .materi-section p {
     color: #475569;
+    line-height: 1.6;
 }
 
 /* =========================
    INFO BOX
 ========================= */
+
 .info-box {
     background: #eff6ff;
     border-left: 5px solid #2563eb;
@@ -91,6 +98,7 @@ footer{text-align:center;padding:30px;color:#64748b}
 /* =========================
    TOPIC CARD
 ========================= */
+
 .topic-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -122,6 +130,7 @@ footer{text-align:center;padding:30px;color:#64748b}
 /* =========================
    FEATURE
 ========================= */
+
 .feature-list {
     display: grid;
     gap: 12px;
@@ -162,6 +171,7 @@ footer{text-align:center;padding:30px;color:#64748b}
 /* =========================
    COMPARISON TABLE
 ========================= */
+
 .comparison-table {
     width: 100%;
     border-collapse: collapse;
@@ -184,6 +194,7 @@ footer{text-align:center;padding:30px;color:#64748b}
 /* =========================
    ISTILAH
 ========================= */
+
 .term-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -210,6 +221,7 @@ footer{text-align:center;padding:30px;color:#64748b}
 /* =========================
    FLOW
 ========================= */
+
 .flow-box {
     display: flex;
     justify-content: center;
@@ -237,6 +249,7 @@ footer{text-align:center;padding:30px;color:#64748b}
 /* =========================
    SUMMARY
 ========================= */
+
 .summary-box {
     background: #ecfdf5;
     border-left: 5px solid #22c55e;
@@ -257,6 +270,7 @@ footer{text-align:center;padding:30px;color:#64748b}
 /* =========================
    NAVIGATION
 ========================= */
+
 .lesson-navigation {
     display: flex;
     justify-content: space-between;
@@ -285,9 +299,9 @@ footer{text-align:center;padding:30px;color:#64748b}
 }
 
 .nav-disabled {
-    background: #f1f5f9 !important;
-    color: #94a3b8 !important;
-    cursor: not-allowed !important;
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
 }
 
 .nav-next {
@@ -321,360 +335,1485 @@ footer{text-align:center;padding:30px;color:#64748b}
 </style>
 </head>
 <body>
-
-<header>
-    <h2>TECH-C ESP32 Course</h2>
-    <nav>
-        <a href="#">Home</a>
-        <a href="#" onclick="mulaiBelajar(); return false;">Materi</a>
-        <a href="#">Quiz</a>
-    </nav>
-</header>
-
+<header><h2>TECH-C ESP32 Course</h2><nav><a href="#">Home</a><a href="#" onclick="mulaiBelajar(); return false;">Materi</a><a href="#">Quiz</a></nav></header>
 <section class="hero" id="dashboardCourse">
-    <h1>Belajar ESP32 dengan PictoBlox</h1>
-    <p>Mulai dari pengenalan, instalasi, koneksi board, sensor, hingga proyek IoT.</p>
-    <a class="btn" href="#" onclick="mulaiBelajar(); return false;">Mulai Belajar</a>
+<h1>Belajar ESP32 dengan PictoBlox</h1>
+<p>Mulai dari pengenalan, instalasi, koneksi board, sensor, hingga proyek IoT.</p>
+<a
+    class="btn"
+    href="#"
+    onclick="mulaiBelajar(); return false;"
+>
+    Mulai Belajar
+</a>
 </section>
 
-<div class="container" id="materiPage">
+<div
+    class="container"
+    id="materiPage"
+>
+
     <aside class="sidebar">
+
         <h3>Progress</h3>
+
         <div class="progress">
             <div id="bar"></div>
         </div>
+
         <p id="progressText">0% selesai</p>
 
         <h3>Daftar Materi</h3>
-        <div class="lesson active" onclick="bukaMateri(1)">1. Pengenalan ESP32</div>
-        <div class="lesson" onclick="bukaMateri(2)">2. Mengenal Board</div>
-        <div class="lesson" onclick="bukaMateri(3)">3. Install PictoBlox</div>
-        <div class="lesson" onclick="bukaMateri(4)">4. Install Driver</div>
-        <div class="lesson" onclick="bukaMateri(5)">5. Koneksi Board</div>
-        <p><b>Part 1 berakhir di sini.</b></p>
+
+        <div
+            class="lesson"
+            onclick="bukaMateri(1)"
+        >
+            1. Pengenalan ESP32
+        </div>
+
+        <div
+            class="lesson"
+            onclick="bukaMateri(2)"
+        >
+            2. Mengenal Board
+        </div>
+
+        <div
+            class="lesson"
+            onclick="bukaMateri(3)"
+        >
+            3. Install PictoBlox
+        </div>
+
+        <div
+            class="lesson"
+            onclick="bukaMateri(4)"
+        >
+            4. Install Driver
+        </div>
+
+        <div
+            class="lesson"
+            onclick="bukaMateri(5)"
+        >
+            5. Koneksi Board
+        </div>
+
+        <p>
+            <b>Part 1 berakhir di sini.</b>
+        </p>
+
     </aside>
 
-    <main class="content" id="materiContent">
+<main
+    class="content"
+    id="materiContent"
+>
 
-        <!-- ==============================================
-             MATERI 1 (WRAPPER #materi1)
-        ============================================== -->
-        <article class="materi-page active" id="materi1">
-            <div class="lesson-header">
-                <span class="lesson-number">MATERI 1</span>
-                <h2>Pengenalan ESP32</h2>
-                <p>Mengenal ESP32, fungsi, kemampuan, dan penggunaannya dalam berbagai proyek elektronik.</p>
+    <!-- ==============================================
+         MATERI 1 (DIBUNGKUS DALAM #materi1)
+    =============================================== -->
+    <div class="materi-page" id="materi1">
+
+        <div class="lesson-header">
+
+            <span class="lesson-number">
+                MATERI 1
+            </span>
+
+            <h2>
+                Pengenalan ESP32
+            </h2>
+
+            <p>
+                Mengenal ESP32, fungsi, kemampuan, dan
+                penggunaannya dalam berbagai proyek elektronik.
+            </p>
+
+        </div>
+
+        <section class="materi-section">
+
+            <h3>
+                1. Apa itu ESP32?
+            </h3>
+
+            <p>
+                ESP32 adalah sebuah mikrokontroler yang dapat
+                digunakan untuk mengendalikan berbagai perangkat
+                elektronik seperti LED, tombol, sensor, buzzer,
+                motor, dan perangkat lainnya.
+            </p>
+
+            <p>
+                ESP32 banyak digunakan dalam proyek
+                <b>robotik, otomasi, elektronik, dan Internet of Things
+                (IoT)</b>.
+            </p>
+
+            <div class="info-box">
+
+                <strong>Intinya:</strong>
+
+                <p>
+                    ESP32 dapat menerima data dari sensor,
+                    memproses data tersebut, kemudian memberikan
+                    perintah kepada perangkat lain.
+                </p>
+
             </div>
 
-            <section class="materi-section">
-                <h3>1. Apa itu ESP32?</h3>
-                <p>ESP32 adalah sebuah mikrokontroler yang dapat digunakan untuk mengendalikan berbagai perangkat elektronik seperti LED, tombol, sensor, buzzer, motor, dan perangkat lainnya.</p>
-                <p>ESP32 banyak digunakan dalam proyek <b>robotik, otomasi, elektronik, dan Internet of Things (IoT)</b>.</p>
-                <div class="info-box">
-                    <strong>Intinya:</strong>
-                    <p>ESP32 dapat menerima data dari sensor, memproses data tersebut, kemudian memberikan perintah kepada perangkat lain.</p>
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                2. Apa itu Mikrokontroler?
+            </h3>
+
+            <p>
+                Sebelum mempelajari ESP32, kita perlu memahami
+                istilah <b>mikrokontroler</b>.
+            </p>
+
+            <p>
+                Mikrokontroler adalah sebuah perangkat elektronik
+                yang dapat diprogram untuk menjalankan suatu tugas
+                tertentu.
+            </p>
+
+            <p>
+                Contohnya, kita dapat memberikan program kepada
+                ESP32 untuk:
+            </p>
+
+            <ul>
+
+                <li>
+                    Menyalakan dan mematikan LED.
+                </li>
+
+                <li>
+                    Membaca tombol.
+                </li>
+
+                <li>
+                    Membaca sensor.
+                </li>
+
+                <li>
+                    Mengontrol servo.
+                </li>
+
+                <li>
+                    Mengontrol motor.
+                </li>
+
+                <li>
+                    Mengirim data melalui WiFi.
+                </li>
+
+            </ul>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                3. ESP32 Digunakan Untuk Apa?
+            </h3>
+
+            <p>
+                ESP32 dapat digunakan untuk berbagai macam
+                proyek.
+            </p>
+
+            <div class="topic-grid">
+
+                <div class="topic-card">
+
+                    <div class="topic-icon">
+                        🤖
+                    </div>
+
+                    <h4>
+                        Robotik
+                    </h4>
+
+                    <p>
+                        Mengontrol motor, sensor, servo,
+                        dan berbagai komponen robot.
+                    </p>
+
                 </div>
-            </section>
 
-            <section class="materi-section">
-                <h3>2. Apa itu Mikrokontroler?</h3>
-                <p>Sebelum mempelajari ESP32, kita perlu memahami istilah <b>mikrokontroler</b>.</p>
-                <p>Mikrokontroler adalah sebuah perangkat elektronik yang dapat diprogram untuk menjalankan suatu tugas tertentu.</p>
-                <p>Contohnya, kita dapat memberikan program kepada ESP32 untuk:</p>
-                <ul>
-                    <li>Menyalakan dan mematikan LED.</li>
-                    <li>Membaca tombol.</li>
-                    <li>Membaca sensor.</li>
-                    <li>Mengontrol servo.</li>
-                    <li>Mengontrol motor.</li>
-                    <li>Mengirim data melalui WiFi.</li>
-                </ul>
-            </section>
+                <div class="topic-card">
 
-            <section class="materi-section">
-                <h3>3. ESP32 Digunakan Untuk Apa?</h3>
-                <p>ESP32 dapat digunakan untuk berbagai macam proyek.</p>
-                <div class="topic-grid">
-                    <div class="topic-card">
-                        <div class="topic-icon">🤖</div>
-                        <h4>Robotik</h4>
-                        <p>Mengontrol motor, sensor, servo, dan berbagai komponen robot.</p>
+                    <div class="topic-icon">
+                        🌐
                     </div>
-                    <div class="topic-card">
-                        <div class="topic-icon">🌐</div>
-                        <h4>IoT</h4>
-                        <p>Menghubungkan perangkat dengan jaringan dan mengirim data melalui internet.</p>
-                    </div>
-                    <div class="topic-card">
-                        <div class="topic-icon">💡</div>
-                        <h4>Otomasi</h4>
-                        <p>Mengendalikan perangkat secara otomatis berdasarkan kondisi tertentu.</p>
-                    </div>
-                    <div class="topic-card">
-                        <div class="topic-icon">📡</div>
-                        <h4>Komunikasi</h4>
-                        <p>Digunakan untuk komunikasi dengan perangkat lain melalui berbagai antarmuka.</p>
-                    </div>
+
+                    <h4>
+                        IoT
+                    </h4>
+
+                    <p>
+                        Menghubungkan perangkat dengan jaringan
+                        dan mengirim data melalui internet.
+                    </p>
+
                 </div>
-            </section>
 
-            <section class="materi-section">
-                <h3>4. Mengapa Menggunakan ESP32?</h3>
-                <p>Salah satu alasan ESP32 banyak digunakan adalah karena memiliki kemampuan yang sangat lengkap untuk berbagai proyek mikrokontroler dan IoT.</p>
-                <div class="feature-list">
-                    <div class="feature-item">
-                        <span>✓</span>
-                        <div>
-                            <strong>Banyak GPIO</strong>
-                            <p>Dapat digunakan untuk menghubungkan berbagai sensor dan perangkat.</p>
-                        </div>
+                <div class="topic-card">
+
+                    <div class="topic-icon">
+                        💡
                     </div>
-                    <div class="feature-item">
-                        <span>✓</span>
-                        <div>
-                            <strong>WiFi</strong>
-                            <p>Memungkinkan ESP32 terhubung ke jaringan internet.</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <span>✓</span>
-                        <div>
-                            <strong>Bluetooth</strong>
-                            <p>Beberapa varian ESP32 mendukung komunikasi Bluetooth nirkabel.</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <span>✓</span>
-                        <div>
-                            <strong>Dapat Diprogram</strong>
-                            <p>ESP32 dapat diprogram menjalankan berbagai instruksi sesuai kebutuhan proyek.</p>
-                        </div>
-                    </div>
+
+                    <h4>
+                        Otomasi
+                    </h4>
+
+                    <p>
+                        Mengendalikan perangkat secara otomatis
+                        berdasarkan kondisi tertentu.
+                    </p>
+
                 </div>
-            </section>
 
-            <section class="materi-section">
-                <h3>5. ESP32 dan Arduino</h3>
-                <p>ESP32 dan Arduino sama-sama dapat digunakan sebagai pengendali pada proyek elektronik. Namun keduanya memiliki spesifikasi dan karakteristik yang berbeda.</p>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Arduino Uno</th>
-                            <th>ESP32</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Cocok untuk mempelajari dasar mikrokontroler.</td>
-                            <td>Cocok untuk mikrokontroler, komunikasi, dan IoT.</td>
-                        </tr>
-                        <tr>
-                            <td>Tidak memiliki WiFi bawaan.</td>
-                            <td>Memiliki WiFi bawaan.</td>
-                        </tr>
-                        <tr>
-                            <td>Umumnya untuk proyek elektronik dasar.</td>
-                            <td>Dapat digunakan untuk proyek yang membutuhkan konektivitas jaringan.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+                <div class="topic-card">
 
-            <section class="materi-section">
-                <h3>6. Istilah yang Perlu Dipahami</h3>
-                <div class="term-list">
-                    <div class="term-item">
-                        <strong>GPIO</strong>
-                        <p>Pin yang dapat digunakan sebagai input atau output.</p>
+                    <div class="topic-icon">
+                        📡
                     </div>
-                    <div class="term-item">
-                        <strong>Input</strong>
-                        <p>Data yang dibaca oleh ESP32, misalnya dari tombol atau sensor.</p>
+
+                    <h4>
+                        Komunikasi
+                    </h4>
+
+                    <p>
+                        Digunakan untuk komunikasi dengan perangkat
+                        lain melalui berbagai antarmuka.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                4. Mengapa Menggunakan ESP32?
+            </h3>
+
+            <p>
+                Salah satu alasan ESP32 banyak digunakan adalah
+                karena ESP32 memiliki kemampuan yang cukup lengkap
+                untuk berbagai proyek mikrokontroler dan IoT.
+            </p>
+
+            <div class="feature-list">
+
+                <div class="feature-item">
+
+                    <span>✓</span>
+
+                    <div>
+
+                        <strong>
+                            Banyak GPIO
+                        </strong>
+
+                        <p>
+                            Dapat digunakan untuk menghubungkan
+                            berbagai sensor dan perangkat.
+                        </p>
+
                     </div>
-                    <div class="term-item">
-                        <strong>Output</strong>
-                        <p>Perintah yang diberikan ESP32 kepada perangkat seperti LED atau motor.</p>
+
+                </div>
+
+                <div class="feature-item">
+
+                    <span>✓</span>
+
+                    <div>
+
+                        <strong>
+                            WiFi
+                        </strong>
+
+                        <p>
+                            Memungkinkan ESP32 terhubung ke
+                            jaringan WiFi.
+                        </p>
+
                     </div>
-                    <div class="term-item">
-                        <strong>Program</strong>
-                        <p>Instruksi baris kode yang dieksekusi oleh ESP32.</p>
+
+                </div>
+
+                <div class="feature-item">
+
+                    <span>✓</span>
+
+                    <div>
+
+                        <strong>
+                            Bluetooth
+                        </strong>
+
+                        <p>
+                            Beberapa varian ESP32 mendukung
+                            komunikasi Bluetooth.
+                        </p>
+
                     </div>
+
                 </div>
-            </section>
 
-            <section class="materi-section">
-                <h3>7. Contoh Penggunaan ESP32</h3>
-                <p>Misalnya kita ingin membuat lampu otomatis. ESP32 membaca sensor, memproses nilainya, kemudian memutuskan menghidupkan atau mematikan LED.</p>
-                <div class="flow-box">
-                    <div>Sensor</div>
-                    <span>→</span>
-                    <div>ESP32</div>
-                    <span>→</span>
-                    <div>LED</div>
+                <div class="feature-item">
+
+                    <span>✓</span>
+
+                    <div>
+
+                        <strong>
+                            Dapat Diprogram
+                        </strong>
+
+                        <p>
+                            ESP32 dapat diprogram untuk menjalankan
+                            berbagai tugas sesuai kebutuhan proyek.
+                        </p>
+
+                    </div>
+
                 </div>
-            </section>
 
-            <section class="summary-box">
-                <h3>🎯 Kesimpulan Materi 1</h3>
-                <p>ESP32 adalah mikrokontroler yang bertenaga untuk proyek elektronik, robotik, dan IoT.</p>
-                <p>Pada materi berikutnya kita akan mempelajari <b>bagian-bagian board ESP32 beserta kegunaan pin-pinnya</b>.</p>
-            </section>
-
-            <!-- Navigasi Materi 1 -->
-            <div class="lesson-navigation">
-                <button class="nav-disabled" disabled>← Sebelumnya</button>
-                <button class="nav-next" onclick="bukaMateri(2)">Materi Berikutnya →</button>
-            </div>
-        </article>
-
-        <!-- ==============================================
-             MATERI 2 (WRAPPER #materi2)
-        ============================================== -->
-        <article class="materi-page" id="materi2">
-            <div class="lesson-header">
-                <span class="lesson-number">MATERI 2</span>
-                <h2>Mengenal Board ESP32</h2>
-                <p>Mengenal bagian-bagian board ESP32, fungsi pin, tombol, port, dan cara memberikan sumber daya.</p>
             </div>
 
-            <section class="materi-section">
-                <h3>1. Apa itu Board ESP32?</h3>
-                <p>Board ESP32 merupakan papan pengembangan (development board) yang menggunakan chip ESP32 sebagai mikrokontroler utamanya. Board ini menyediakan header pin dan konektor siap pakai.</p>
-                <div class="info-box">
-                    <strong>Intinya:</strong>
-                    <p>Chip ESP32 adalah otaknya, sedangkan board ESP32 menyediakan kaki pin dan sirkuit pendukung agar mudah dihubungkan ke rangkaian elektronik.</p>
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                5. ESP32 dan Arduino
+            </h3>
+
+            <p>
+                ESP32 dan Arduino sama-sama dapat digunakan
+                sebagai pengendali pada proyek elektronik.
+                Namun keduanya memiliki kemampuan dan
+                karakteristik yang berbeda.
+            </p>
+
+            <table class="comparison-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Arduino Uno
+                        </th>
+
+                        <th>
+                            ESP32
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            Cocok untuk mempelajari dasar
+                            mikrokontroler.
+                        </td>
+
+                        <td>
+                            Cocok untuk mikrokontroler,
+                            komunikasi, dan proyek IoT.
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>
+                            Tidak memiliki WiFi bawaan.
+                        </td>
+
+                        <td>
+                            Memiliki WiFi bawaan.
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>
+                            Umumnya digunakan untuk proyek
+                            elektronik dasar.
+                        </td>
+
+                        <td>
+                            Dapat digunakan untuk proyek yang
+                            membutuhkan konektivitas jaringan.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                6. Istilah yang Perlu Dipahami
+            </h3>
+
+            <div class="term-list">
+
+                <div class="term-item">
+
+                    <strong>
+                        GPIO
+                    </strong>
+
+                    <p>
+                        Pin yang dapat digunakan sebagai
+                        input atau output.
+                    </p>
+
                 </div>
-            </section>
 
-            <section class="materi-section">
-                <h3>2. Mengenal Bagian-Bagian Board ESP32</h3>
-                <p>Bagian-bagian penting pada board ESP32 antara lain:</p>
-                <ul>
-                    <li><b>Chip ESP32:</b> Mikrokontroler utama pemroses program.</li>
-                    <li><b>Pin GPIO:</b> Pin input dan output periferal.</li>
-                    <li><b>Pin 3.3V & VIN:</b> Pin penyedia daya dan input voltase.</li>
-                    <li><b>Pin GND:</b> Ground (titik 0V sirkuit).</li>
-                    <li><b>Port Micro USB / Type-C:</b> Untuk upload kode dan sumber daya.</li>
-                    <li><b>Tombol EN / RST:</b> Tombol restart/reset mikro.</li>
-                    <li><b>Tombol BOOT:</b> Digunakan untuk mode flash/uploading program.</li>
-                </ul>
-            </section>
+                <div class="term-item">
 
-            <section class="materi-section">
-                <h3>3. Pin GPIO</h3>
-                <p>GPIO (<i>General Purpose Input/Output</i>) dapat diprogram secara fleksibel:</p>
-                <div class="info-box">
-                    <p><b>Sebagai Input:</b> Membaca status push button, sensor cahaya, dsb.</p>
-                    <p><b>Sebagai Output:</b> Mengaktifkan modul relay, buzzer, atau LED.</p>
+                    <strong>
+                        Input
+                    </strong>
+
+                    <p>
+                        Data yang dibaca oleh ESP32,
+                        misalnya dari tombol atau sensor.
+                    </p>
+
                 </div>
-            </section>
 
-            <section class="materi-section">
-                <h3>4. Sumber Daya (3.3V, VIN, GND)</h3>
-                <p>ESP32 beroperasi pada level logika <b>3.3V</b>. Jangan memberikan tegangan 5V secara langsung ke pin GPIO karena dapat merusak mikrokontroler.</p>
-            </section>
+                <div class="term-item">
 
-            <section class="summary-box">
-                <h3>🎯 Kesimpulan Materi 2</h3>
-                <p>Setelah memahami fungsi pin, tombol, dan sumber daya pada board ESP32, kita siap melangkah ke proses instalasi software pemrograman.</p>
-                <p>Pada materi ke-3 kita akan belajar <b>cara instalasi dan setup PictoBlox</b>.</p>
-            </section>
+                    <strong>
+                        Output
+                    </strong>
 
-            <!-- Navigasi Materi 2 -->
-            <div class="lesson-navigation">
-                <button class="nav-prev" onclick="bukaMateri(1)">← Sebelumnya</button>
-                <button class="nav-next" onclick="bukaMateri(3)">Materi Berikutnya →</button>
-            </div>
-        </article>
+                    <p>
+                        Perintah yang diberikan ESP32 kepada
+                        perangkat seperti LED, buzzer, atau motor.
+                    </p>
 
-        <!-- Template Placeholder Materi 3, 4, 5 -->
-        <article class="materi-page" id="materi3">
-            <div class="lesson-header">
-                <span class="lesson-number">MATERI 3</span>
-                <h2>Install PictoBlox</h2>
-                <p>Panduan mengunduh dan memasang software PictoBlox di komputer.</p>
-            </div>
-            <p>Konten materi PictoBlox dapat ditulis di sini...</p>
-            <div class="lesson-navigation">
-                <button class="nav-prev" onclick="bukaMateri(2)">← Sebelumnya</button>
-                <button class="nav-next" onclick="bukaMateri(4)">Materi Berikutnya →</button>
-            </div>
-        </article>
+                </div>
 
-        <article class="materi-page" id="materi4">
-            <div class="lesson-header">
-                <span class="lesson-number">MATERI 4</span>
-                <h2>Install Driver</h2>
-                <p>Memasang driver USB (CP2102 / CH340) agar board terbaca.</p>
-            </div>
-            <p>Konten materi Driver dapat ditulis di sini...</p>
-            <div class="lesson-navigation">
-                <button class="nav-prev" onclick="bukaMateri(3)">← Sebelumnya</button>
-                <button class="nav-next" onclick="bukaMateri(5)">Materi Berikutnya →</button>
-            </div>
-        </article>
+                <div class="term-item">
 
-        <article class="materi-page" id="materi5">
-            <div class="lesson-header">
-                <span class="lesson-number">MATERI 5</span>
-                <h2>Koneksi Board</h2>
-                <p>Menghubungkan board ESP32 ke PictoBlox melalui kabel USB.</p>
-            </div>
-            <p>Konten materi koneksi dapat ditulis di sini...</p>
-            <div class="lesson-navigation">
-                <button class="nav-prev" onclick="bukaMateri(4)">← Sebelumnya</button>
-                <button class="nav-disabled" disabled>Selesai</button>
-            </div>
-        </article>
+                    <strong>
+                        Program
+                    </strong>
 
-    </main>
+                    <p>
+                        Instruksi yang diberikan kepada ESP32
+                        agar dapat menjalankan suatu tugas.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                7. Contoh Penggunaan ESP32
+            </h3>
+
+            <p>
+                Misalnya kita ingin membuat lampu otomatis.
+                ESP32 dapat membaca sebuah sensor kemudian
+                menentukan apakah LED harus menyala atau mati.
+            </p>
+
+            <div class="flow-box">
+
+                <div>
+                    Sensor
+                </div>
+
+                <span>
+                    →
+                </span>
+
+                <div>
+                    ESP32
+                </div>
+
+                <span>
+                    →
+                </span>
+
+                <div>
+                    LED
+                </div>
+
+            </div>
+
+            <p>
+                Pada contoh tersebut, sensor bertindak sebagai
+                <b>input</b>, ESP32 sebagai pengolah data,
+                dan LED sebagai <b>output</b>.
+            </p>
+
+        </section>
+
+        <section class="summary-box">
+
+            <h3>
+                🎯 Kesimpulan Materi 1
+            </h3>
+
+            <p>
+                ESP32 adalah mikrokontroler yang dapat digunakan
+                untuk berbagai proyek elektronik, robotik,
+                otomasi, dan IoT.
+            </p>
+
+            <p>
+                Pada materi berikutnya kita akan mengenal
+                <b>bagian-bagian board ESP32 dan fungsi
+                pin-pin yang terdapat pada board.</b>
+            </p>
+
+        </section>
+
+        <div class="lesson-navigation">
+
+            <button
+                class="nav-disabled"
+                disabled
+            >
+                ← Sebelumnya
+            </button>
+
+            <button
+                class="nav-next"
+                onclick="bukaMateri(2)"
+            >
+                Materi Berikutnya →
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================================
+         MATERI 2 (DIBUNGKUS DALAM #materi2)
+    =============================================== -->
+    <div class="materi-page" id="materi2">
+
+        <div class="lesson-header">
+
+            <span class="lesson-number">
+                MATERI 2
+            </span>
+
+            <h2>
+                Mengenal Board ESP32
+            </h2>
+
+            <p>
+                Mengenal bagian-bagian board ESP32,
+                fungsi pin, tombol, port, dan cara
+                memberikan sumber daya pada ESP32.
+            </p>
+
+        </div>
+
+        <section class="materi-section">
+
+            <h3>
+                1. Apa itu Board ESP32?
+            </h3>
+
+            <p>
+                Pada materi sebelumnya kita telah mengenal
+                ESP32 sebagai sebuah mikrokontroler.
+                Sekarang kita akan mengenal lebih jauh
+                mengenai board ESP32 yang digunakan untuk
+                membuat berbagai proyek elektronik.
+            </p>
+
+            <p>
+                Board ESP32 merupakan sebuah papan
+                pengembangan yang menggunakan chip ESP32
+                sebagai mikrokontroler utamanya.
+                Board ini menyediakan berbagai pin dan
+                konektor sehingga ESP32 dapat dihubungkan
+                dengan komponen elektronik lainnya.
+            </p>
+
+            <p>
+                Dengan menggunakan board ESP32, kita dapat
+                menghubungkan berbagai perangkat seperti
+                LED, tombol, sensor, buzzer, servo, motor,
+                dan berbagai modul lainnya.
+            </p>
+
+            <div class="info-box">
+
+                <strong>Intinya:</strong>
+
+                <p>
+                    Chip ESP32 adalah mikrokontrolernya,
+                    sedangkan board ESP32 membantu kita
+                    menggunakan mikrokontroler tersebut
+                    dengan lebih mudah.
+                </p>
+
+            </div>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                2. Mengenal Bagian-Bagian Board ESP32
+            </h3>
+
+            <p>
+                Sebelum mulai melakukan pemrograman,
+                kita perlu mengenali bagian-bagian yang
+                terdapat pada board ESP32.
+            </p>
+
+            <p>
+                Setiap bagian memiliki fungsi yang berbeda.
+                Dengan mengenal bagian tersebut, kita akan
+                lebih mudah menentukan kabel dan pin yang
+                digunakan ketika membuat rangkaian.
+            </p>
+
+            <ul>
+
+                <li>
+                    Chip ESP32 sebagai mikrokontroler utama.
+                </li>
+
+                <li>
+                    Pin GPIO untuk menghubungkan komponen
+                    elektronik.
+                </li>
+
+                <li>
+                    Pin 3.3V untuk sumber tegangan 3.3 volt.
+                </li>
+
+                <li>
+                    Pin GND sebagai ground.
+                </li>
+
+                <li>
+                    Port USB untuk menghubungkan board
+                    dengan komputer.
+                </li>
+
+                <li>
+                    Tombol EN atau Reset.
+                </li>
+
+                <li>
+                    Tombol BOOT untuk proses pemrograman
+                    pada kondisi tertentu.
+                </li>
+
+            </ul>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                3. Chip ESP32
+            </h3>
+
+            <p>
+                Chip ESP32 merupakan bagian utama yang
+                menjalankan program yang kita buat.
+                Program tersebut akan diproses oleh
+                mikrokontroler untuk mengendalikan
+                perangkat yang terhubung dengannya.
+            </p>
+
+            <p>
+                Contohnya, kita dapat membuat program
+                yang membaca sebuah sensor. ESP32 akan
+                menerima data dari sensor tersebut,
+                memprosesnya, kemudian menjalankan
+                perintah sesuai dengan program.
+            </p>
+
+            <div class="info-box">
+
+                <strong>Contoh sederhana:</strong>
+
+                <p>
+                    Sensor memberikan data →
+                    ESP32 memproses data →
+                    ESP32 memberikan perintah →
+                    perangkat melakukan tindakan.
+                </p>
+
+            </div>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                4. Pin GPIO
+            </h3>
+
+            <p>
+                GPIO merupakan singkatan dari
+                <b>General Purpose Input/Output</b>.
+                Pin GPIO dapat digunakan sebagai
+                input maupun output sesuai dengan
+                kebutuhan program.
+            </p>
+
+            <p>
+                Sebagai input, GPIO dapat digunakan
+                untuk membaca kondisi tombol atau
+                sensor.
+            </p>
+
+            <p>
+                Sebagai output, GPIO dapat digunakan
+                untuk mengendalikan LED, buzzer,
+                relay, dan berbagai perangkat lainnya.
+            </p>
+
+            <div class="info-box">
+
+                <strong>Contoh:</strong>
+
+                <p>
+                    Tombol → GPIO sebagai input
+                </p>
+
+                <p>
+                    LED → GPIO sebagai output
+                </p>
+
+            </div>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                5. Pin 3.3V, VIN, dan GND
+            </h3>
+
+            <p>
+                Board ESP32 memiliki beberapa pin yang
+                berhubungan dengan sumber daya.
+                Pin tersebut perlu dikenali sebelum
+                kita menghubungkan komponen elektronik.
+            </p>
+
+            <h4>
+                Pin 3.3V
+            </h4>
+
+            <p>
+                Pin 3.3V menyediakan tegangan sekitar
+                3.3 volt untuk perangkat yang sesuai
+                dengan tegangan tersebut.
+            </p>
+
+            <h4>
+                Pin GND
+            </h4>
+
+            <p>
+                GND atau Ground merupakan titik referensi
+                tegangan pada rangkaian. Komponen yang
+                terhubung dengan ESP32 biasanya membutuhkan
+                hubungan ground yang sama.
+            </p>
+
+            <h4>
+                Pin VIN
+            </h4>
+
+            <p>
+                VIN merupakan pin yang berkaitan dengan
+                masukan tegangan board. Penggunaan pin
+                ini harus memperhatikan sumber tegangan
+                dan karakteristik board ESP32 yang digunakan.
+            </p>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                6. Port USB
+            </h3>
+
+            <p>
+                Port USB digunakan untuk menghubungkan
+                board ESP32 dengan komputer.
+            </p>
+
+            <p>
+                Melalui koneksi USB, kita dapat melakukan
+                pemrograman board dan memberikan daya
+                kepada board selama sumber daya dari USB
+                mencukupi.
+            </p>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                7. Tombol EN / Reset
+            </h3>
+
+            <p>
+                Tombol EN atau tombol Reset digunakan
+                untuk melakukan reset pada ESP32.
+            </p>
+
+            <p>
+                Ketika tombol reset ditekan, ESP32 akan
+                menjalankan kembali program dari awal.
+            </p>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                8. Tombol BOOT
+            </h3>
+
+            <p>
+                Tombol BOOT digunakan pada proses tertentu
+                ketika ESP32 perlu masuk ke mode pemrograman.
+            </p>
+
+            <p>
+                Pada penggunaan normal, kita tidak selalu
+                perlu menekan tombol BOOT. Cara penggunaannya
+                dapat bergantung pada jenis board ESP32
+                yang digunakan.
+            </p>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                9. ESP32 dan Arduino Uno
+            </h3>
+
+            <p>
+                ESP32 dan Arduino Uno sama-sama dapat
+                digunakan sebagai mikrokontroler untuk
+                membuat proyek elektronik. Namun,
+                keduanya memiliki kemampuan dan
+                karakteristik yang berbeda.
+            </p>
+
+            <ul>
+
+                <li>
+                    ESP32 memiliki konektivitas WiFi
+                    dan Bluetooth.
+                </li>
+
+                <li>
+                    ESP32 memiliki kemampuan pemrosesan
+                    yang lebih tinggi dibandingkan
+                    Arduino Uno pada banyak penggunaan.
+                </li>
+
+                <li>
+                    Arduino Uno menggunakan logika 5V,
+                    sedangkan ESP32 menggunakan logika
+                    3.3V pada GPIO.
+                </li>
+
+                <li>
+                    ESP32 sangat cocok untuk proyek
+                    Internet of Things (IoT).
+                </li>
+
+            </ul>
+
+        </section>
+
+        <section class="materi-section">
+
+            <h3>
+                10. Kesimpulan
+            </h3>
+
+            <p>
+                Board ESP32 menyediakan berbagai bagian
+                yang memungkinkan kita menghubungkan
+                mikrokontroler dengan perangkat elektronik.
+            </p>
+
+            <p>
+                Setelah memahami fungsi GPIO, sumber daya,
+                USB, tombol EN, dan tombol BOOT, kita akan
+                lebih siap untuk melakukan praktik menggunakan
+                ESP32.
+            </p>
+
+            <div class="info-box">
+
+                <strong>Selanjutnya:</strong>
+
+                <p>
+                    Pada materi berikutnya kita akan mulai
+                    mengenal dan menggunakan PictoBlox untuk
+                    memprogram ESP32.
+                </p>
+
+            </div>
+
+        </section>
+
+        <div class="lesson-navigation">
+
+            <button
+                class="nav-prev"
+                onclick="bukaMateri(1)"
+            >
+                ← Sebelumnya
+            </button>
+
+            <button
+                class="nav-next"
+                onclick="bukaMateri(3)"
+            >
+                Materi Berikutnya →
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================================
+         MATERI 3 (INSTALL & CARA PENGGUNAAN PICTOBLOX)
+    =============================================== -->
+    <div class="materi-page" id="materi3">
+
+        <div class="lesson-header">
+
+            <span class="lesson-number">
+                MATERI 3
+            </span>
+
+            <h2>
+                Install & Penggunaan PictoBlox
+            </h2>
+
+            <p>
+                Panduan mengunduh, memasang aplikasi PictoBlox, 
+                serta memahami cara penggunaannya untuk memprogram ESP32.
+            </p>
+
+        </div>
+
+        <!-- 1. APA ITU PICTOBLOX -->
+        <section class="materi-section">
+
+            <h3>
+                1. Apa itu PictoBlox?
+            </h3>
+
+            <p>
+                <b>PictoBlox</b> adalah software pemrograman berbasis visual block (blok kode drag-and-drop) 
+                yang dibuat berdasarkan Scratch 3.0. PictoBlox dirancang khusus untuk mempermudah 
+                pemrograman robotika, kecerdasan buatan (AI), dan Internet of Things (IoT) 
+                tanpa perlu mengetik baris kode teks yang rumit.
+            </p>
+
+            <div class="info-box">
+
+                <strong>Keunggulan:</strong>
+
+                <p>
+                    Sangat cocok bagi pemula karena kita cukup menyusun balok logika secara visual, 
+                    namun tetap dapat mengakses fitur canggih seperti WiFi ESP32, sensor, hingga AI.
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- 2. LANGKAH MENGUNDUH & MEMASANG -->
+        <section class="materi-section">
+
+            <h3>
+                2. Cara Mengunduh dan Memasang PictoBlox
+            </h3>
+
+            <p>
+                Ikuti petunjuk di bawah ini untuk menginstal aplikasi PictoBlox pada komputer/laptop Anda:
+            </p>
+
+            <div class="feature-list">
+
+                <div class="feature-item">
+
+                    <span>1</span>
+
+                    <div>
+
+                        <strong>
+                            Buka Link Resmi Unduhan
+                        </strong>
+
+                        <p>
+                            Buka peramban browser dan kunjungi situs resmi: 
+                            <b>https://thestempedia.com/product/pictoblox/download/</b>
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="feature-item">
+
+                    <span>2</span>
+
+                    <div>
+
+                        <strong>
+                            Pilih Versi Sistem Operasi
+                        </strong>
+
+                        <p>
+                            Pilih file installer sesuai sistem operasi yang Anda gunakan (Windows, macOS, Linux, atau versi APK untuk smartphone/tablet Android).
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="feature-item">
+
+                    <span>3</span>
+
+                    <div>
+
+                        <strong>
+                            Jalankan Installer
+                        </strong>
+
+                        <p>
+                            Buka file instalasi yang telah diunduh (misal: <code>PictoBlox-Setup.exe</code>). Klik tombol <b>Next</b>, setujui syarat ketentuan, lalu tunggu proses pemasangan hingga selesai (<b>Finish</b>).
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- 3. MENGENAL ANTARMUKA PICTOBLOX -->
+        <section class="materi-section">
+
+            <h3>
+                3. Mengenal Bagian Antarmuka PictoBlox
+            </h3>
+
+            <p>
+                Ketika Anda membuka PictoBlox, Anda akan melihat beberapa area kerja utama:
+            </p>
+
+            <div class="topic-grid">
+
+                <div class="topic-card">
+
+                    <div class="topic-icon">
+                        🧩
+                    </div>
+
+                    <h4>
+                        Block Palette
+                    </h4>
+
+                    <p>
+                        Kumpulan blok perintah berdasarkan kategori warna (Motion, Looks, Events, Control, Pin, dan ESP32).
+                    </p>
+
+                </div>
+
+                <div class="topic-card">
+
+                    <div class="topic-icon">
+                        📋
+                    </div>
+
+                    <h4>
+                        Script / Block Area
+                    </h4>
+
+                    <p>
+                        Area kerja tempat Anda menyusun dan menghubungkan balok-balok program.
+                    </p>
+
+                </div>
+
+                <div class="topic-card">
+
+                    <div class="topic-icon">
+                        🎮
+                    </div>
+
+                    <h4>
+                        Stage Area
+                    </h4>
+
+                    <p>
+                        Layar simulator untuk melihat aksi Sprite atau karakter secara visual.
+                    </p>
+
+                </div>
+
+                <div class="topic-card">
+
+                    <div class="topic-icon">
+                        🔌
+                    </div>
+
+                    <h4>
+                        Board & Connect Menu
+                    </h4>
+
+                    <p>
+                        Menu bar atas untuk memilih board mikrokontroler dan menyambungkan port USB.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- 4. CARA PENGGUNAAN PADA ESP32 -->
+        <section class="materi-section">
+
+            <h3>
+                4. Cara Menggunakan PictoBlox untuk ESP32
+            </h3>
+
+            <p>
+                Terdapat 2 mode utama saat menggunakan PictoBlox dengan mikrokontroler:
+            </p>
+
+            <div class="term-list">
+
+                <div class="term-item">
+
+                    <strong>
+                        Stage Mode
+                    </strong>
+
+                    <p>
+                        Program berjalan langsung dari komputer. ESP32 harus terus terhubung kabel data ke laptop untuk membaca sensor atau mengirim data ke karakter di layar PictoBlox secara langsung.
+                    </p>
+
+                </div>
+
+                <div class="term-item">
+
+                    <strong>
+                        Upload Mode
+                    </strong>
+
+                    <p>
+                        Program visual diubah menjadi baris kode dan di-flash ke dalam memori chip ESP32. ESP32 dapat dilepas dari laptop dan beroperasi secara mandiri menggunakan baterai.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="info-box">
+
+                <strong>Langkah Pemilihan Board:</strong>
+
+                <p>
+                    Klik menu <b>Board</b> di bagian atas PictoBlox → Pilih <b>ESP32</b> → Beralih ke <b>Upload Mode</b> jika ingin program tersimpan langsung di dalam chip ESP32.
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- KESIMPULAN MATERI 3 -->
+        <section class="summary-box">
+
+            <h3>
+                🎯 Kesimpulan Materi 3
+            </h3>
+
+            <p>
+                PictoBlox mempermudah pemrograman ESP32 melalui antarmuka blok yang interaktif. 
+                Sebelum kita menyambungkan board dan mulai menyusun program, komputer kita memerlukan pengenal khusus yang disebut <b>Driver USB</b>.
+            </p>
+
+            <p>
+                Pada materi berikutnya kita akan mempelajari 
+                <b>cara instalasi driver (CH340 / CP2102) agar board ESP32 terbaca dengan benar di PictoBlox.</b>
+            </p>
+
+        </section>
+
+        <!-- NAVIGASI MATERI 3 -->
+        <div class="lesson-navigation">
+
+            <button
+                class="nav-prev"
+                onclick="bukaMateri(2)"
+            >
+                ← Sebelumnya
+            </button>
+
+            <button
+                class="nav-next"
+                onclick="bukaMateri(4)"
+            >
+                Materi Berikutnya →
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================================
+         MATERI 4 (PLACEHOLDER)
+    =============================================== -->
+    <div class="materi-page" id="materi4">
+
+        <div class="lesson-header">
+
+            <span class="lesson-number">
+                MATERI 4
+            </span>
+
+            <h2>
+                Install Driver Board
+            </h2>
+
+            <p>
+                Memasang driver USB to UART (CH340 / CP2102) agar board terdeteksi di komputer.
+            </p>
+
+        </div>
+
+        <p>Konten Materi 4 akan segera dibuka...</p>
+
+        <div class="lesson-navigation">
+
+            <button
+                class="nav-prev"
+                onclick="bukaMateri(3)"
+            >
+                ← Sebelumnya
+            </button>
+
+            <button
+                class="nav-next"
+                onclick="bukaMateri(5)"
+            >
+                Materi Berikutnya →
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================================
+         MATERI 5 (PLACEHOLDER)
+    =============================================== -->
+    <div class="materi-page" id="materi5">
+
+        <div class="lesson-header">
+
+            <span class="lesson-number">
+                MATERI 5
+            </span>
+
+            <h2>
+                Koneksi Board
+            </h2>
+
+            <p>
+                Menghubungkan board ESP32 ke PictoBlox melalui kabel USB.
+            </p>
+
+        </div>
+
+        <p>Konten Materi 5 akan segera dibuka...</p>
+
+        <div class="lesson-navigation">
+
+            <button
+                class="nav-prev"
+                onclick="bukaMateri(4)"
+            >
+                ← Sebelumnya
+            </button>
+
+            <button
+                class="nav-disabled"
+                disabled
+            >
+                Selesai
+            </button>
+
+        </div>
+
+    </div>
+
+</main>
+
 </div>
 
 <script>
+
 function mulaiBelajar() {
-    document.getElementById('dashboardCourse').style.display = 'none';
-    const materiPage = document.getElementById('materiPage');
+
+    // Sembunyikan halaman awal
+    document.getElementById(
+        'dashboardCourse'
+    ).style.display = 'none';
+
+    // Tampilkan halaman materi
+    const materiPage =
+        document.getElementById(
+            'materiPage'
+        );
+
     materiPage.style.display = 'grid';
+
+    // Buka materi 1 secara default
     bukaMateri(1);
+
+    // Scroll ke halaman materi
+    materiPage.scrollIntoView({
+        behavior: 'smooth'
+    });
+
 }
 
 function bukaMateri(nomor) {
-    // 1. Sembunyikan semua halaman materi
-    const semuaMateri = document.querySelectorAll('.materi-page');
-    semuaMateri.forEach(page => page.classList.remove('active'));
 
-    // 2. Tampilkan materi yang dipilih
-    const target = document.getElementById('materi' + nomor);
-    if (target) {
-        target.classList.add('active');
-    }
+    // =========================
+    // SEMBUNYIKAN SEMUA MATERI
+    // =========================
 
-    // 3. Update status aktif pada sidebar list
-    const lessons = document.querySelectorAll('.lesson');
-    lessons.forEach((lesson, index) => {
-        if (index === (nomor - 1)) {
-            lesson.classList.add('active');
-        } else {
-            lesson.classList.remove('active');
-        }
+    const materi =
+        document.querySelectorAll('.materi-page');
+
+    materi.forEach(function(page) {
+
+        page.style.display = 'none';
+
     });
 
-    // 4. Update progress bar
-    const totalMateri = lessons.length;
-    const progressPercent = Math.round((nomor / totalMateri) * 100);
-    const bar = document.getElementById('bar');
-    const txt = document.getElementById('progressText');
-    if (bar && txt) {
-        bar.style.width = progressPercent + '%';
-        txt.innerText = progressPercent + '% selesai';
+    // =========================
+    // TAMPILKAN MATERI DIPILIH
+    // =========================
+
+    const halaman =
+        document.getElementById(
+            'materi' + nomor
+        );
+
+    if (halaman) {
+
+        halaman.style.display = 'block';
+
     }
 
-    // 5. Scroll otomatis kembali ke atas materi
+    // =========================
+    // UPDATE WARNA SIDEBAR
+    // =========================
+
+    const lessons =
+        document.querySelectorAll('.lesson');
+
+    lessons.forEach(function(lesson) {
+
+        lesson.classList.remove('active');
+
+    });
+
+    if (lessons[nomor - 1]) {
+
+        lessons[nomor - 1]
+            .classList.add('active');
+
+    }
+
+    // =========================
+    // UPDATE PROGRESS BAR
+    // =========================
+
+    const totalMateri = lessons.length;
+    const progressPersen = Math.round((nomor / totalMateri) * 100);
+
+    const bar = document.getElementById('bar');
+    const text = document.getElementById('progressText');
+
+    if (bar && text) {
+        bar.style.width = progressPersen + '%';
+        text.innerText = progressPersen + '% selesai';
+    }
+
+    // Scroll ke atas materi saat pindah halaman
     const content = document.getElementById('materiContent');
     if (content) {
         content.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
 }
+
 </script>
 
 <footer>© Tech-C Robotic & Coding</footer>
