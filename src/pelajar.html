@@ -305,7 +305,7 @@ if (!token) {
             </div>
           </div>
 
-          <!-- CONTAINER UTAMA UNTUK DUA KOTAK (KANTOR & RUMAH) -->
+          <!-- DUA KOTAK CONTAINER (KANTOR & RUMAH) -->
           <div class="space-y-10">
 
             <!-- ==============================================
@@ -328,7 +328,7 @@ if (!token) {
               </div>
 
               <div id="pelajarListKantor" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-                <!-- Data siswa privat kantor masuk ke sini -->
+                <!-- Siswa Privat Kantor akan di-render di sini -->
               </div>
             </div>
 
@@ -352,7 +352,7 @@ if (!token) {
               </div>
 
               <div id="pelajarListRumah" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-                <!-- Data siswa privat rumah masuk ke sini -->
+                <!-- Siswa Privat Rumah akan di-render di sini -->
               </div>
             </div>
 
@@ -433,7 +433,7 @@ const API_BASE = getApiBase();
 let allStudents = [];
 let activeCategory = 'all'; // 'all' | 'kantor' | 'rumah'
 
-// DAFTAR NAMA SISWA YANG PASTI MASUK KE PRIVAT KANTOR
+// DAFTAR NAMA SISWA YANG TERMASUK PRIVAT KANTOR
 const KANTOR_STUDENT_NAMES = [
   'abi',
   'adma',
@@ -511,19 +511,17 @@ function getStudentProgress(student) {
   return Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
 }
 
-// Menentukan apakah murid masuk ke kategori 'kantor' atau 'rumah'
+// Menentukan apakah murid masuk ke 'kantor' atau 'rumah'
 function getStudentCategory(student) {
   const name = getStudentName(student).toLowerCase().trim();
   const rawType = String(student.tipe_privat || student.kategori_privat || student.type || student.program || student.lokasi || '').toLowerCase();
 
-  // 1. Cek dari daftar nama spesifik yang diberikan
   for (const kName of KANTOR_STUDENT_NAMES) {
     if (name.includes(kName)) {
       return 'kantor';
     }
   }
 
-  // 2. Cek atribut data jika ada
   if (rawType.includes('kantor') || rawType.includes('office')) {
     return 'kantor';
   }
@@ -531,7 +529,6 @@ function getStudentCategory(student) {
     return 'rumah';
   }
 
-  // Default: dimasukkan ke privat rumah jika bukan kelompok nama kantor
   return 'rumah';
 }
 
@@ -565,6 +562,7 @@ function showSkeleton() {
   if (listRumah) listRumah.innerHTML = skeletonHTML;
 }
 
+// RENDER KARTU SISWA DENGAN ONCLICK KE FILE HTML KHUSUS ANAK
 function renderStudentCard(student) {
   const id = student.id;
   const name = getStudentName(student);
@@ -581,7 +579,7 @@ function renderStudentCard(student) {
 
   return `
     <div
-      onclick="pilihPelajar(${id})"
+      onclick="pilihPelajar('${safeName}', ${id})"
       class="student-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
     >
       <div class="relative h-24 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500">
@@ -682,14 +680,12 @@ function renderPelajar(students) {
 
   updateStats(allStudents, students);
 
-  // Pisahkan murid ke masing-masing kategori
   const listKantor = students.filter(s => getStudentCategory(s) === 'kantor');
   const listRumah = students.filter(s => getStudentCategory(s) === 'rumah');
 
   setText('badgeCountKantor', `${listKantor.length} Pelajar`);
   setText('badgeCountRumah', `${listRumah.length} Pelajar`);
 
-  // Logika toggle visibilitas tab kategori
   if (activeCategory === 'kantor') {
     sectionKantor.classList.remove('hidden');
     sectionRumah.classList.add('hidden');
@@ -701,7 +697,6 @@ function renderPelajar(students) {
     sectionRumah.classList.remove('hidden');
   }
 
-  // Render cards
   containerKantor.innerHTML = listKantor.length 
     ? listKantor.map(renderStudentCard).join('') 
     : `<p class="col-span-full py-8 text-center text-sm font-semibold text-slate-400">Tidak ada data murid privat kantor</p>`;
@@ -710,7 +705,6 @@ function renderPelajar(students) {
     ? listRumah.map(renderStudentCard).join('') 
     : `<p class="col-span-full py-8 text-center text-sm font-semibold text-slate-400">Tidak ada data murid privat ke rumah</p>`;
 
-  // Tampilkan empty state jika kedua daftar benar-benar kosong
   if (!students.length) {
     if (emptyState) emptyState.classList.remove('hidden');
   } else {
@@ -721,7 +715,6 @@ function renderPelajar(students) {
 function setFilterCategory(cat) {
   activeCategory = cat;
 
-  // Update styling tombol tab
   const tabs = {
     all: document.getElementById('btnTabAll'),
     kantor: document.getElementById('btnTabKantor'),
@@ -885,22 +878,20 @@ async function loadPelajar() {
   }
 }
 
-function pilihPelajar(id) {
- function pilihPelajar(student) {
-  // Ambil nama pertama anak, hilangkan spasi, dan jadikan huruf kapital awal
-  const nama = (student.name || student.nama || '').trim().split(' ')[0];
-  
-  if (nama.toLowerCase() === 'abi') {
-    window.location.href = "Abi.html";
-  } else if (nama.toLowerCase() === 'adma') {
-    window.location.href = "Adma.html";
-  } else if (nama.toLowerCase() === 'ulul') {
-    window.location.href = "Ulul.html";
-  } else {
-    // Default jika file khusus belum dibuat, buka file namanya (misal: Azka.html)
-    window.location.href = `${nama}.html`;
+// FUNGSI NAVIGASI: MEMBUKA FILE HTML SPESIFIK SESUAI NAMA ANAK
+function pilihPelajar(namaLengkap, studentId) {
+  if (studentId) {
+    localStorage.setItem('student_id', studentId);
   }
-}
+
+  // Mengambil kata pertama nama anak (contoh: "Abi" -> "Abi", "Ahmad Rizki" -> "Ahmad")
+  const namaPanggilan = (namaLengkap || '').trim().split(' ')[0];
+
+  // Mengubah menjadi huruf awal kapital (Abi.html, Adma.html, Ulul.html)
+  const namaFile = namaPanggilan.charAt(0).toUpperCase() + namaPanggilan.slice(1).toLowerCase();
+
+  // Pindah halaman ke file HTML anak yang bersangkutan
+  window.location.href = `${namaFile}.html`;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
