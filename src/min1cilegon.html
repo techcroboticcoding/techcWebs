@@ -140,13 +140,13 @@ header h1{
     color:#dc2626;
 }
 
-  /* =========================
+/* =========================
    TABEL ABSENSI
 ========================= */
 
 .attendance-table {
     width: 100%;
-    min-width: 1550px;
+    min-width: 2100px;
     border-collapse: collapse;
     background: white;
 }
@@ -154,7 +154,7 @@ header h1{
 .attendance-table th {
     background: #2563eb;
     color: white;
-    padding: 8px 4px;
+    padding: 10px 6px;
     border: 1px solid #dbe3ef;
     text-align: center;
     font-weight: 600;
@@ -184,9 +184,9 @@ header h1{
     min-width: 80px;
 }
 
-.attendance-table th:not(.col-no):not(.col-name):not(.col-class) {
-    width: 75px;
-    min-width: 75px;
+.attendance-table th.col-date-header {
+    width: 110px;
+    min-width: 110px;
 }
 
 .attendance-table tbody tr:hover {
@@ -202,30 +202,40 @@ header h1{
     cursor: pointer;
 }
 
-/* GAYA INPUT TANGGAL DI HEADER */
+/* GAYA INPUT TANGGAL (TANGGAL, BULAN, TAHUN) */
+.date-header-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.date-header-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #e0f2fe;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .date-header-input {
-    width: 65px;
-    padding: 5px 2px;
-    background: rgba(255, 255, 255, 0.95);
+    width: 105px;
+    padding: 4px 6px;
+    background: #ffffff;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     text-align: center;
     font-size: 11px;
-    font-weight: bold;
-    color: #1e3a8a;
+    font-weight: 600;
+    color: #0f172a;
     outline: none;
+    cursor: pointer;
     transition: 0.2s;
 }
 
 .date-header-input:focus {
-    background: #ffffff;
     border-color: #f59e0b;
     box-shadow: 0 0 5px rgba(245, 158, 11, 0.5);
-}
-
-.date-header-input::placeholder {
-    color: #94a3b8;
-    font-weight: normal;
 }
 
 </style>
@@ -245,7 +255,7 @@ header h1{
 </header>
 
 <div class="container">
-    <!-- ==========================
+<!-- ==========================
      DASHBOARD
 ========================== -->
 
@@ -288,7 +298,7 @@ header h1{
             0
         </h2>
 
-        <p>Hadir Hari Ini</p>
+        <p>Total Kehadiran</p>
 
     </div>
 
@@ -301,7 +311,7 @@ header h1{
             0
         </h2>
 
-        <p>Izin</p>
+        <p>Total Izin</p>
 
     </div>
 
@@ -314,7 +324,7 @@ header h1{
             0
         </h2>
 
-        <p>Sakit</p>
+        <p>Total Sakit</p>
 
     </div>
 
@@ -327,7 +337,7 @@ header h1{
             0
         </h2>
 
-        <p>Alfa</p>
+        <p>Total Alfa</p>
 
     </div>
 
@@ -493,14 +503,14 @@ header h1{
                 <th rowspan="2" class="col-class">Kelas</th>
 
                 <th colspan="18">
-                    Kehadiran & Tanggal Pertemuan
+                    Kehadiran & Tanggal Pertemuan (Hari, Bulan, Tahun)
                 </th>
 
             </tr>
 
-            <!-- BARIS HEADER PERTEMUAN YANG DAPAT DIEDIT TANGGALNYA -->
+            <!-- BARIS HEADER PERTEMUAN DENGAN INPUT DATE (HARI, BULAN, TAHUN) -->
             <tr style="background:#2563eb;color:white;" id="attendanceDateHeaderRow">
-                <!-- Di-generate melalui JavaScript -->
+                <!-- Di-generate otomatis oleh JavaScript -->
             </tr>
 
         </thead>
@@ -554,7 +564,7 @@ let students = [];
 
 let deleteMode = false;
 
-// Array untuk menyimpan tanggal 18 pertemuan
+// Menyimpan 18 tanggal pertemuan dalam format YYYY-MM-DD
 let attendanceDates = Array(18).fill('');
 
 /* =========================
@@ -573,7 +583,7 @@ function loadDates() {
 }
 
 /* =========================
-   SIMPAN & UPDATE TANGGAL
+   SIMPAN DATA TANGGAL
 ========================= */
 function saveDates() {
     localStorage.setItem('min1cilegon_dates', JSON.stringify(attendanceDates));
@@ -585,7 +595,7 @@ function updateDate(index, value) {
 }
 
 /* =========================
-   RENDER HEADER TANGGAL
+   RENDER HEADER TANGGAL (DATE PICKER)
 ========================= */
 function renderDateHeaders() {
     const headerRow = document.getElementById('attendanceDateHeaderRow');
@@ -593,17 +603,19 @@ function renderDateHeaders() {
 
     let html = '';
     for (let i = 0; i < 18; i++) {
-        const val = escapeHTML(attendanceDates[i] || '');
+        const val = attendanceDates[i] || '';
         html += `
-            <th>
-                <input 
-                    type="text" 
-                    class="date-header-input" 
-                    value="${val}" 
-                    placeholder="Tgl ${i + 1}"
-                    title="Pertemuan ${i + 1} (Ketik tanggal manual)"
-                    onchange="updateDate(${i}, this.value)"
-                >
+            <th class="col-date-header">
+                <div class="date-header-container">
+                    <span class="date-header-label">P${i + 1}</span>
+                    <input 
+                        type="date" 
+                        class="date-header-input" 
+                        value="${val}" 
+                        title="Pertemuan ${i + 1}"
+                        onchange="updateDate(${i}, this.value)"
+                    >
+                </div>
             </th>
         `;
     }
@@ -648,7 +660,7 @@ function loadStudents() {
 
 
 /* =========================
-   SIMPAN DATA
+   SIMPAN DATA SISWA
 ========================= */
 
 function saveStudents() {
@@ -1138,7 +1150,7 @@ async function simpanSiswaKeDatabase() {
     const data = {
 
         school_id: schoolId,
-        dates: attendanceDates, // Termasuk data tanggal pertemuan
+        dates: attendanceDates, // Data tanggal lengkap pertemuan
 
         students: siswaTerdaftar.map(function(student) {
 
