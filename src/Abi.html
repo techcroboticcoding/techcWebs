@@ -134,9 +134,9 @@
         </table>
       </div>
 
-      <!-- KOTAK NOTIFIKASI PENGINGAT PEMBAYARAN (MUNCUL OTOMATIS SAAT KELIPATAN 4 PERTEMUAN) -->
-      <div id="paymentAlertBox" class="hidden m-5 rounded-2xl border border-amber-300 bg-amber-50/90 p-5 shadow-sm notice-pulse">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <!-- KOTAK NOTIFIKASI PENGINGAT PEMBAYARAN -->
+      <div id="paymentAlertBox" class="hidden m-5 rounded-2xl border border-amber-300 bg-amber-50/95 p-5 shadow-sm notice-pulse">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div class="flex items-start gap-3.5">
             <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-xl text-white shadow-md shadow-amber-500/30">
               <i class="fa-solid fa-bell"></i>
@@ -152,16 +152,31 @@
                 Waktunya Konfirmasi Pembayaran Sesi Privat Abi!
               </h4>
               <p class="text-xs text-amber-800/90">
-                Murid telah menyelesaikan paket belajar 4 pertemuan. Silakan kirimkan notifikasi atau tagihan invoice kepada wali murid.
+                Murid telah menyelesaikan paket belajar 4 pertemuan. Masukkan nomor WhatsApp tujuan untuk mengirim notifikasi penagihan.
               </p>
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center gap-2 shrink-0">
-            <button onclick="kirimWhatsAppTagihan()" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700">
-              <i class="fa-brands fa-whatsapp text-sm"></i> Kirim WhatsApp
+          <!-- KONTROL NOMOR WA & TOMBOL AKSI -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <div class="relative">
+              <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
+                <i class="fa-brands fa-whatsapp text-emerald-600"></i>
+              </span>
+              <input 
+                type="text" 
+                id="inputWaNumber" 
+                placeholder="Contoh: 08123456789" 
+                class="w-44 rounded-xl border border-amber-300 bg-white py-2 pl-8 pr-3 text-xs font-bold text-slate-800 outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                title="Nomor WhatsApp penerima tagihan"
+              />
+            </div>
+
+            <button onclick="kirimWhatsAppTagihan()" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-emerald-700">
+              <i class="fa-solid fa-paper-plane text-xs"></i> Kirim WhatsApp
             </button>
-            <button onclick="tandaiLunas()" class="inline-flex items-center gap-1.5 rounded-xl border border-amber-400/80 bg-white px-3.5 py-2.5 text-xs font-bold text-amber-900 shadow-sm hover:bg-amber-100">
+
+            <button onclick="tandaiLunas()" class="inline-flex items-center gap-1.5 rounded-xl border border-amber-400/80 bg-white px-3.5 py-2.5 text-xs font-bold text-amber-900 shadow-sm transition hover:bg-amber-100">
               <i class="fa-solid fa-check"></i> Tandai Lunas
             </button>
           </div>
@@ -172,7 +187,7 @@
 
   </main>
 
-  <!-- AUTOCOMPLETE LIST MATERI TEKNOLOGI / ESP32 TECH-C -->
+  <!-- AUTOCOMPLETE LIST MATERI -->
   <datalist id="materiList">
     <option value="1. Pengenalan ESP32 & Setup Board"></option>
     <option value="2. Mengenal Pin GPIO ESP32 (LED Blinking)"></option>
@@ -190,8 +205,8 @@
     const STUDENT_NAME = "Abi";
     const STORAGE_KEY = "techc_student_meetings_abi";
     const PAYMENT_STATUS_KEY = "techc_payment_cleared_abi";
+    const WA_NUMBER_KEY = "techc_target_wa_abi";
 
-    // Data Awal jika belum ada riwayat tersimpan
     const DEFAULT_MEETINGS = [
       { sesi: 1, tanggal: "2026-09-02", materi: "1. Pengenalan ESP32 & Setup Board", catatan: "Cepat memahami struktur pin board" },
       { sesi: 2, tanggal: "2026-09-09", materi: "2. Mengenal Pin GPIO ESP32 (LED Blinking)", catatan: "Praktik logika blink di PictoBlox lancar" },
@@ -201,7 +216,6 @@
 
     let meetings = [];
 
-    // 1. Muat Data dari LocalStorage
     function loadMeetings() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
@@ -213,10 +227,17 @@
       } else {
         meetings = DEFAULT_MEETINGS;
       }
+
+      // Muat nomor WhatsApp yang tersimpan jika ada
+      const savedWa = localStorage.getItem(WA_NUMBER_KEY);
+      const waInput = document.getElementById('inputWaNumber');
+      if (waInput && savedWa) {
+        waInput.value = savedWa;
+      }
+
       renderTable();
     }
 
-    // 2. Simpan Data ke LocalStorage
     function simpanKeStorage(showToast = false) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(meetings));
       checkPaymentNotification();
@@ -227,7 +248,6 @@
       }
     }
 
-    // 3. Render Baris Tabel
     function renderTable() {
       const tbody = document.getElementById('tableBodyPertemuan');
       if (!tbody) return;
@@ -294,14 +314,12 @@
       updateStatistics();
     }
 
-    // 4. Update Field Baris
     function updateRow(idx, field, value) {
       if (!meetings[idx]) return;
       meetings[idx][field] = value;
       simpanKeStorage(false);
     }
 
-    // 5. Tambah Sesi Pertemuan Baru
     function tambahPertemuan() {
       const nextSesi = meetings.length + 1;
       const today = new Date().toISOString().split('T')[0];
@@ -317,7 +335,6 @@
       simpanKeStorage(false);
     }
 
-    // 6. Hapus Pertemuan
     function hapusPertemuan(idx) {
       if (confirm(`Apakah Anda yakin ingin menghapus Pertemuan ke-${idx + 1}?`)) {
         meetings.splice(idx, 1);
@@ -326,19 +343,14 @@
       }
     }
 
-    // 7. Cek Notifikasi Pembayaran (Setiap Kelipatan 4 Pertemuan)
     function checkPaymentNotification() {
       const alertBox = document.getElementById('paymentAlertBox');
       const textNotice = document.getElementById('alertPertemuanKe');
       if (!alertBox) return;
 
-      // Hitung sesi yang sudah memiliki tanggal
       const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
-      
-      // Ambil riwayat pembayaran yang sudah ditandai lunas sebelumnya
       const lastClearedMilestone = parseInt(localStorage.getItem(PAYMENT_STATUS_KEY) || '0', 10);
 
-      // Cek apakah mencapai kelipatan 4 (4, 8, 12, dst) dan belum ditandai lunas
       if (totalSelesai >= 4 && (totalSelesai % 4 === 0) && totalSelesai > lastClearedMilestone) {
         alertBox.classList.remove('hidden');
         if (textNotice) {
@@ -349,7 +361,6 @@
       }
     }
 
-    // 8. Tandai Tagihan Sudah Lunas
     function tandaiLunas() {
       const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
       localStorage.setItem(PAYMENT_STATUS_KEY, totalSelesai.toString());
@@ -357,19 +368,38 @@
       const alertBox = document.getElementById('paymentAlertBox');
       if (alertBox) alertBox.classList.add('hidden');
 
-      alert(`Pembayaran sesi ke-${totalSelesai} untuk Abi telah ditandai lunas! Notifikasi ditutup.`);
+      alert(`Pembayaran paket 4 pertemuan ke-${totalSelesai} untuk Abi berhasil ditandai LUNAS!`);
     }
 
-    // 9. Format Pesan WhatsApp ke Orang Tua
+    // FUNGSI KIRIM WHATSAPP DENGAN NOMOR TUJUAN
     function kirimWhatsAppTagihan() {
+      const waInput = document.getElementById('inputWaNumber');
+      let rawNumber = (waInput ? waInput.value : '').trim();
+
+      if (!rawNumber) {
+        alert("Silakan masukkan nomor WhatsApp tujuan terlebih dahulu.");
+        if (waInput) waInput.focus();
+        return;
+      }
+
+      // Bersihkan tanda strip, spasi, plus
+      let cleanNumber = rawNumber.replace(/[\s\-\+]/g, '');
+
+      // Ubah awalan 08xxx menjadi 628xxx
+      if (cleanNumber.startsWith('6281293552833')) {
+        cleanNumber = '62' + cleanNumber.substring(1);
+      }
+
+      // Simpan nomor WA ke localStorage agar selalu diingat
+      localStorage.setItem(WA_NUMBER_KEY, rawNumber);
+
       const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
       const pesan = `Halo Ayah/Bunda Abi, kami dari TECH-C Robotic & Coding menginformasikan bahwa ananda Abi telah menyelesaikan ${totalSelesai} pertemuan sesi privat. Untuk melanjutkan ke sesi berikutnya, berikut kami lampirkan tagihan pembayaran sesi belajar. Terima kasih!`;
       
-      const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`;
+      const waUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(pesan)}`;
       window.open(waUrl, '_blank');
     }
 
-    // 10. Update Tampilan Ringkasan Header
     function updateStatistics() {
       const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
       
