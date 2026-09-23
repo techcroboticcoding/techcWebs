@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Pelajar & Materi - TECH-C</title>
+
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+    .dark .grid-bg {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 8px;
+      width: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.4);
+      border-radius: 999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(37, 99, 235, 0.6);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/90 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <div class="flex items-center gap-4">
+        <a href="pelajar.html" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-brand-50 hover:text-brand-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Daftar Pelajar</span>
+        </a>
+        <div class="h-6 w-[1px] bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-600 to-cyan-500 flex items-center justify-center text-white text-sm font-black shadow-md shadow-brand-500/20">
+            TC
+          </div>
+          <span class="font-extrabold text-base tracking-tight text-slate-900 dark:text-white hidden sm:inline">
+            TECH-C <span class="text-brand-600 font-semibold text-xs ml-1 px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/60 dark:text-brand-400">Jurnal Materi</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" onclick="toggleDarkMode()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center hover:scale-105 transition" title="Ganti Tema">
+          <i class="fa-solid fa-moon dark:hidden text-sm"></i>
+          <i class="fa-solid fa-sun hidden dark:block text-sm text-amber-400"></i>
+        </button>
+
+        <!-- Save Button -->
+        <button onclick="simpanSemuaSesi()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-lg shadow-brand-500/25 transition hover:-translate-y-0.5">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Simpan Data</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="grid-bg flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+    
+    <!-- PROFILE OVERVIEW HERO -->
+    <section class="mb-8 rounded-3xl border border-slate-200/80 bg-white/95 p-6 sm:p-8 shadow-xl shadow-slate-200/60 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20 relative overflow-hidden">
+      <!-- Glow ambient shapes -->
+      <div class="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-brand-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-20 bottom-0 h-48 w-48 rounded-full bg-cyan-500/10 blur-2xl pointer-events-none"></div>
+
+      <div class="relative flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+        
+        <!-- Left: Avatar + Details -->
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
+          <div class="relative group">
+            <img id="studentAvatar" src="https://placehold.co/120x120/2563eb/ffffff?text=STUDENT" alt="Avatar" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-4 border-white dark:border-slate-800 shadow-xl shadow-brand-600/15">
+            <div id="studentCategoryBadge" class="absolute -bottom-2 -right-2 px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase text-white bg-brand-600 shadow-md">
+              Privat Kantor
+            </div>
+          </div>
+
+          <div>
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
+              <span id="studentStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800">
+                Aktif
+              </span>
+              <span id="studentSchoolBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                Private Class TECH-C
+              </span>
+            </div>
+
+            <h1 id="studentNameText" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+              Memuat Pelajar...
+            </h1>
+            
+            <p id="studentClassText" class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
+              Program: Robotic & Coding • Level ESP32 & IoT
+            </p>
+
+            <div class="mt-4 flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span class="inline-flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-brand-600"></i> Tahun Ajaran 2026/2027</span>
+              <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-rose-500"></i> Cilegon</span>
+              <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-code text-cyan-600"></i> PictoBlox & ESP32</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Progress Card -->
+        <div class="w-full md:w-80 bg-slate-50 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800 p-5 rounded-2xl">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400 mb-2">
+            <span>Progress Materi Selesai</span>
+            <span id="progressPercentLabel" class="text-brand-600 dark:text-brand-400 font-extrabold text-sm">0%</span>
+          </div>
+
+          <div class="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden mb-4">
+            <div id="progressBarFill" class="bg-gradient-to-r from-brand-600 to-cyan-500 h-full rounded-full transition-all duration-500 w-0"></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-center pt-2 border-t border-slate-200/60 dark:border-slate-800/80">
+            <div>
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Pertemuan</p>
+              <p id="totalSessionsCount" class="text-lg font-black text-slate-800 dark:text-white mt-0.5">0</p>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pertemuan Terakhir</p>
+              <p id="lastSessionDate" class="text-xs font-black text-brand-600 dark:text-brand-400 mt-1">-</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MAIN SECTION: TABEL MATERI (NO KEHADIRAN) -->
+    <section class="rounded-3xl border border-slate-200/80 bg-white/95 shadow-xl shadow-slate-200/60 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20 overflow-hidden">
+      
+      <!-- TOOLBAR -->
+      <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span class="w-3 h-3 rounded-full bg-brand-600"></span>
+            Tabel Pertemuan & Materi Pembelajaran
+          </h2>
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
+            Catatan silabus, tanggal sesi pertemuan, dan materi yang telah dipelajari oleh murid.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Search input -->
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input id="searchMateriInput" oninput="filterMeetings()" type="text" placeholder="Cari materi atau tanggal..." class="pl-9 pr-3.5 py-2 rounded-xl text-xs font-medium border border-slate-200 bg-slate-50 focus:bg-white dark:border-slate-700 dark:bg-slate-950 dark:text-white outline-none focus:border-brand-500 w-48 sm:w-60">
+          </div>
+
+          <!-- Add Button -->
+          <button onclick="tambahSesiBaru()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition hover:-translate-y-0.5">
+            <i class="fa-solid fa-plus"></i>
+            <span>Tambah Pertemuan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TABLE CONTAINER -->
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left border-collapse min-w-[850px]">
+          <thead>
+            <tr class="bg-slate-50/80 dark:bg-slate-950/40 text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+              <th class="py-3.5 px-4 w-16 text-center">Sesi</th>
+              <th class="py-3.5 px-5 w-44">Nama Siswa</th>
+              <th class="py-3.5 px-4 w-44">Tanggal Pertemuan</th>
+              <th class="py-3.5 px-5">Materi Pembelajaran</th>
+              <th class="py-3.5 px-5 w-72">Catatan Perkembangan</th>
+              <th class="py-3.5 px-4 w-24 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="meetingsTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+            <!-- Rendered by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div id="noMeetingsAlert" class="hidden py-16 px-4 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 text-2xl flex items-center justify-center mx-auto mb-3">
+          <i class="fa-solid fa-book-open-reader"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Belum Ada Catatan Pertemuan</h3>
+        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Klik tombol "Tambah Pertemuan" di atas untuk mengisi tanggal dan materi yang diajarkan.</p>
+        <button onclick="tambahSesiBaru()" class="mt-4 px-4 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs shadow-md hover:bg-brand-700 transition">
+          + Tambah Sesi Pertama
+        </button>
+      </div>
+
+      <!-- FOOTER SUMMARY -->
+      <div class="p-4 sm:p-5 bg-slate-50/80 dark:bg-slate-950/40 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+        <p id="meetingCounterSummary">Menampilkan 0 sesi belajar</p>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400">
+          <i class="fa-solid fa-circle-info text-brand-500"></i> Perubahan data tersimpan otomatis di perangkat Anda
+        </span>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xl border border-slate-800 dark:border-slate-100">
+      <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+      <span id="toastMessage" class="text-xs font-bold tracking-tight">Perubahan berhasil disimpan!</span>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // PREDEFINED CURRICULUM TOPICS
+    const TOPIC_SUGGESTIONS = [
+      '1. Pengenalan Mikrokontroler ESP32 & Fitur IoT',
+      '2. Mengenal Bagian Board ESP32, Pinout & GPIO Logic',
+      '3. Instalasi Software PictoBlox & Konfigurasi Serial',
+      '4. Instalasi Driver USB to UART (CH340 / CP2102)',
+      '5. Koneksi Board ESP32 ke PictoBlox via USB',
+      '6. Praktik Output: Blink Internal & External LED',
+      '7. Kontrol Kecepatan Kedip LED dengan Variabel Blok',
+      '8. Praktik Input: Push Button & Logika Kondisi IF-ELSE',
+      '9. Eksperimen Sensor Cahaya LDR & Lampu Otomatis',
+      '10. Mengendalikan Servo Motor 180 Derajat',
+      '11. Pembacaan Sensor Jarak Ultrasonik (HC-SR04)',
+      '12. Proyek Radar Robot Pintar Pendeteksi Rintangan',
+      '13. Koneksi Modul WiFi ESP32 ke Jaringan Hotspot',
+      '14. IoT Dasar: Monitoring Nilai Sensor via Web Cloud'
+    ];
+
+    // HARDCODED DATABASE OF STUDENTS (MATCHING PELAJAR.HTML)
+    const STUDENT_ROSTER = [
+      { id: 1, name: 'Abi', school: 'Private Class TECH-C', category: 'kantor', class: 'Private Class', progress: 35 },
+      { id: 2, name: 'Adma', school: 'Private Class TECH-C', category: 'kantor', class: 'Private Class', progress: 40 },
+      { id: 3, name: 'Ahmad Rizki', school: 'SDIT Al-Khairiyah', category: 'kantor', class: 'Junior A', progress: 45 },
+      { id: 4, name: 'Amsyar', school: 'Private Class TECH-C', category: 'kantor', class: 'Private Class', progress: 25 },
+      { id: 5, name: 'Aryan', school: 'Private Class TECH-C', category: 'kantor', class: 'Private Class', progress: 30 },
+      { id: 6, name: 'Azka', school: 'Private Class TECH-C', category: 'kantor', class: 'Private Class', progress: 50 },
+      { id: 7, name: 'Barra', school: 'Private Class TECH-C', category: 'kantor', class: 'Private Class', progress: 30 },
+      { id: 8, name: 'Biyon', school: 'Private Class TECH-C', category: 'kantor', class: 'Private Class', progress: 35 },
+    ];
+
+    let currentStudent = null;
+    let meetings = [];
+
+    // Initialize Theme
+    function initTheme() {
+      const isDark = JSON.parse(localStorage.getItem('darkMode')) ?? false;
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+
+    function toggleDarkMode() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('darkMode', JSON.stringify(isDark));
+    }
+
+    // Toast Notification
+    function showToast(message, isSuccess = true) {
+      const toast = document.getElementById('toastNotification');
+      const msg = document.getElementById('toastMessage');
+      const icon = document.getElementById('toastIcon');
+
+      msg.innerText = message;
+      icon.className = isSuccess 
+        ? "fa-solid fa-circle-check text-emerald-400 text-base" 
+        : "fa-solid fa-triangle-exclamation text-amber-400 text-base";
+
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2500);
+    }
+
+    // Load active student from storage
+    function loadStudentProfile() {
+      const studentId = localStorage.getItem('student_id');
+      
+      let student = STUDENT_ROSTER.find(s => String(s.id) === String(studentId));
+
+      if (!student) {
+        student = {
+          id: studentId || 1,
+          name: localStorage.getItem('selected_student_name') || 'Abi',
+          school: 'Private Class TECH-C',
+          category: 'kantor',
+          class: 'Private Class',
+          progress: 30
+        };
+      }
+
+      currentStudent = student;
+
+      // Update DOM
+      document.getElementById('studentNameText').innerText = student.name;
+      document.getElementById('studentSchoolBadge').innerText = student.school;
+      document.getElementById('studentClassText').innerText = `Kelas: ${student.class} • Program Robotic & Coding`;
+      
+      const categoryBadge = document.getElementById('studentCategoryBadge');
+      if (student.category === 'rumah') {
+        categoryBadge.innerText = 'Privat ke Rumah';
+        categoryBadge.className = 'absolute -bottom-2 -right-2 px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase text-white bg-emerald-600 shadow-md';
+      } else {
+        categoryBadge.innerText = 'Privat Kantor';
+        categoryBadge.className = 'absolute -bottom-2 -right-2 px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase text-white bg-brand-600 shadow-md';
+      }
+
+      const avatar = document.getElementById('studentAvatar');
+      avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=2563eb&color=fff&bold=true&size=160`;
+    }
+
+    // Load meetings
+    function loadMeetingsData() {
+      const storageKey = `techc_student_meetings_${currentStudent.id}`;
+      const saved = localStorage.getItem(storageKey);
+
+      if (saved) {
+        try {
+          meetings = JSON.parse(saved);
+        } catch (e) {
+          meetings = [];
+        }
+      } else {
+        // Pre-fill initial lesson history
+        meetings = [
+          {
+            session: 1,
+            date: '2026-08-04',
+            material: '1. Pengenalan Mikrokontroler ESP32 & Fitur IoT',
+            notes: 'Siswa memahami fungsi utama mikrokontroler dan perbandingannya dengan Arduino.'
+          },
+          {
+            session: 2,
+            date: '2026-08-11',
+            material: '2. Mengenal Bagian Board ESP32, Pinout & GPIO Logic',
+            notes: 'Mempelajari fungsi pin input, output, serta pin power 3.3V dan GND.'
+          },
+          {
+            session: 3,
+            date: '2026-08-18',
+            material: '3. Instalasi Software PictoBlox & Konfigurasi Serial',
+            notes: 'Berhasil menghubungkan aplikasi PictoBlox dan memahami perbedaan Upload Mode vs Stage Mode.'
+          },
+          {
+            session: 4,
+            date: '2026-08-25',
+            material: '6. Praktik Output: Blink Internal & External LED',
+            notes: 'Praktik membuat program lampu kedip dengan delay variabel sukses dipahami.'
+          }
+        ];
+        saveMeetingsToStorage();
+      }
+
+      renderMeetingsTable(meetings);
+    }
+
+    function saveMeetingsToStorage() {
+      const storageKey = `techc_student_meetings_${currentStudent.id}`;
+      localStorage.setItem(storageKey, JSON.stringify(meetings));
+      updateProgressStats();
+    }
+
+    // Render Table without 'Kehadiran'
+    function renderMeetingsTable(items) {
+      const tbody = document.getElementById('meetingsTableBody');
+      const emptyAlert = document.getElementById('noMeetingsAlert');
+      const counter = document.getElementById('meetingCounterSummary');
+
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '';
+        emptyAlert.classList.remove('hidden');
+        counter.innerText = 'Menampilkan 0 sesi belajar';
+        return;
+      }
+
+      emptyAlert.classList.add('hidden');
+      counter.innerText = `Menampilkan ${items.length} sesi belajar`;
+
+      tbody.innerHTML = items.map((item, index) => {
+        return `
+          <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition">
+            <!-- No Sesi -->
+            <td class="py-3 px-4 text-center font-bold text-slate-500">
+              <span class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-xs font-black text-slate-700 dark:text-slate-300">
+                P${item.session || (index + 1)}
+              </span>
+            </td>
+
+            <!-- Nama Siswa -->
+            <td class="py-3 px-5 font-bold text-xs text-slate-800 dark:text-slate-200">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-user-graduate text-brand-600"></i>
+                <span>${escapeHtml(currentStudent ? currentStudent.name : 'Murid')}</span>
+              </div>
+            </td>
+
+            <!-- Tanggal Pertemuan -->
+            <td class="py-3 px-4">
+              <input 
+                type="date" 
+                value="${item.date || ''}" 
+                onchange="updateRowField(${index}, 'date', this.value)"
+                class="w-full text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 outline-none focus:border-brand-500 cursor-pointer"
+              />
+            </td>
+
+            <!-- Materi Pembelajaran -->
+            <td class="py-3 px-5">
+              <input 
+                type="text" 
+                list="topicsDatalist"
+                value="${escapeHtml(item.material || '')}" 
+                placeholder="Ketik topik materi..." 
+                onchange="updateRowField(${index}, 'material', this.value)"
+                class="w-full text-xs font-semibold px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none focus:border-brand-500"
+              />
+            </td>
+
+            <!-- Catatan Perkembangan -->
+            <td class="py-3 px-5">
+              <input 
+                type="text" 
+                value="${escapeHtml(item.notes || '')}" 
+                placeholder="Catatan hasil belajar siswa..." 
+                onchange="updateRowField(${index}, 'notes', this.value)"
+                class="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 outline-none focus:border-brand-500 placeholder:text-slate-400"
+              />
+            </td>
+
+            <!-- Aksi Hapus -->
+            <td class="py-3 px-4 text-center">
+              <button 
+                onclick="hapusSesi(${index})" 
+                class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white dark:bg-rose-950/40 dark:text-rose-400 dark:hover:bg-rose-600 dark:hover:text-white transition inline-flex items-center justify-center text-xs" 
+                title="Hapus Pertemuan"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Helper to update specific row in memory
+    function updateRowField(index, field, value) {
+      if (meetings[index]) {
+        meetings[index][field] = value;
+        saveMeetingsToStorage();
+      }
+    }
+
+    // Add row
+    function tambahSesiBaru() {
+      const today = new Date().toISOString().split('T')[0];
+      const nextSessionNumber = meetings.length + 1;
+      const suggestedTopic = TOPIC_SUGGESTIONS[meetings.length] || `Pertemuan ${nextSessionNumber}: Praktik Lanjutan Robotik`;
+
+      meetings.push({
+        session: nextSessionNumber,
+        date: today,
+        material: suggestedTopic,
+        notes: 'Sesi belajar baru ditambahkan.'
+      });
+
+      saveMeetingsToStorage();
+      renderMeetingsTable(meetings);
+      showToast(`Pertemuan ke-${nextSessionNumber} berhasil ditambahkan!`);
+    }
+
+    // Remove row
+    function hapusSesi(index) {
+      const sesino = meetings[index].session || (index + 1);
+      if (confirm(`Apakah Anda yakin ingin menghapus catatan Sesi ${sesino}?`)) {
+        meetings.splice(index, 1);
+        // Renumber sessions cleanly
+        meetings.forEach((m, idx) => {
+          m.session = idx + 1;
+        });
+        saveMeetingsToStorage();
+        renderMeetingsTable(meetings);
+        showToast('Pertemuan berhasil dihapus.');
+      }
+    }
+
+    // Save trigger
+    function simpanSemuaSesi() {
+      saveMeetingsToStorage();
+      showToast('Seluruh data tanggal & materi berhasil disimpan!', true);
+    }
+
+    // Update Statistics
+    function updateProgressStats() {
+      const total = meetings.length;
+      document.getElementById('totalSessionsCount').innerText = total;
+
+      // Last date
+      if (meetings.length > 0 && meetings[meetings.length - 1].date) {
+        const d = new Date(meetings[meetings.length - 1].date);
+        document.getElementById('lastSessionDate').innerText = d.toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        });
+      } else {
+        document.getElementById('lastSessionDate').innerText = '-';
+      }
+
+      // Progress calculation (16 meetings standard curriculum)
+      const targetSessions = 16;
+      const calculatedProgress = Math.min(100, Math.round((total / targetSessions) * 100));
+
+      document.getElementById('progressPercentLabel').innerText = `${calculatedProgress}%`;
+      document.getElementById('progressBarFill').style.width = `${calculatedProgress}%`;
+    }
+
+    // Filter functionality
+    function filterMeetings() {
+      const keyword = document.getElementById('searchMateriInput').value.toLowerCase().trim();
+      if (!keyword) {
+        renderMeetingsTable(meetings);
+        return;
+      }
+
+      const filtered = meetings.filter(m => 
+        (m.material && m.material.toLowerCase().includes(keyword)) ||
+        (m.date && m.date.includes(keyword)) ||
+        (m.notes && m.notes.toLowerCase().includes(keyword))
+      );
+
+      renderMeetingsTable(filtered);
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    // Datalist for topics
+    function buildTopicsDatalist() {
+      const datalist = document.createElement('datalist');
+      datalist.id = 'topicsDatalist';
+      TOPIC_SUGGESTIONS.forEach(topic => {
+        const option = document.createElement('option');
+        option.value = topic;
+        datalist.appendChild(option);
+      });
+      document.body.appendChild(datalist);
+    }
+
+    // Lifecycle Onload
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      buildTopicsDatalist();
+      loadStudentProfile();
+      loadMeetingsData();
+      updateProgressStats();
+    });
+  </script>
+</body>
+</html>
