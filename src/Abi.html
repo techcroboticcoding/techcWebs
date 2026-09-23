@@ -371,8 +371,6 @@
       alert(`Pembayaran paket 4 pertemuan ke-${totalSelesai} untuk Abi berhasil ditandai LUNAS!`);
     }
 
-    // FUNGSI KIRIM WHATSAPP DENGAN NOMOR TUJUAN
-    // FUNGSI KIRIM WHATSAPP DENGAN URL WA.ME & PENANGANAN KLIK BERULANG
     function kirimWhatsAppTagihan() {
       const waInput = document.getElementById('inputWaNumber');
       let rawNumber = (waInput ? waInput.value : '').trim();
@@ -383,34 +381,38 @@
         return;
       }
 
-      // Bersihkan tanda strip, spasi, tanda kurung, dan simbol plus
-      let cleanNumber = rawNumber.replace(/[\s\-\+\(\)]/g, '');
+      // Bersihkan karakter selain angka
+      let cleanNumber = rawNumber.replace(/\D/g, '');
 
-      // Ubah awalan 08xxx menjadi 628xxx
+      // Ubah awalan 08... menjadi 628...
       if (cleanNumber.startsWith('0')) {
         cleanNumber = '62' + cleanNumber.substring(1);
       }
 
-      // Simpan nomor WA ke localStorage agar tidak hilang
+      // Simpan nomor WA ke localStorage agar selalu tersimpan
       localStorage.setItem(WA_NUMBER_KEY, rawNumber);
 
       const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
       const pesan = `Halo Ayah/Bunda Abi, kami dari TECH-C Robotic & Coding menginformasikan bahwa ananda Abi telah menyelesaikan ${totalSelesai} pertemuan sesi privat. Untuk melanjutkan ke sesi berikutnya, berikut kami lampirkan tagihan pembayaran sesi belajar. Terima kasih!`;
-      
-      // Menggunakan wa.me yang langsung menuju chat tanpa perantara berulang
-      const waUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(pesan)}`;
 
-      // Gunakan elemen tautan dinamis agar browser mengeksekusinya seperti klik asli
-      // Ini mencegah tab baru macet saat diklik untuk kedua atau ketiga kalinya
-      const link = document.createElement('a');
-      link.href = waUrl;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // 1. Salin teks pesan otomatis ke Clipboard (pencegahan jika WA Web macet/blank)
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(pesan).catch(() => {});
+      }
+
+      // 2. Gunakan URL resmi API WhatsApp
+      const waUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(pesan)}`;
+
+      // 3. Buka tab bersih baru menggunakan link dinamis tanpa atribut nama jendela
+      const a = document.createElement('a');
+      a.href = waUrl;
+      a.target = '_blank';
+      a.rel = 'noreferrer noopener';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
-
+  
     function updateStatistics() {
       const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
       
