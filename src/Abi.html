@@ -456,30 +456,70 @@
     }
 
     // ==========================================================
-    // LOGIKA GENERATE FORMAT INVOICE RESMI
+    // LOGIKA GENERATE DATA INVOICE PAKET 4 PERTEMUAN
     // ==========================================================
     function generateInvoiceData() {
+      // Ambil pertemuan yang sudah memiliki tanggal valid
       const validMeetings = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '');
       const totalSelesai = validMeetings.length;
       const now = new Date();
-      const invoiceNo = `INV/TECHC/${now.getFullYear()}/${String(totalSelesai).padStart(3, '0')}`;
+      
+      // Tentukan blok/siklus paket 4 pertemuan
+      // Contoh: jika selesai 12, akhir = 12, awal = 9 (Sesi 9 - 12)
+      // Jika selesai 4, akhir = 4, awal = 1 (Sesi 1 - 4)
+      const akhirSesi = Math.floor(totalSelesai / 4) * 4;
+      const awalSesi = akhirSesi - 3;
+      const paketKe = akhirSesi / 4;
+
+      const invoiceNo = `INV/TECHC/${now.getFullYear()}/PKT-${paketKe}`;
       const tglCetak = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
-      // Ambil 4 sesi pertemuan terakhir
-      const sesiPaket = validMeetings.slice(-4);
-      const daftarSesiText = sesiPaket.map(s => `• Sesi ${s.sesi} (${s.tanggal}): ${s.materi || 'Praktik Robotika'}`).join('\n');
+      // Ambil 4 sesi tepat pada periode tagihan ini (misal sesi 9 s/d 12)
+      const sesiPaket = validMeetings.slice(awalSesi - 1, akhirSesi);
+      
+      const daftarSesiText = sesiPaket.map(s => 
+        `• Sesi ${s.sesi} (${s.tanggal}): ${s.materi || 'Praktik Robotika & Coding'}`
+      ).join('\n');
 
       return {
         invoiceNo,
         tglCetak,
+        paketKe,
+        awalSesi,
+        akhirSesi,
         totalSelesai,
-        sesiPaket,
         daftarSesiText,
         nominal: BIAYA_PAKET_4_SESI
       };
     }
 
-    // KIRIM INVOICE RESMI VIA WHATSAPP
+    // ==========================================================
+    // CEK NOTIFIKASI PEMBAYARAN (AKTIF PADA SESI 4, 8, 12, DST)
+    // ==========================================================
+    function checkPaymentNotification() {
+      const alertBox = document.getElementById('paymentAlertBox');
+      const textNotice = document.getElementById('alertPertemuanKe');
+      if (!alertBox) return;
+
+      const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
+      const lastClearedMilestone = parseInt(localStorage.getItem(PAYMENT_STATUS_KEY) || '0', 10);
+
+      // Muncul saat total pertemuan minimal 4 dan merupakan kelipatan 4 (4, 8, 12, ...)
+      // Serta sesi tersebut belum ditandai lunas
+      if (totalSelesai >= 4 && (totalSelesai % 4 === 0) && totalSelesai > lastClearedMilestone) {
+        alertBox.classList.remove('hidden');
+        const awal = totalSelesai - 3;
+        if (textNotice) {
+          textNotice.innerText = `Tagihan Sesi ${awal} s/d ${totalSelesai} (Paket ${totalSelesai / 4})`;
+        }
+      } else {
+        alertBox.classList.add('hidden');
+      }
+    }
+
+    // ==========================================================
+    // KIRIM INVOICE WHATSAPP
+    // ==========================================================
     function kirimWhatsAppInvoice() {
       const waInput = document.getElementById('inputWaNumber');
       let rawNumber = (waInput ? waInput.value : '').trim();
@@ -499,7 +539,7 @@
 
       const inv = generateInvoiceData();
 
-      // FORMAT INVOICE RESMI UNTUK WHATSAPP
+      // FORMAT PESAN INVOICE RESMI
       const pesanInvoice = 
 `🧾 *INVOICE PEMBAYARAN PRIVATE CLASS TECH-C*
 --------------------------------------------------
@@ -507,30 +547,30 @@
 *Tanggal      :* ${inv.tglCetak}
 *Nama Siswa   :* Abi
 *Program      :* Private Robotic & IoT (ESP32)
+*Periode      :* Paket ${inv.paketKe} (Pertemuan ${inv.awalSesi} - ${inv.akhirSesi})
 *Status       :* ⏳ Menunggu Pembayaran
 --------------------------------------------------
-*RINCIAN LAYANAN:*
-Paket Kursus 4 Sesi Tatap Muka (Pertemuan Selesai):
+*RINCIAN SESI BELAJAR SELESAI:*
 ${inv.daftarSesiText}
 
 --------------------------------------------------
 *TOTAL TAGIHAN : ${inv.nominal}*
 --------------------------------------------------
 
-*METODE PEMBAYARAN:*
-Silakan melakukan transfer ke rekening resmi berikut:
+*METODE TRANSFER:*
+Silakan melakukan transfer melalui rekening resmi:
 🏦 *Bank BCA / Mandiri / BSI*
 💳 *No. Rekening :* 123-456-7890
 👤 *Atas Nama   :* TECH-C Robotic & Coding
 
-_Mohon untuk mengirimkan bukti transfer setelah pembayaran dilakukan. Terima kasih atas kepercayaan Ayah/Bunda!_ 🙏`;
+_Mohon konfirmasi dengan mengirimkan bukti transfer jika sudah melakukan pembayaran. Terima kasih Ayah/Bunda!_ 🙏`;
 
-      // Salin ke Clipboard otomatis sebagai cadangan
+      // Copy ke Clipboard
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(pesanInvoice).catch(() => {});
       }
 
-      // Buka API WhatsApp secara langsung
+      // Buka tautan WhatsApp
       const waUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(pesanInvoice)}`;
       
       const a = document.createElement('a');
@@ -542,7 +582,9 @@ _Mohon untuk mengirimkan bukti transfer setelah pembayaran dilakukan. Terima kas
       document.body.removeChild(a);
     }
 
+    // ==========================================================
     // TAMPILKAN POP-UP STRUK INVOICE
+    // ==========================================================
     function bukaModalInvoice() {
       const modal = document.getElementById('modalInvoice');
       const inv = generateInvoiceData();
@@ -556,10 +598,10 @@ _Mohon untuk mengirimkan bukti transfer setelah pembayaran dilakukan. Terima kas
         itemBody.innerHTML = `
           <tr class="border-b border-slate-50">
             <td class="py-2.5">
-              <p class="font-bold text-slate-800">Paket Belajar 4 Pertemuan (Tatap Muka)</p>
-              <p class="text-[11px] text-slate-400">ESP32 & IoT Coding Studio</p>
+              <p class="font-bold text-slate-800">Paket Kursus Privat (Sesi ${inv.awalSesi} s/d ${inv.akhirSesi})</p>
+              <p class="text-[11px] text-slate-400">ESP32, Coding & Robotic Studio TECH-C</p>
             </td>
-            <td class="py-2.5 text-center">4 Sesi</td>
+            <td class="py-2.5 text-center">4 Pertemuan</td>
             <td class="py-2.5 text-right font-bold text-slate-900">${inv.nominal}</td>
           </tr>
         `;
