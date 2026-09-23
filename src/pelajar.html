@@ -113,7 +113,7 @@ if (!token) {
       <include src="./partials/header.html"></include>
 
       <!-- MAIN -->
-<main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
+      <main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
         <!-- BACKGROUND GLOW -->
         <div class="pointer-events-none absolute inset-0 overflow-hidden">
           <div class="absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full bg-blue-500/10 blur-3xl"></div>
@@ -142,7 +142,7 @@ if (!token) {
                   </h1>
 
                   <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
-                    Kelola data pelajar robotic & coding, lihat profil siswa, kelas, sekolah, dan status belajar dalam satu halaman.
+                    Kelola data pelajar robotic & coding, terbagi antara <b>Privat Kantor</b> dan <b>Privat ke Rumah</b>.
                   </p>
 
                   <div class="mt-6 flex flex-wrap gap-3">
@@ -202,23 +202,23 @@ if (!token) {
               <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-blue-500/10"></div>
               <div class="relative flex items-start justify-between">
                 <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Semua Pelajar</p>
-                  <h2 id="statTotal" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Data dari database</p>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Privat Kantor</p>
+                  <h2 id="statKantor" class="mt-3 text-4xl font-black text-blue-600 dark:text-blue-400">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Belajar di TECH-C</p>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl dark:bg-blue-950">👨‍🎓</div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl dark:bg-blue-950">🏢</div>
               </div>
             </div>
 
             <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-green-500/10"></div>
+              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-emerald-500/10"></div>
               <div class="relative flex items-start justify-between">
                 <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Aktif</p>
-                  <h2 id="statAktif" class="mt-3 text-4xl font-black text-green-500">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Status aktif</p>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Privat Rumah</p>
+                  <h2 id="statRumah" class="mt-3 text-4xl font-black text-emerald-500">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Guru ke Rumah</p>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-2xl dark:bg-green-950">✅</div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-2xl dark:bg-emerald-950">🏠</div>
               </div>
             </div>
 
@@ -228,7 +228,7 @@ if (!token) {
                 <div>
                   <p class="text-sm font-black text-slate-500 dark:text-slate-400">Ditampilkan</p>
                   <h2 id="statShown" class="mt-3 text-4xl font-black text-cyan-500">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Hasil pencarian</p>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Hasil filter</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-2xl dark:bg-cyan-950">🔎</div>
               </div>
@@ -238,9 +238,9 @@ if (!token) {
               <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-violet-500/10"></div>
               <div class="relative flex items-start justify-between">
                 <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Sumber</p>
-                  <h2 class="mt-3 text-2xl font-black text-violet-500">Laravel</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">API students</p>
+                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Aktif Belajar</p>
+                  <h2 id="statAktif" class="mt-3 text-4xl font-black text-violet-500">0</h2>
+                  <p class="mt-2 text-xs font-semibold text-slate-400">Status siswa aktif</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-2xl dark:bg-violet-950">⚡</div>
               </div>
@@ -248,8 +248,8 @@ if (!token) {
 
           </div>
 
-          <!-- TOOLBAR -->
-          <div class="mb-6 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+          <!-- TOOLBAR & FILTER -->
+          <div class="mb-7 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
               <div class="flex flex-1 flex-col gap-3 sm:flex-row">
@@ -265,6 +265,13 @@ if (!token) {
                     placeholder="Cari nama pelajar, sekolah, kelas..."
                     class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
                   />
+                </div>
+
+                <!-- TAB PILIHAN VIEW -->
+                <div class="flex rounded-2xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-800 dark:bg-slate-950">
+                  <button type="button" onclick="setFilterCategory('all')" id="btnTabAll" class="category-tab rounded-xl px-4 py-2 text-xs font-black text-white bg-blue-600 transition">Semua</button>
+                  <button type="button" onclick="setFilterCategory('kantor')" id="btnTabKantor" class="category-tab rounded-xl px-4 py-2 text-xs font-bold text-slate-600 hover:text-blue-600 transition">Kantor</button>
+                  <button type="button" onclick="setFilterCategory('rumah')" id="btnTabRumah" class="category-tab rounded-xl px-4 py-2 text-xs font-bold text-slate-600 hover:text-blue-600 transition">Rumah</button>
                 </div>
 
                 <select
@@ -298,13 +305,61 @@ if (!token) {
             </div>
           </div>
 
-          <!-- GRID PELAJAR -->
-          <div id="pelajarList" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            <!-- JS RENDER -->
+          <!-- CONTAINER UTAMA UNTUK DUA KOTAK (KANTOR & RUMAH) -->
+          <div class="space-y-10">
+
+            <!-- ==============================================
+                 KOTAK 1: PRIVAT KANTOR
+            =============================================== -->
+            <div id="sectionKantor" class="rounded-[2.2rem] border border-blue-100 bg-white/75 p-6 shadow-xl shadow-slate-200/50 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/80">
+              <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 dark:border-slate-800">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-2xl text-white shadow-lg shadow-blue-500/30">
+                    🏢
+                  </div>
+                  <div>
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white">Murid Privat Kantor</h2>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Pembelajaran langsung di Studio / Kantor TECH-C</p>
+                  </div>
+                </div>
+                <span id="badgeCountKantor" class="self-start rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:bg-blue-950 dark:text-blue-400">
+                  0 Pelajar
+                </span>
+              </div>
+
+              <div id="pelajarListKantor" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                <!-- Data siswa privat kantor masuk ke sini -->
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 KOTAK 2: PRIVAT KE RUMAH
+            =============================================== -->
+            <div id="sectionRumah" class="rounded-[2.2rem] border border-emerald-100 bg-white/75 p-6 shadow-xl shadow-slate-200/50 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/80">
+              <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 dark:border-slate-800">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600 text-2xl text-white shadow-lg shadow-emerald-500/30">
+                    🏠
+                  </div>
+                  <div>
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white">Murid Privat ke Rumah</h2>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Sesi bimbingan tatap muka langsung ke rumah murid</p>
+                  </div>
+                </div>
+                <span id="badgeCountRumah" class="self-start rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
+                  0 Pelajar
+                </span>
+              </div>
+
+              <div id="pelajarListRumah" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                <!-- Data siswa privat rumah masuk ke sini -->
+              </div>
+            </div>
+
           </div>
 
           <!-- EMPTY STATE -->
-          <div id="emptyState" class="hidden rounded-[2rem] border border-white/70 bg-white/90 p-10 text-center shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
+          <div id="emptyState" class="mt-8 hidden rounded-[2rem] border border-white/70 bg-white/90 p-10 text-center shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
             <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-blue-50 text-4xl dark:bg-blue-950">
               🔎
             </div>
@@ -314,7 +369,7 @@ if (!token) {
             </h3>
 
             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Coba ubah kata pencarian atau refresh data dari Laravel.
+              Coba ubah kata pencarian atau pilih tab kategori yang lain.
             </p>
           </div>
 
@@ -375,404 +430,485 @@ function getApiBase() {
 }
 
 const API_BASE = getApiBase();
-  let allStudents = [];
+let allStudents = [];
+let activeCategory = 'all'; // 'all' | 'kantor' | 'rumah'
 
-  function setText(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.innerText = value;
+// DAFTAR NAMA SISWA YANG PASTI MASUK KE PRIVAT KANTOR
+const KANTOR_STUDENT_NAMES = [
+  'abi',
+  'adma',
+  'ahmad rizki',
+  'amsyar',
+  'aryan',
+  'azka',
+  'barra',
+  'biyon'
+];
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.innerText = value;
+}
+
+function setApiStatus(text, type = 'loading') {
+  const el = document.getElementById('apiStatus');
+  if (!el) return;
+
+  el.innerText = text;
+  el.className = 'mt-1 text-sm font-black';
+
+  if (type === 'success') {
+    el.classList.add('text-green-500');
+  } else if (type === 'error') {
+    el.classList.add('text-red-500');
+  } else {
+    el.classList.add('text-yellow-500');
+  }
+}
+
+function updateLastUpdate() {
+  const now = new Date();
+  setText('lastUpdate', now.toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit'
+  }));
+}
+
+function getStudentName(student) {
+  return student.name || student.nama || student.full_name || 'Tanpa Nama';
+}
+
+function getStudentPhoto(student) {
+  const name = getStudentName(student);
+
+  if (student.photo_url) return student.photo_url;
+  if (student.photo) {
+    if (String(student.photo).startsWith('http')) return student.photo;
+    return `http://127.0.0.1:8000/storage/${student.photo}`;
+  }
+  if (student.logo) {
+    if (String(student.logo).startsWith('http')) return student.logo;
+    return `http://127.0.0.1:8000/storage/${student.logo}`;
   }
 
-  function setApiStatus(text, type = 'loading') {
-    const el = document.getElementById('apiStatus');
-    if (!el) return;
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
+}
 
-    el.innerText = text;
-    el.className = 'mt-1 text-sm font-black';
+function getStudentSchool(student) {
+  return student.school_name || student.sekolah || student.asal_sekolah || student.school?.nama || student.school?.name || '-';
+}
 
-    if (type === 'success') {
-      el.classList.add('text-green-500');
-    } else if (type === 'error') {
-      el.classList.add('text-red-500');
-    } else {
-      el.classList.add('text-yellow-500');
+function getStudentClass(student) {
+  return student.kelas || student.class || student.level || student.kategori || '-';
+}
+
+function getStudentStatus(student) {
+  return student.status || student.status_belajar || 'Aktif';
+}
+
+function getStudentProgress(student) {
+  const value = Number(student.progress || student.progress_belajar || student.progressBelajar || 0);
+  return Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
+}
+
+// Menentukan apakah murid masuk ke kategori 'kantor' atau 'rumah'
+function getStudentCategory(student) {
+  const name = getStudentName(student).toLowerCase().trim();
+  const rawType = String(student.tipe_privat || student.kategori_privat || student.type || student.program || student.lokasi || '').toLowerCase();
+
+  // 1. Cek dari daftar nama spesifik yang diberikan
+  for (const kName of KANTOR_STUDENT_NAMES) {
+    if (name.includes(kName)) {
+      return 'kantor';
     }
   }
 
-  function updateLastUpdate() {
-    const now = new Date();
-
-    setText('lastUpdate', now.toLocaleTimeString('id-ID', {
-      hour: '2-digit',
-      minute: '2-digit'
-    }));
+  // 2. Cek atribut data jika ada
+  if (rawType.includes('kantor') || rawType.includes('office')) {
+    return 'kantor';
+  }
+  if (rawType.includes('rumah') || rawType.includes('home')) {
+    return 'rumah';
   }
 
-  function getStudentName(student) {
-    return student.name || student.nama || student.full_name || 'Tanpa Nama';
-  }
+  // Default: dimasukkan ke privat rumah jika bukan kelompok nama kantor
+  return 'rumah';
+}
 
-  function getStudentPhoto(student) {
-    const name = getStudentName(student);
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
 
-    if (student.photo_url) {
-      return student.photo_url;
-    }
-
-    if (student.photo) {
-      if (String(student.photo).startsWith('http')) {
-        return student.photo;
-      }
-
-      return `http://127.0.0.1:8000/storage/${student.photo}`;
-    }
-
-    if (student.logo) {
-      if (String(student.logo).startsWith('http')) {
-        return student.logo;
-      }
-
-      return `http://127.0.0.1:8000/storage/${student.logo}`;
-    }
-
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
-  }
-
-  function getStudentSchool(student) {
-    return student.school_name || student.sekolah || student.asal_sekolah || student.school?.nama || student.school?.name || '-';
-  }
-
-  function getStudentClass(student) {
-    return student.kelas || student.class || student.level || student.kategori || '-';
-  }
-
-  function getStudentStatus(student) {
-    return student.status || student.status_belajar || 'Aktif';
-  }
-
-  function getStudentProgress(student) {
-    const value = Number(student.progress || student.progress_belajar || student.progressBelajar || 0);
-    return Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
-  }
-
-  function escapeHtml(value) {
-    return String(value ?? '')
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
-  }
-
-  function showSkeleton() {
-    const container = document.getElementById('pelajarList');
-
-    container.innerHTML = Array.from({ length: 8 }).map(() => `
-      <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 dark:border-slate-800 dark:bg-slate-900/90">
-        <div class="animate-pulse">
-          <div class="mx-auto h-24 w-24 rounded-full bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mx-auto mt-5 h-5 w-32 rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mx-auto mt-3 h-4 w-44 rounded bg-slate-200 dark:bg-slate-800"></div>
-          <div class="mt-5 grid grid-cols-2 gap-3">
-            <div class="h-14 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
-            <div class="h-14 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
-          </div>
+function showSkeleton() {
+  const skeletonHTML = Array.from({ length: 4 }).map(() => `
+    <div class="rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 dark:border-slate-800 dark:bg-slate-900/90">
+      <div class="animate-pulse">
+        <div class="mx-auto h-24 w-24 rounded-full bg-slate-200 dark:bg-slate-800"></div>
+        <div class="mx-auto mt-5 h-5 w-32 rounded bg-slate-200 dark:bg-slate-800"></div>
+        <div class="mx-auto mt-3 h-4 w-44 rounded bg-slate-200 dark:bg-slate-800"></div>
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <div class="h-14 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
+          <div class="h-14 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
         </div>
       </div>
-    `).join('');
-  }
+    </div>
+  `).join('');
 
-  function updateStats(students, shownStudents) {
-    const total = students.length;
-    const aktif = students.filter(s => String(getStudentStatus(s)).toLowerCase() !== 'nonaktif').length;
-    const shown = shownStudents.length;
+  const listKantor = document.getElementById('pelajarListKantor');
+  const listRumah = document.getElementById('pelajarListRumah');
+  if (listKantor) listKantor.innerHTML = skeletonHTML;
+  if (listRumah) listRumah.innerHTML = skeletonHTML;
+}
 
-    setText('statTotal', total);
-    setText('statAktif', aktif);
-    setText('statShown', shown);
-    setText('totalPelajarHero', total);
-    setText('totalPelajarCard', total);
-    setText('activeStudentText', `${aktif} siswa`);
+function renderStudentCard(student) {
+  const id = student.id;
+  const name = getStudentName(student);
+  const photo = getStudentPhoto(student);
+  const school = getStudentSchool(student);
+  const kelas = getStudentClass(student);
+  const status = getStudentStatus(student);
+  const progress = getStudentProgress(student);
 
-    const bar = document.getElementById('activeStudentBar');
-    if (bar) {
-      const percent = total > 0 ? Math.round((aktif / total) * 100) : 0;
-      bar.style.width = `${percent}%`;
-    }
-  }
+  const safeName = escapeHtml(name);
+  const safeSchool = escapeHtml(school);
+  const safeClass = escapeHtml(kelas);
+  const safeStatus = escapeHtml(status);
 
-  function renderPelajar(students) {
-    const container = document.getElementById('pelajarList');
-    const emptyState = document.getElementById('emptyState');
+  return `
+    <div
+      onclick="pilihPelajar(${id})"
+      class="student-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
+    >
+      <div class="relative h-24 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.35),transparent_35%)]"></div>
 
-    if (!container) return;
+        <div class="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-black text-white backdrop-blur">
+          ${safeStatus}
+        </div>
+      </div>
 
-    updateStats(allStudents, students);
+      <div class="relative px-5 pb-5">
+        <div class="-mt-12 flex justify-center">
+          <img
+            src="${photo}"
+            onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true'"
+            class="h-24 w-24 rounded-full border-4 border-white object-cover shadow-xl dark:border-slate-900"
+            alt="${safeName}"
+          />
+        </div>
 
-    if (!students.length) {
-      container.innerHTML = "";
-      if (emptyState) emptyState.classList.remove('hidden');
-      return;
-    }
+        <div class="mt-4 text-center">
+          <h2 class="line-clamp-1 text-lg font-black text-slate-900 dark:text-white">
+            ${safeName}
+          </h2>
 
-    if (emptyState) emptyState.classList.add('hidden');
+          <p class="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
+            ${safeSchool}
+          </p>
+        </div>
 
-    container.innerHTML = students.map(student => {
-      const id = student.id;
-      const name = getStudentName(student);
-      const photo = getStudentPhoto(student);
-      const school = getStudentSchool(student);
-      const kelas = getStudentClass(student);
-      const status = getStudentStatus(student);
-      const progress = getStudentProgress(student);
-
-      const safeName = escapeHtml(name);
-      const safeSchool = escapeHtml(school);
-      const safeClass = escapeHtml(kelas);
-      const safeStatus = escapeHtml(status);
-
-      return `
-        <div
-          onclick="pilihPelajar(${id})"
-          class="student-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
-        >
-          <div class="relative h-24 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.35),transparent_35%)]"></div>
-
-            <div class="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-black text-white backdrop-blur">
-              ${safeStatus}
-            </div>
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
+            <p class="text-xs font-semibold text-slate-400">Kelas</p>
+            <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">${safeClass}</p>
           </div>
 
-          <div class="relative px-5 pb-5">
-            <div class="-mt-12 flex justify-center">
-              <img
-                src="${photo}"
-                onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true'"
-                class="h-24 w-24 rounded-full border-4 border-white object-cover shadow-xl dark:border-slate-900"
-                alt="${safeName}"
-              />
-            </div>
-
-            <div class="mt-4 text-center">
-              <h2 class="line-clamp-1 text-lg font-black text-slate-900 dark:text-white">
-                ${safeName}
-              </h2>
-
-              <p class="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
-                ${safeSchool}
-              </p>
-            </div>
-
-            <div class="mt-5 grid grid-cols-2 gap-3">
-              <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
-                <p class="text-xs font-semibold text-slate-400">Kelas</p>
-                <p class="mt-1 text-sm font-black text-slate-900 dark:text-white">${safeClass}</p>
-              </div>
-
-              <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
-                <p class="text-xs font-semibold text-slate-400">Progress</p>
-                <p class="mt-1 text-sm font-black text-blue-500">${progress}%</p>
-              </div>
-            </div>
-
-            <div class="mt-5">
-              <div class="mb-2 flex items-center justify-between text-xs font-bold text-slate-400">
-                <span>Progress belajar</span>
-                <span>${progress}%</span>
-              </div>
-
-              <div class="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                <div
-                  class="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-500"
-                  style="width: ${progress}%"
-                ></div>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              class="mt-5 w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-950 dark:text-slate-300"
-            >
-              Lihat Detail
-            </button>
+          <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
+            <p class="text-xs font-semibold text-slate-400">Progress</p>
+            <p class="mt-1 text-sm font-black text-blue-500">${progress}%</p>
           </div>
         </div>
-      `;
-    }).join('');
+
+        <div class="mt-5">
+          <div class="mb-2 flex items-center justify-between text-xs font-bold text-slate-400">
+            <span>Progress belajar</span>
+            <span>${progress}%</span>
+          </div>
+
+          <div class="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+            <div
+              class="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-500"
+              style="width: ${progress}%"
+            ></div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="mt-5 w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-950 dark:text-slate-300"
+        >
+          Lihat Detail
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function updateStats(students, shownStudents) {
+  const total = students.length;
+  const aktif = students.filter(s => String(getStudentStatus(s)).toLowerCase() !== 'nonaktif').length;
+  const totalKantor = students.filter(s => getStudentCategory(s) === 'kantor').length;
+  const totalRumah = students.filter(s => getStudentCategory(s) === 'rumah').length;
+
+  setText('statTotal', total);
+  setText('statAktif', aktif);
+  setText('statKantor', totalKantor);
+  setText('statRumah', totalRumah);
+  setText('statShown', shownStudents.length);
+  setText('totalPelajarHero', total);
+  setText('totalPelajarCard', total);
+  setText('activeStudentText', `${aktif} siswa`);
+
+  const bar = document.getElementById('activeStudentBar');
+  if (bar) {
+    const percent = total > 0 ? Math.round((aktif / total) * 100) : 0;
+    bar.style.width = `${percent}%`;
+  }
+}
+
+function renderPelajar(students) {
+  const containerKantor = document.getElementById('pelajarListKantor');
+  const containerRumah = document.getElementById('pelajarListRumah');
+  const sectionKantor = document.getElementById('sectionKantor');
+  const sectionRumah = document.getElementById('sectionRumah');
+  const emptyState = document.getElementById('emptyState');
+
+  if (!containerKantor || !containerRumah) return;
+
+  updateStats(allStudents, students);
+
+  // Pisahkan murid ke masing-masing kategori
+  const listKantor = students.filter(s => getStudentCategory(s) === 'kantor');
+  const listRumah = students.filter(s => getStudentCategory(s) === 'rumah');
+
+  setText('badgeCountKantor', `${listKantor.length} Pelajar`);
+  setText('badgeCountRumah', `${listRumah.length} Pelajar`);
+
+  // Logika toggle visibilitas tab kategori
+  if (activeCategory === 'kantor') {
+    sectionKantor.classList.remove('hidden');
+    sectionRumah.classList.add('hidden');
+  } else if (activeCategory === 'rumah') {
+    sectionKantor.classList.add('hidden');
+    sectionRumah.classList.remove('hidden');
+  } else {
+    sectionKantor.classList.remove('hidden');
+    sectionRumah.classList.remove('hidden');
   }
 
-  function applyFilter() {
-    const search = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
-    const sort = document.getElementById('sortInput')?.value || 'az';
+  // Render cards
+  containerKantor.innerHTML = listKantor.length 
+    ? listKantor.map(renderStudentCard).join('') 
+    : `<p class="col-span-full py-8 text-center text-sm font-semibold text-slate-400">Tidak ada data murid privat kantor</p>`;
 
-    let filtered = allStudents.filter(student => {
-      const target = [
-        getStudentName(student),
-        getStudentSchool(student),
-        getStudentClass(student),
-        getStudentStatus(student)
-      ].join(' ').toLowerCase();
+  containerRumah.innerHTML = listRumah.length 
+    ? listRumah.map(renderStudentCard).join('') 
+    : `<p class="col-span-full py-8 text-center text-sm font-semibold text-slate-400">Tidak ada data murid privat ke rumah</p>`;
 
-      return target.includes(search);
-    });
+  // Tampilkan empty state jika kedua daftar benar-benar kosong
+  if (!students.length) {
+    if (emptyState) emptyState.classList.remove('hidden');
+  } else {
+    if (emptyState) emptyState.classList.add('hidden');
+  }
+}
 
-    filtered.sort((a, b) => {
-      const nameA = getStudentName(a).toLowerCase();
-      const nameB = getStudentName(b).toLowerCase();
+function setFilterCategory(cat) {
+  activeCategory = cat;
 
-      if (sort === 'az') return nameA.localeCompare(nameB);
-      if (sort === 'za') return nameB.localeCompare(nameA);
-      if (sort === 'newest') return Number(b.id || 0) - Number(a.id || 0);
-      if (sort === 'oldest') return Number(a.id || 0) - Number(b.id || 0);
+  // Update styling tombol tab
+  const tabs = {
+    all: document.getElementById('btnTabAll'),
+    kantor: document.getElementById('btnTabKantor'),
+    rumah: document.getElementById('btnTabRumah')
+  };
 
-      return 0;
-    });
+  Object.keys(tabs).forEach(key => {
+    if (tabs[key]) {
+      if (key === cat) {
+        tabs[key].className = 'category-tab rounded-xl px-4 py-2 text-xs font-black text-white bg-blue-600 transition';
+      } else {
+        tabs[key].className = 'category-tab rounded-xl px-4 py-2 text-xs font-bold text-slate-600 hover:text-blue-600 dark:text-slate-300 transition';
+      }
+    }
+  });
 
-    renderPelajar(filtered);
+  applyFilter();
+}
+
+function applyFilter() {
+  const search = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
+  const sort = document.getElementById('sortInput')?.value || 'az';
+
+  let filtered = allStudents.filter(student => {
+    const target = [
+      getStudentName(student),
+      getStudentSchool(student),
+      getStudentClass(student),
+      getStudentStatus(student)
+    ].join(' ').toLowerCase();
+
+    const matchesSearch = target.includes(search);
+    const category = getStudentCategory(student);
+
+    if (activeCategory === 'kantor') return matchesSearch && category === 'kantor';
+    if (activeCategory === 'rumah') return matchesSearch && category === 'rumah';
+    return matchesSearch;
+  });
+
+  filtered.sort((a, b) => {
+    const nameA = getStudentName(a).toLowerCase();
+    const nameB = getStudentName(b).toLowerCase();
+
+    if (sort === 'az') return nameA.localeCompare(nameB);
+    if (sort === 'za') return nameB.localeCompare(nameA);
+    if (sort === 'newest') return Number(b.id || 0) - Number(a.id || 0);
+    if (sort === 'oldest') return Number(a.id || 0) - Number(b.id || 0);
+
+    return 0;
+  });
+
+  renderPelajar(filtered);
+}
+
+async function apiGetStudents() {
+  const res = await fetch(`${API_BASE}/students`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+
+  if (res.status === 401) {
+    localStorage.clear();
+    window.location.href = './login.html';
+    return [];
   }
 
-  async function apiGetStudents() {
-    const res = await fetch(`${API_BASE}/students`, {
-      method: 'GET',
+  const raw = await res.text();
+  let data;
+
+  try {
+    data = JSON.parse(raw);
+  } catch (err) {
+    console.error("Response bukan JSON:", raw);
+    throw new Error("API /students bukan JSON. Cek error Laravel.");
+  }
+
+  if (!res.ok) {
+    throw new Error(data.message || `HTTP Error ${res.status}`);
+  }
+
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.data)) return data.data;
+  if (Array.isArray(data.students)) return data.students;
+
+  return [];
+}
+
+async function loadHeaderUser() {
+  try {
+    const res = await fetch(`${API_BASE}/profile`, {
       headers: {
         'Accept': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     });
 
-    if (res.status === 401) {
-      localStorage.clear();
-      window.location.href = './login.html';
-      return [];
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const name = data.name || localStorage.getItem('name') || 'Admin';
+    const email = data.email || localStorage.getItem('email') || '';
+
+    setText('header_name', name);
+    setText('dropdown_name', name);
+    setText('dropdown_email', email);
+
+    const avatar = document.getElementById('header_avatar');
+    if (avatar) {
+      avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
     }
 
-    const raw = await res.text();
-
-    let data;
-
-    try {
-      data = JSON.parse(raw);
-    } catch (err) {
-      console.error("Response bukan JSON:", raw);
-      throw new Error("API /students bukan JSON. Cek error Laravel.");
-    }
-
-    if (!res.ok) {
-      throw new Error(data.message || `HTTP Error ${res.status}`);
-    }
-
-    if (Array.isArray(data)) return data;
-
-    if (Array.isArray(data.data)) return data.data;
-
-    if (Array.isArray(data.students)) return data.students;
-
-    return [];
+  } catch (err) {
+    console.warn("Header profile gagal:", err);
   }
-
-  async function loadHeaderUser() {
-    try {
-      const res = await fetch(`${API_BASE}/profile`, {
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (!res.ok) return;
-
-      const data = await res.json();
-
-      const name = data.name || localStorage.getItem('name') || 'Admin';
-      const email = data.email || localStorage.getItem('email') || '';
-
-      setText('header_name', name);
-      setText('dropdown_name', name);
-      setText('dropdown_email', email);
-
-      const avatar = document.getElementById('header_avatar');
-
-      if (avatar) {
-        avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
-      }
-
-    } catch (err) {
-      console.warn("Header profile gagal:", err);
-    }
-  }
-
-  async function loadPelajar() {
-    try {
-      setApiStatus('Loading...', 'loading');
-      showSkeleton();
-
-      const data = await apiGetStudents();
-
-      allStudents = data;
-      applyFilter();
-
-      setApiStatus('Connected', 'success');
-      updateLastUpdate();
-
-    } catch (err) {
-      console.error("Error load pelajar:", err);
-
-      setApiStatus('Disconnected', 'error');
-
-      const container = document.getElementById('pelajarList');
-      if (container) {
-        container.innerHTML = `
-          <div class="col-span-full rounded-[2rem] border border-red-200 bg-red-50 p-8 text-center shadow-xl shadow-red-100 dark:border-red-900 dark:bg-red-950/40 dark:shadow-black/20">
-            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-100 text-3xl dark:bg-red-950">
-              ⚠️
-            </div>
-
-            <h3 class="text-xl font-black text-red-600 dark:text-red-300">
-              Gagal mengambil data pelajar
-            </h3>
-
-            <p class="mt-2 text-sm font-semibold text-red-500 dark:text-red-300">
-              ${escapeHtml(err.message || 'Cek Laravel API /api/students')}
-            </p>
-
-            <button
-              onclick="loadPelajar()"
-              class="mt-5 rounded-2xl bg-red-600 px-5 py-3 text-sm font-black text-white transition hover:bg-red-700"
-            >
-              Coba Lagi
-            </button>
-          </div>
-        `;
-      }
-    }
-  }
-
-  function pilihPelajar(id) {
-    localStorage.setItem('student_id', id);
-
-    // Sengaja bukan profile.html biar nggak tabrakan sama profile admin
-    window.location.href = "detailPelajar.html";
-  }
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    await loadPartials();
-    await loadHeaderUser();
-    if (window.syncAdminProfileHeader) {
-  await window.syncAdminProfileHeader();
 }
-    await loadPelajar();
 
-    const searchInput = document.getElementById('searchInput');
-    const sortInput = document.getElementById('sortInput');
+async function loadPelajar() {
+  try {
+    setApiStatus('Loading...', 'loading');
+    showSkeleton();
 
-    if (searchInput) {
-      searchInput.addEventListener('input', applyFilter);
+    const data = await apiGetStudents();
+    allStudents = data;
+    applyFilter();
+
+    setApiStatus('Connected', 'success');
+    updateLastUpdate();
+
+  } catch (err) {
+    console.error("Error load pelajar:", err);
+    setApiStatus('Disconnected', 'error');
+
+    const containerKantor = document.getElementById('pelajarListKantor');
+    if (containerKantor) {
+      containerKantor.innerHTML = `
+        <div class="col-span-full rounded-[2rem] border border-red-200 bg-red-50 p-8 text-center shadow-xl shadow-red-100 dark:border-red-900 dark:bg-red-950/40 dark:shadow-black/20">
+          <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-100 text-3xl dark:bg-red-950">
+            ⚠️
+          </div>
+
+          <h3 class="text-xl font-black text-red-600 dark:text-red-300">
+            Gagal mengambil data pelajar
+          </h3>
+
+          <p class="mt-2 text-sm font-semibold text-red-500 dark:text-red-300">
+            ${escapeHtml(err.message || 'Cek Laravel API /api/students')}
+          </p>
+
+          <button
+            onclick="loadPelajar()"
+            class="mt-5 rounded-2xl bg-red-600 px-5 py-3 text-sm font-black text-white transition hover:bg-red-700"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      `;
     }
+  }
+}
 
-    if (sortInput) {
-      sortInput.addEventListener('change', applyFilter);
-    }
-  });
+function pilihPelajar(id) {
+  localStorage.setItem('student_id', id);
+  window.location.href = "detailPelajar.html";
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadPartials();
+  await loadHeaderUser();
+  if (window.syncAdminProfileHeader) {
+    await window.syncAdminProfileHeader();
+  }
+  await loadPelajar();
+
+  const searchInput = document.getElementById('searchInput');
+  const sortInput = document.getElementById('sortInput');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilter);
+  }
+
+  if (sortInput) {
+    sortInput.addEventListener('change', applyFilter);
+  }
+});
   </script>
 
 </body>
