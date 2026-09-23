@@ -886,8 +886,21 @@ async function loadPelajar() {
 }
 
 function pilihPelajar(id) {
-  localStorage.setItem('student_id', id);
-  window.location.href = "detailPelajar.html";
+ function pilihPelajar(student) {
+  // Ambil nama pertama anak, hilangkan spasi, dan jadikan huruf kapital awal
+  const nama = (student.name || student.nama || '').trim().split(' ')[0];
+  
+  if (nama.toLowerCase() === 'abi') {
+    window.location.href = "Abi.html";
+  } else if (nama.toLowerCase() === 'adma') {
+    window.location.href = "Adma.html";
+  } else if (nama.toLowerCase() === 'ulul') {
+    window.location.href = "Ulul.html";
+  } else {
+    // Default jika file khusus belum dibuat, buka file namanya (misal: Azka.html)
+    window.location.href = `${nama}.html`;
+  }
+}
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
