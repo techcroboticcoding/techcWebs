@@ -433,16 +433,20 @@ const API_BASE = getApiBase();
 let allStudents = [];
 let activeCategory = 'all'; // 'all' | 'kantor' | 'rumah'
 
-// DAFTAR NAMA SISWA YANG TERMASUK PRIVAT KANTOR
+// 1. DAFTAR NAMA SISWA PRIVAT KANTOR
 const KANTOR_STUDENT_NAMES = [
+  'ahmad',
+  'zein',
+  'kenzie',
+  'rafka'
+];
+
+// 2. DAFTAR NAMA SISWA PRIVAT KE RUMAH
+const RUMAH_STUDENT_NAMES = [
+  'ulul',
   'abi',
-  'adma',
-  'ahmad rizki',
-  'amsyar',
-  'aryan',
-  'azka',
-  'barra',
-  'biyon'
+  'charles',
+  'ludwig'
 ];
 
 function setText(id, value) {
@@ -514,21 +518,38 @@ function getStudentProgress(student) {
 // Menentukan apakah murid masuk ke 'kantor' atau 'rumah'
 function getStudentCategory(student) {
   const name = getStudentName(student).toLowerCase().trim();
-  const rawType = String(student.tipe_privat || student.kategori_privat || student.type || student.program || student.lokasi || '').toLowerCase();
+  const rawType = String(
+    student.tipe_privat || 
+    student.kategori_privat || 
+    student.type || 
+    student.program || 
+    student.lokasi || 
+    ''
+  ).toLowerCase();
 
+  // 1. Cek apakah cocok dengan daftar Privat Kantor
   for (const kName of KANTOR_STUDENT_NAMES) {
     if (name.includes(kName)) {
       return 'kantor';
     }
   }
 
-  if (rawType.includes('kantor') || rawType.includes('office')) {
+  // 2. Cek apakah cocok dengan daftar Privat Rumah
+  for (const rName of RUMAH_STUDENT_NAMES) {
+    if (name.includes(rName)) {
+      return 'rumah';
+    }
+  }
+
+  // 3. Fallback jika dari data API/database ada kata kunci lokasi
+  if (rawType.includes('kantor') || rawType.includes('office') || rawType.includes('studio')) {
     return 'kantor';
   }
   if (rawType.includes('rumah') || rawType.includes('home')) {
     return 'rumah';
   }
 
+  // Standar awal jika belum didaftarkan
   return 'rumah';
 }
 
@@ -887,7 +908,7 @@ function pilihPelajar(namaLengkap, studentId) {
   // Mengambil kata pertama nama anak (contoh: "Abi" -> "Abi", "Ahmad Rizki" -> "Ahmad")
   const namaPanggilan = (namaLengkap || '').trim().split(' ')[0];
 
-  // Mengubah menjadi huruf awal kapital (Abi.html, Adma.html, Ulul.html)
+  // Mengubah menjadi huruf awal kapital (Abi.html, Ulul.html, Charles.html)
   const namaFile = namaPanggilan.charAt(0).toUpperCase() + namaPanggilan.slice(1).toLowerCase();
 
   // Pindah halaman ke file HTML anak yang bersangkutan
