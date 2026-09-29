@@ -59,22 +59,22 @@
 
   <main class="mx-auto max-w-7xl px-4 pt-6 sm:px-6">
 
-    <!-- HERO PROFIL SISWA Ludwig -->
+    <!-- HERO PROFIL SISWA LUDWIG -->
     <div class="relative mb-6 overflow-hidden rounded-[2rem] border border-white/80 bg-white/90 p-6 shadow-xl shadow-slate-200/60 backdrop-blur-xl sm:p-8">
       <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
       
       <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div class="flex items-center gap-5">
           <div class="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 text-3xl font-black text-white shadow-lg shadow-blue-500/30 ring-4 ring-white">
-            AB
+            KE
             <span class="absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-2 border-white bg-emerald-500"></span>
           </div>
 
           <div>
             <div class="flex flex-wrap items-center gap-2.5">
-              <h2 class="text-2xl font-black text-slate-900 sm:text-3xl">Ulul</h2>
-              <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-600 border border-emerald-200/60">
-                🏠 Privat ke Rumah
+              <h2 class="text-2xl font-black text-slate-900 sm:text-3xl">Ludwig</h2>
+              <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 border border-blue-200/60">
+                🏢 Privat Kantor TECH-C
               </span>
               <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-600 border border-emerald-200/60">
                 Status: Aktif
@@ -152,7 +152,7 @@
                 <span id="alertPertemuanKe" class="text-xs font-bold text-amber-800">Selesai 4 Pertemuan</span>
               </div>
               <h4 class="mt-0.5 text-sm sm:text-base font-black text-amber-950">
-                Invoice Privat Ulul Siap Dikirim!
+                Invoice Privat Ludwig Siap Dikirim!
               </h4>
               <p class="text-xs text-amber-800/90">
                 Paket 4 pertemuan telah tercapai. Anda dapat mengirimkan format Invoice Resmi via WhatsApp atau mencetak struk invoice.
@@ -197,7 +197,7 @@
 
   </main>
 
-  <!-- MODAL STRUK INVOICE RESMI (BISA DI-PRINT / DI-SAVE PDF) -->
+  <!-- MODAL STRUK INVOICE RESMI -->
   <div id="modalInvoice" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-sm flex items-center justify-center">
     <div class="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl">
       <!-- HEADER INVOICE -->
@@ -216,8 +216,8 @@
       <div class="grid grid-cols-2 gap-4 py-4 text-xs border-b border-slate-100">
         <div>
           <span class="text-slate-400 font-semibold">DITAGIHKAN KEPADA:</span>
-          <p class="mt-1 font-bold text-slate-800 text-sm">Wali Murid: Ulul</p>
-          <p class="text-slate-500">Program: Privat Robotic & IoT</p>
+          <p class="mt-1 font-bold text-slate-800 text-sm">Wali Murid: Ludwig</p>
+          <p class="text-slate-500">Program: Privat Robotic & IoT (Kantor)</p>
         </div>
         <div class="text-right">
           <span class="text-slate-400 font-semibold">TANGGAL TERBIT:</span>
@@ -246,7 +246,7 @@
       <div class="py-4 bg-slate-50 rounded-2xl p-4 mt-4 border border-slate-100">
         <div class="flex justify-between items-center text-sm font-black text-slate-900 border-b border-slate-200/80 pb-3">
           <span>TOTAL TAGIHAN:</span>
-          <span class="text-lg text-blue-600" id="invTotalNominal">Rp 1000.000</span>
+          <span class="text-lg text-blue-600" id="invTotalNominal">Rp 500.000</span>
         </div>
         <div class="mt-3 text-xs text-slate-600 space-y-1">
           <p class="font-bold text-slate-800">Metode Transfer Pembayaran:</p>
@@ -283,20 +283,13 @@
   </datalist>
 
   <script>
-    const STUDENT_NAME = "Ulul";
-    const STORAGE_KEY = "techc_student_meetings_ulul";
-    const PAYMENT_STATUS_KEY = "techc_payment_cleared_ulul";
-    const WA_NUMBER_KEY = "techc_target_wa_ulul";
+    // Konfigurasi Khusus Ludwig
+    const STUDENT_NAME = "Ludwig";
+    const STORAGE_KEY = "techc_student_meetings_ludwig";
+    const PAYMENT_STATUS_KEY = "techc_payment_cleared_ludwig";
+    const WA_NUMBER_KEY = "techc_target_wa_ludwig";
 
-    // Konfigurasi Biaya Paket (Dapat Anda sesuaikan harganya)
-    const BIAYA_PAKET_4_SESI = "Rp 1000.000"; 
-
-    const DEFAULT_MEETINGS = [
-      { sesi: 1, tanggal: "2026-09-02", materi: "1. Pengenalan ESP32 & Setup Board", catatan: "Cepat memahami struktur pin board" },
-      { sesi: 2, tanggal: "2026-09-09", materi: "2. Mengenal Pin GPIO ESP32 (LED Blinking)", catatan: "Praktik logika blink di PictoBlox lancar" },
-      { sesi: 3, tanggal: "2026-09-16", materi: "3. Install Software PictoBlox & Driver USB", catatan: "Berhasil upload kode mandiri" },
-      { sesi: 4, tanggal: "2026-09-23", materi: "4. Push Button Digital Input dengan ESP32", catatan: "Membuat tombol saklar LED" }
-    ];
+    const BIAYA_PAKET_4_SESI = "Rp 500.000"; 
 
     let meetings = [];
 
@@ -306,10 +299,10 @@
         try {
           meetings = JSON.parse(saved);
         } catch (e) {
-          meetings = DEFAULT_MEETINGS;
+          meetings = [];
         }
       } else {
-        meetings = DEFAULT_MEETINGS;
+        meetings = [];
       }
 
       const savedWa = localStorage.getItem(WA_NUMBER_KEY);
@@ -327,7 +320,7 @@
       updateStatistics();
 
       if (showToast) {
-        alert("Data pertemuan Ulul berhasil disimpan!");
+        alert("Data pertemuan Ludwig berhasil disimpan!");
       }
     }
 
@@ -436,8 +429,9 @@
 
       if (totalSelesai >= 4 && (totalSelesai % 4 === 0) && totalSelesai > lastClearedMilestone) {
         alertBox.classList.remove('hidden');
+        const awal = totalSelesai - 3;
         if (textNotice) {
-          textNotice.innerText = `Selesai ${totalSelesai} Pertemuan (Paket Tercapai)`;
+          textNotice.innerText = `Tagihan Sesi ${awal} s/d ${totalSelesai} (Paket ${totalSelesai / 4})`;
         }
       } else {
         alertBox.classList.add('hidden');
@@ -452,21 +446,14 @@
       if (alertBox) alertBox.classList.add('hidden');
       tutupModalInvoice();
 
-      alert(`Pembayaran paket 4 pertemuan ke-${totalSelesai} untuk Ulul berhasil ditandai LUNAS!`);
+      alert(`Pembayaran paket 4 pertemuan ke-${totalSelesai} untuk Ludwig berhasil ditandai LUNAS!`);
     }
 
-    // ==========================================================
-    // LOGIKA GENERATE DATA INVOICE PAKET 4 PERTEMUAN
-    // ==========================================================
     function generateInvoiceData() {
-      // Ambil pertemuan yang sudah memiliki tanggal valid
       const validMeetings = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '');
       const totalSelesai = validMeetings.length;
       const now = new Date();
       
-      // Tentukan blok/siklus paket 4 pertemuan
-      // Contoh: jika selesai 12, akhir = 12, awal = 9 (Sesi 9 - 12)
-      // Jika selesai 4, akhir = 4, awal = 1 (Sesi 1 - 4)
       const akhirSesi = Math.floor(totalSelesai / 4) * 4;
       const awalSesi = akhirSesi - 3;
       const paketKe = akhirSesi / 4;
@@ -474,9 +461,7 @@
       const invoiceNo = `INV/TECHC/${now.getFullYear()}/PKT-${paketKe}`;
       const tglCetak = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
-      // Ambil 4 sesi tepat pada periode tagihan ini (misal sesi 9 s/d 12)
       const sesiPaket = validMeetings.slice(awalSesi - 1, akhirSesi);
-      
       const daftarSesiText = sesiPaket.map(s => 
         `• Sesi ${s.sesi} (${s.tanggal}): ${s.materi || 'Praktik Robotika & Coding'}`
       ).join('\n');
@@ -493,33 +478,6 @@
       };
     }
 
-    // ==========================================================
-    // CEK NOTIFIKASI PEMBAYARAN (AKTIF PADA SESI 4, 8, 12, DST)
-    // ==========================================================
-    function checkPaymentNotification() {
-      const alertBox = document.getElementById('paymentAlertBox');
-      const textNotice = document.getElementById('alertPertemuanKe');
-      if (!alertBox) return;
-
-      const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
-      const lastClearedMilestone = parseInt(localStorage.getItem(PAYMENT_STATUS_KEY) || '0', 10);
-
-      // Muncul saat total pertemuan minimal 4 dan merupakan kelipatan 4 (4, 8, 12, ...)
-      // Serta sesi tersebut belum ditandai lunas
-      if (totalSelesai >= 4 && (totalSelesai % 4 === 0) && totalSelesai > lastClearedMilestone) {
-        alertBox.classList.remove('hidden');
-        const awal = totalSelesai - 3;
-        if (textNotice) {
-          textNotice.innerText = `Tagihan Sesi ${awal} s/d ${totalSelesai} (Paket ${totalSelesai / 4})`;
-        }
-      } else {
-        alertBox.classList.add('hidden');
-      }
-    }
-
-    // ==========================================================
-    // KIRIM INVOICE WHATSAPP
-    // ==========================================================
     function kirimWhatsAppInvoice() {
       const waInput = document.getElementById('inputWaNumber');
       let rawNumber = (waInput ? waInput.value : '').trim();
@@ -539,14 +497,13 @@
 
       const inv = generateInvoiceData();
 
-      // FORMAT PESAN INVOICE RESMI
       const pesanInvoice = 
 `🧾 *INVOICE PEMBAYARAN PRIVATE CLASS TECH-C*
 --------------------------------------------------
 *No. Invoice :* ${inv.invoiceNo}
 *Tanggal      :* ${inv.tglCetak}
 *Nama Siswa   :* Ludwig
-*Program      :* Private Robotic
+*Program      :* Private Robotic & IoT (Kantor TECH-C)
 *Periode      :* Paket ${inv.paketKe} (Pertemuan ${inv.awalSesi} - ${inv.akhirSesi})
 *Status       :* ⏳ Menunggu Pembayaran
 --------------------------------------------------
@@ -565,12 +522,10 @@ Silakan melakukan transfer melalui rekening resmi:
 
 _Mohon konfirmasi dengan mengirimkan bukti transfer jika sudah melakukan pembayaran. Terima kasih Ayah/Bunda!_ 🙏`;
 
-      // Copy ke Clipboard
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(pesanInvoice).catch(() => {});
       }
 
-      // Buka tautan WhatsApp
       const waUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(pesanInvoice)}`;
       
       const a = document.createElement('a');
@@ -582,9 +537,6 @@ _Mohon konfirmasi dengan mengirimkan bukti transfer jika sudah melakukan pembaya
       document.body.removeChild(a);
     }
 
-    // ==========================================================
-    // TAMPILKAN POP-UP STRUK INVOICE
-    // ==========================================================
     function bukaModalInvoice() {
       const modal = document.getElementById('modalInvoice');
       const inv = generateInvoiceData();
