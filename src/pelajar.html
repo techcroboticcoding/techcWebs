@@ -862,6 +862,19 @@ async function loadPelajar() {
     showSkeleton();
 
     const data = await apiGetStudents();
+    const isKeandraExist = data.some(s => (s.name || s.nama || '').toLowerCase().includes('keandra'));
+    if (!isKeandraExist) {
+    data.push({
+      id: 999,
+      name: "Keandra",
+      school_name: "Private Class TECH-C",
+      kelas: "Private Class",
+      progress: 0,
+      status: "Aktif",
+      tipe_privat: "kantor"
+    });
+}
+    
     allStudents = data;
     applyFilter();
 
