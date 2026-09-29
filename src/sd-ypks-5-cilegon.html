@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dashboard SD YPKS 2 Cilegon</title>
+<title>Dashboard SD YPKS 5 Cilegon</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -246,7 +246,7 @@ header h1{
 
 <header>
 
-    <h1>SD YPKS 2 Cilegon</h1>
+    <h1>SD YPKS 5 Cilegon</h1>
 
     <a href="../sekolah.html" class="back-btn">
         ← Kembali
@@ -265,7 +265,7 @@ header h1{
 
     <p>
         Selamat datang di Dashboard Absensi Ekstrakurikuler Robotic & Coding
-        SD YPKS 2 Cilegon Tahun Ajaran 2026/2027.
+        SD YPKS 5 Cilegon Tahun Ajaran 2026/2027.
     </p>
 
 </div>
@@ -360,7 +360,7 @@ header h1{
             </td>
 
             <td>
-                SD YPKS 2 Cilegon
+                SD YPKS 5 Cilegon
             </td>
 
         </tr>
@@ -544,7 +544,7 @@ box-shadow:0 10px 20px rgba(0,0,0,.08);
     </h3>
 
     <p style="color:#64748b;">
-        Dashboard Absen Ekstrakurikuler SD YPKS 2 Cilegon
+        Dashboard Absen Ekstrakurikuler SD YPKS 5 Cilegon
     </p>
 
     <p style="margin-top:8px;color:#94a3b8;font-size:14px;">
@@ -571,7 +571,7 @@ let attendanceDates = Array(18).fill('');
    LOAD DATA TANGGAL
 ========================= */
 function loadDates() {
-    const savedDates = localStorage.getItem('sd-ypks-2-cilegon_dates');
+    const savedDates = localStorage.getItem('sd-ypks-5-cilegon_dates');
     if (savedDates) {
         try {
             attendanceDates = JSON.parse(savedDates);
@@ -586,7 +586,7 @@ function loadDates() {
    SIMPAN DATA TANGGAL
 ========================= */
 function saveDates() {
-    localStorage.setItem('sd-ypks-2-cilegon_dates', JSON.stringify(attendanceDates));
+    localStorage.setItem('sd-ypks-5-cilegon_dates', JSON.stringify(attendanceDates));
 }
 
 function updateDate(index, value) {
@@ -629,7 +629,7 @@ function renderDateHeaders() {
 function loadStudents() {
 
     const savedStudents =
-        localStorage.getItem('sd-ypks-2-cilegon_students');
+        localStorage.getItem('sd-ypks-5-cilegon_students');
 
     if (savedStudents) {
 
@@ -666,7 +666,7 @@ function loadStudents() {
 function saveStudents() {
 
     localStorage.setItem(
-        'sd-ypks-2-cilegon_students',
+        'sd-ypks-5-cilegon_students',
         JSON.stringify(students)
     );
 
