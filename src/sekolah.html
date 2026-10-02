@@ -1,694 +1,577 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Daftar Sekolah - TECH-C</title>
 
-  <!-- Tailwind CSS & FontAwesome -->
+  <!-- Tailwind CSS & FontAwesome CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     * {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
     }
 
-    body {
-      min-height: 100vh;
-      overflow-y: auto !important;
-      overflow-x: hidden;
-      background-color: #f8fafc;
-    }
-
-    .grid-bg {
+    /* Background kotak-kotak halus seperti gambar */
+    .grid-mesh {
+      background-color: #f6f9fe;
       background-image:
-        linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
-      background-size: 42px 42px;
+        linear-gradient(rgba(226, 232, 240, 0.6) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
+      background-size: 36px 36px;
     }
 
     .school-card {
-      transition: all 0.25s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .school-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 30px -10px rgba(37, 99, 235, 0.12);
     }
 
-    .school-card:hover {
-      transform: translateY(-6px);
+    /* Kustom scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
     }
   </style>
-  <script src="./admin-profile-sync.js"></script>
 </head>
 
-<script>
-const token = localStorage.getItem('token');
-const role = localStorage.getItem('role');
+<body class="bg-[#f6f9fe] text-slate-800 antialiased">
 
-if (!token) {
-  window.location.href = './login.html';
-} else if (role === 'siswa') {
-  window.location.href = './dashboardSiswa.html';
-} else if (role !== 'admin') {
-  localStorage.clear();
-  window.location.href = './login.html';
-}
-</script>
+  <div class="flex min-h-screen">
 
-<body class="bg-slate-50 text-slate-800">
-
-  <!-- PRELOADER -->
-  <include src="./partials/preloader.html"></include>
-
-  <div class="flex min-h-screen bg-slate-50 dark:bg-slate-950">
-
-    <!-- SIDEBAR -->
-    <include src="./partials/sidebar.html"></include>
-
-    <!-- CONTENT WRAPPER -->
-    <div class="relative flex min-h-screen flex-1 flex-col overflow-y-auto">
-      <include src="./partials/overlay.html"></include>
-
-      <!-- HEADER -->
-      <include src="./partials/header.html"></include>
-
-      <!-- MAIN -->
-      <main class="grid-bg relative flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:p-8 lg:pb-32">
-        <!-- BACKGROUND GLOW -->
-        <div class="pointer-events-none absolute inset-0 overflow-hidden">
-          <div class="absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full bg-blue-500/10 blur-3xl"></div>
-          <div class="absolute left-[-150px] top-72 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-3xl"></div>
-          <div class="absolute bottom-[-160px] right-1/4 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl"></div>
+    <!-- ==============================================
+         SIDEBAR KIRI (PERSIS SEPERTI GAMBAR)
+    =============================================== -->
+    <aside class="w-60 shrink-0 bg-white border-r border-slate-100 flex flex-col justify-between py-6 px-4 select-none">
+      <div>
+        <!-- LOGO TECH-C -->
+        <div class="px-2 mb-8 flex items-center gap-2">
+          <div class="flex items-center gap-2">
+            <div class="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center text-white text-xl font-black shadow-md shadow-blue-500/30">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+              <span class="text-xl font-black tracking-tight text-blue-600 leading-none block">TECH-C</span>
+              <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 block mt-0.5">Robotic And Coding</span>
+            </div>
+          </div>
         </div>
 
-        <section class="relative z-10 mx-auto max-w-7xl">
-
-          <!-- HERO -->
-          <div class="mb-7 overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-            <div class="relative p-6 sm:p-7 lg:p-8">
-
-              <div class="absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-blue-600/15 via-cyan-500/5 to-transparent lg:block"></div>
-
-              <div class="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
-
-                <div>
-                  <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300">
-                    <span class="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
-                    School Management
-                  </div>
-
-                  <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-                    Daftar Sekolah TECH-C
-                  </h1>
-
-                  <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
-                    Pilih sekolah untuk melihat data pelajar, jadwal ekskul, laporan, invoice, dan absensi kegiatan siswa.
-                  </p>
-
-                  <div class="mt-6 flex flex-wrap gap-3">
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
-                      <p class="text-xs font-semibold text-slate-500">Status API</p>
-                      <p id="apiStatus" class="mt-1 text-sm font-black text-yellow-500">Checking...</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
-                      <p class="text-xs font-semibold text-slate-500">Total Sekolah</p>
-                      <p id="totalSekolahHero" class="mt-1 text-sm font-black text-slate-900 dark:text-white">0</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800 dark:bg-slate-950">
-                      <p class="text-xs font-semibold text-slate-500">Update Terakhir</p>
-                      <p id="lastUpdate" class="mt-1 text-sm font-black text-slate-900 dark:text-white">-</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="relative shrink-0">
-                  <div class="absolute -inset-4 rounded-[2.5rem] bg-blue-500/20 blur-2xl"></div>
-
-                  <div class="relative w-full rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500 p-6 text-white shadow-2xl shadow-blue-500/25 dark:border-blue-900 sm:w-[330px]">
-                    <div class="flex items-center justify-between gap-4">
-                      <div>
-                        <p class="text-sm font-bold text-white/80">TECH-C Schools</p>
-                        <h2 id="totalSekolahCard" class="mt-2 text-5xl font-black">0</h2>
-                        <p class="mt-1 text-xs font-semibold text-white/70">Sekolah terdaftar</p>
-                      </div>
-
-                      <div class="flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-white/20 text-4xl backdrop-blur">
-                        🏫
-                      </div>
-                    </div>
-
-                    <div class="mt-5 rounded-2xl bg-white/15 p-4 backdrop-blur">
-                      <div class="flex items-center justify-between text-xs font-bold text-white/80">
-                        <span>Mitra aktif</span>
-                        <span id="activeSchoolText">0 sekolah</span>
-                      </div>
-                      <div class="mt-3 h-3 overflow-hidden rounded-full bg-white/20">
-                        <div id="activeSchoolBar" class="h-full w-0 rounded-full bg-white transition-all duration-700"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
+        <!-- NAVIGATION MENU -->
+        <div class="space-y-6">
+          <!-- MENU GROUP -->
+          <div>
+            <span class="px-3 text-[10px] font-black uppercase tracking-wider text-slate-300">Menu</span>
+            <div class="mt-2 space-y-1">
+              <a href="index.html" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-slate-500 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition">
+                <i class="fa-solid fa-table-cells-large w-4"></i> Dashboard
+              </a>
             </div>
           </div>
 
-          <!-- TOP STATS -->
-          <div class="mb-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-
-            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-blue-500/10"></div>
-              <div class="relative flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Semua Sekolah</p>
-                  <h2 id="statTotal" class="mt-3 text-4xl font-black text-slate-900 dark:text-white">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Data sekolah</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl dark:bg-blue-950">🏫</div>
-              </div>
-            </div>
-
-            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-green-500/10"></div>
-              <div class="relative flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Aktif</p>
-                  <h2 id="statAktif" class="mt-3 text-4xl font-black text-green-500">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Mitra aktif</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-2xl dark:bg-green-950">✅</div>
-              </div>
-            </div>
-
-            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-cyan-500/10"></div>
-              <div class="relative flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Ditampilkan</p>
-                  <h2 id="statShown" class="mt-3 text-4xl font-black text-cyan-500">0</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">Hasil pencarian</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-2xl dark:bg-cyan-950">🔎</div>
-              </div>
-            </div>
-
-            <div class="relative overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-              <div class="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-violet-500/10"></div>
-              <div class="relative flex items-start justify-between">
-                <div>
-                  <p class="text-sm font-black text-slate-500 dark:text-slate-400">Sumber</p>
-                  <h2 id="sourceStatus" class="mt-3 text-2xl font-black text-violet-500">Dummy</h2>
-                  <p class="mt-2 text-xs font-semibold text-slate-400">API / fallback</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-2xl dark:bg-violet-950">⚡</div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- TOOLBAR -->
-          <div class="mb-6 rounded-[1.7rem] border border-white/70 bg-white/90 p-4 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-
-              <div class="flex flex-1 flex-col gap-3 sm:flex-row">
-
-                <div class="relative flex-1">
-                  <div class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                    🔎
-                  </div>
-
-                  <input
-                    id="searchInput"
-                    type="text"
-                    placeholder="Cari nama sekolah..."
-                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-12 py-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
-                  />
-                </div>
-
-                <select
-                  id="sortInput"
-                  class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                >
-                  <option value="az">Nama A-Z</option>
-                  <option value="za">Nama Z-A</option>
-                  <option value="newest">Terbaru</option>
-                  <option value="oldest">Terlama</option>
-                </select>
-
-              </div>
-
-              <div class="flex gap-3">
-                <button
-                  onclick="loadSekolah()"
-                  class="rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-600 transition hover:-translate-y-0.5 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-                >
-                  Refresh
-                </button>
-
-                <a
-                  href="tambah-sekolah.html"
-                  class="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-black text-white shadow-xl shadow-blue-500/25 transition hover:-translate-y-0.5 hover:shadow-2xl"
-                >
-                  + Tambah Sekolah
-                </a>
-              </div>
-
+          <!-- MASTER GROUP -->
+          <div>
+            <span class="px-3 text-[10px] font-black uppercase tracking-wider text-slate-300">Master</span>
+            <div class="mt-2 space-y-1">
+              <a href="sekolah.html" class="flex items-center gap-3 px-3 py-2 text-xs font-black text-blue-600 bg-blue-50/80 rounded-xl transition">
+                <i class="fa-solid fa-school w-4"></i> Sekolah
+              </a>
+              <a href="pelajar.html" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-slate-500 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition">
+                <i class="fa-solid fa-user-graduate w-4"></i> Pelajar
+              </a>
+              <a href="pengajar.html" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-slate-500 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition">
+                <i class="fa-solid fa-chalkboard-user w-4"></i> Pengajar
+              </a>
+              <a href="pelajaran.html" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-slate-500 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition">
+                <i class="fa-solid fa-book-open w-4"></i> Pelajaran
+              </a>
+              <a href="dokumentasi.html" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-slate-500 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition">
+                <i class="fa-solid fa-camera w-4"></i> Kirim Dokumentasi
+              </a>
             </div>
           </div>
 
-          <!-- GRID DAFTAR SEKOLAH (CONTAINER KARTU) -->
-          <div id="schoolList" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            <!-- DI-RENDER OLEH JAVASCRIPT -->
+          <!-- TRANSAKSI GROUP -->
+          <div>
+            <span class="px-3 text-[10px] font-black uppercase tracking-wider text-slate-300">Transaksi</span>
+            <div class="mt-2 space-y-1">
+              <a href="invoice.html" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-slate-500 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition">
+                <i class="fa-solid fa-file-invoice-dollar w-4"></i> Invoice
+              </a>
+            </div>
           </div>
 
-          <!-- EMPTY STATE -->
-          <div id="emptyState" class="hidden rounded-[2rem] border border-white/70 bg-white/90 p-10 text-center shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20">
-            <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-[1.7rem] bg-blue-50 text-4xl dark:bg-blue-950">
-              🔎
+          <!-- MANAGEMENT -->
+          <div>
+            <span class="px-3 text-[10px] font-black uppercase tracking-wider text-slate-300">Management</span>
+            <div class="mt-2 space-y-1">
+              <a href="penggajian.html" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-slate-500 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition">
+                <i class="fa-solid fa-wallet w-4"></i> Penggajian
+              </a>
             </div>
+          </div>
 
-            <h3 class="text-xl font-black text-slate-900 dark:text-white">
-              Data sekolah tidak ditemukan
-            </h3>
+          <!-- REPORT -->
+          <div>
+            <span class="px-3 text-[10px] font-black uppercase tracking-wider text-slate-300">Report</span>
+            <div class="mt-2 space-y-1">
+              <a href="laporan.html" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-slate-500 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition">
+                <i class="fa-solid fa-chart-pie w-4"></i> Laporan
+              </a>
+            </div>
+          </div>
 
-            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Coba ubah kata pencarian atau refresh data.
+          <!-- AKUN -->
+          <div>
+            <span class="px-3 text-[10px] font-black uppercase tracking-wider text-slate-300">Akun</span>
+            <div class="mt-2 space-y-1">
+              <a href="profile.html" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-slate-500 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition">
+                <i class="fa-solid fa-user-gear w-4"></i> Profile Admin
+              </a>
+              <a href="absensi.html" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-slate-500 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition">
+                <i class="fa-solid fa-clock-rotate-left w-4"></i> Absensi
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOGOUT -->
+      <div class="px-3 pt-4 border-t border-slate-100">
+        <a href="login.html" onclick="localStorage.clear()" class="text-xs font-bold text-rose-500 hover:text-rose-600 transition flex items-center gap-2">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </aside>
+
+    <!-- ==============================================
+         KONTEN UTAMA (KANAN)
+    =============================================== -->
+    <div class="flex-1 flex flex-col min-w-0">
+
+      <!-- TOPBAR KANAN ATAS: PROFIL USER -->
+      <header class="h-16 flex items-center justify-end px-8 select-none">
+        <div class="flex items-center gap-3">
+          <img 
+            id="userAvatar" 
+            src="https://ui-avatars.com/api/?name=Akbar+Marzuqi&background=2563eb&color=fff&bold=true" 
+            class="h-9 w-9 rounded-full object-cover border-2 border-white shadow-sm"
+            alt="Akbar Marzuqi"
+          />
+          <span id="userName" class="text-xs font-bold text-slate-800">Akbar Marzuqi</span>
+        </div>
+      </header>
+
+      <!-- ISI KONTEN (GRID-MESH) -->
+      <main class="grid-mesh flex-1 p-6 lg:p-8 space-y-6">
+
+        <!-- 1. KOTAK HERO BESAR (PUTIH DENGAN CARD BIRU GRADIENT DI KANAN) -->
+        <div class="bg-white rounded-[2rem] p-6 lg:p-8 shadow-sm border border-slate-100/80 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-4">
+            <h1 class="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">
+              Daftar Sekolah TECH-C
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-400 font-medium max-w-xl leading-relaxed">
+              Kelola data sekolah mitra ekstrakurikuler robotic & coding, jadwal presensi, serta absensi harian kegiatan siswa.
             </p>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <div class="rounded-2xl border border-slate-100 bg-white/70 px-4 py-2.5 shadow-sm min-w-[100px]">
+                <p class="text-[10px] font-bold text-slate-400">Status API</p>
+                <p id="apiStatus" class="text-xs font-black text-emerald-500 mt-0.5">Connected</p>
+              </div>
+
+              <div class="rounded-2xl border border-slate-100 bg-white/70 px-4 py-2.5 shadow-sm min-w-[100px]">
+                <p class="text-[10px] font-bold text-slate-400">Total Sekolah</p>
+                <p id="totalSekolahHero" class="text-xs font-black text-slate-800 mt-0.5">27</p>
+              </div>
+
+              <div class="rounded-2xl border border-slate-100 bg-white/70 px-4 py-2.5 shadow-sm min-w-[100px]">
+                <p class="text-[10px] font-bold text-slate-400">Update Terakhir</p>
+                <p id="lastUpdate" class="text-xs font-black text-slate-800 mt-0.5">15.01</p>
+              </div>
+            </div>
           </div>
 
-        </section>
+          <!-- KARTU GRADIENT BIRU TINGGI (SEPERTI PADA GAMBAR) -->
+          <div class="w-full lg:w-72 rounded-[1.8rem] bg-gradient-to-b from-blue-500 via-blue-600 to-cyan-500 p-6 text-white shadow-xl shadow-blue-500/20 relative overflow-hidden flex flex-col justify-between shrink-0">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-3xl font-black" id="totalSekolahBanner">27</p>
+                <p class="text-[10px] font-bold text-white/80">Sekolah terdaftar</p>
+              </div>
+              <div class="h-10 w-10 rounded-xl bg-white/20 flex items-center justify-center text-lg backdrop-blur-sm">
+                🏫
+              </div>
+            </div>
+
+            <div class="mt-8 rounded-2xl bg-white/15 p-3.5 backdrop-blur-sm">
+              <div class="flex justify-between items-center text-[10px] font-bold text-white/90">
+                <span>Mitra aktif</span>
+                <span id="activeSekolahCount">27 sekolah</span>
+              </div>
+              <div class="w-full bg-white/25 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div class="bg-white h-full rounded-full w-full"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. BARIS 4 KARTU STATISTIK PASTEL (SEPERTI DI GAMBAR) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- KARTU 1: SD MITRA -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-100/80 shadow-sm flex items-center justify-between relative overflow-hidden">
+            <div>
+              <p class="text-[11px] font-bold text-slate-400">Tingkat SD / MI</p>
+              <h3 id="statSD" class="text-2xl font-black text-blue-600 mt-1">18</h3>
+              <p class="text-[10px] font-semibold text-slate-400 mt-0.5">Sekolah Dasar</p>
+            </div>
+            <div class="h-12 w-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-xl">
+              🏫
+            </div>
+          </div>
+
+          <!-- KARTU 2: SMP/MTS MITRA -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-100/80 shadow-sm flex items-center justify-between relative overflow-hidden">
+            <div>
+              <p class="text-[11px] font-bold text-slate-400">Tingkat SMP / MTs</p>
+              <h3 id="statSMP" class="text-2xl font-black text-emerald-500 mt-1">7</h3>
+              <p class="text-[10px] font-semibold text-slate-400 mt-0.5">Sekolah Menengah</p>
+            </div>
+            <div class="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl">
+              🎒
+            </div>
+          </div>
+
+          <!-- KARTU 3: DITAMPILKAN -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-100/80 shadow-sm flex items-center justify-between relative overflow-hidden">
+            <div>
+              <p class="text-[11px] font-bold text-slate-400">Ditampilkan</p>
+              <h3 id="statShown" class="text-2xl font-black text-cyan-500 mt-1">27</h3>
+              <p class="text-[10px] font-semibold text-slate-400 mt-0.5">Hasil filter</p>
+            </div>
+            <div class="h-12 w-12 rounded-2xl bg-cyan-50 text-cyan-500 flex items-center justify-center text-xl">
+              🔍
+            </div>
+          </div>
+
+          <!-- KARTU 4: STATUS AKTIF -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-100/80 shadow-sm flex items-center justify-between relative overflow-hidden">
+            <div>
+              <p class="text-[11px] font-bold text-slate-400">Mitra Aktif</p>
+              <h3 id="statAktif" class="text-2xl font-black text-violet-500 mt-1">27</h3>
+              <p class="text-[10px] font-semibold text-slate-400 mt-0.5">Status ekskul jalan</p>
+            </div>
+            <div class="h-12 w-12 rounded-2xl bg-violet-50 text-violet-500 flex items-center justify-center text-xl">
+              ⚡
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. TOOLBAR PENCARIAN & FILTER (PERSIS SEPERTI GAMBAR) -->
+        <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100/80 flex flex-col lg:flex-row items-center justify-between gap-3">
+          <div class="flex-1 w-full relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input 
+              type="text" 
+              id="searchInput"
+              placeholder="Cari nama sekolah..." 
+              class="w-full bg-slate-50/70 border border-slate-100 rounded-xl py-2.5 pl-10 pr-4 text-xs font-semibold text-slate-700 outline-none focus:bg-white focus:border-blue-400 transition placeholder:text-slate-400"
+            />
+          </div>
+
+          <div class="flex items-center gap-2 w-full lg:w-auto overflow-x-auto pb-1 lg:pb-0">
+            <!-- Filter Tabs -->
+            <div class="flex rounded-xl bg-slate-100 p-1 text-xs font-bold shrink-0">
+              <button onclick="setFilterJenjang('all')" id="btnTabAll" class="rounded-lg px-3.5 py-1.5 bg-blue-600 text-white transition">Semua</button>
+              <button onclick="setFilterJenjang('sd')" id="btnTabSD" class="rounded-lg px-3.5 py-1.5 text-slate-600 hover:text-blue-600 transition">SD</button>
+              <button onclick="setFilterJenjang('smp')" id="btnTabSMP" class="rounded-lg px-3.5 py-1.5 text-slate-600 hover:text-blue-600 transition">SMP</button>
+            </div>
+
+            <!-- Urutkan -->
+            <select id="sortInput" class="bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 text-xs font-bold text-slate-600 outline-none shrink-0">
+              <option value="az">Nama A-Z</option>
+              <option value="za">Nama Z-A</option>
+            </select>
+
+            <button onclick="resetFilter()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl px-4 py-2 text-xs font-black transition shrink-0">
+              Refresh
+            </button>
+
+            <a href="tambah-sekolah.html" class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-4 py-2 text-xs font-black shadow-md shadow-blue-500/25 transition shrink-0 flex items-center gap-1.5">
+              <span>+ Tambah Sekolah</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 4. KOTAK WADAH KARTU DAFTAR SEKOLAH (PERSIS KOTAK BIRU MURID DI GAMBAR) -->
+        <div class="bg-white rounded-[2rem] p-6 lg:p-7 border border-slate-100 shadow-sm space-y-6">
+          
+          <!-- HEADER KOTAK -->
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div class="flex items-center gap-3">
+              <div class="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 text-lg">
+                <i class="fa-solid fa-school"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-black text-slate-900">Daftar Sekolah Mitra Ekskul</h2>
+                <p class="text-[11px] text-slate-400 font-semibold">Program Ekstrakurikuler Robotic & Coding TECH-C</p>
+              </div>
+            </div>
+            <span id="badgeSekolahCount" class="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-600">
+              27 Sekolah
+            </span>
+          </div>
+
+          <!-- GRID KARTU-KARTU SEKOLAH (AVATAR BULAT PERSIS SEPERTI GAMBAR) -->
+          <div id="schoolListGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Di-generate lewat JavaScript -->
+          </div>
+
+          <!-- KONDISI KOSONG -->
+          <div id="emptyNotice" class="hidden py-12 text-center">
+            <p class="text-sm font-bold text-slate-400">Data sekolah tidak ditemukan</p>
+          </div>
+
+        </div>
+
       </main>
     </div>
   </div>
 
-  <!-- LOAD PARTIAL -->
   <script>
-  async function loadPartials() {
-    const includes = document.querySelectorAll('include');
-    for (let el of includes) {
-      const file = el.getAttribute('src');
+    // DAFTAR LENGKAP SEKOLAH MITRA TECH-C
+    const DATA_SEKOLAH = [
+      { id: 1, nama: "SD Daar El Latif", kota: "Kota Cilegon", jenjang: "sd", file: "sd-daar-el-latif.html", inisial: "DL", kelas: "Robotic", progress: 85 },
+      { id: 2, nama: "SDIT Al-Khairiyah", kota: "Kota Cilegon", jenjang: "sd", file: "sd-al-khairiyah.html", inisial: "AK", kelas: "Robotic", progress: 90 },
+      { id: 3, nama: "SDIT BIS", kota: "Kota Cilegon", jenjang: "sd", file: "sdit-bis.html", inisial: "BI", kelas: "Coding", progress: 75 },
+      { id: 4, nama: "SD Al Hanif", kota: "Kota Cilegon", jenjang: "sd", file: "sd-al-hanif.html", inisial: "AH", kelas: "Robotic", progress: 88 },
+      { id: 5, nama: "MTsN 3 Cilegon", kota: "Kota Cilegon", jenjang: "smp", file: "mtsn3cilegon.html", inisial: "M3", kelas: "IoT Class", progress: 95 },
+      { id: 6, nama: "SDIT CIS", kota: "Kota Cilegon", jenjang: "sd", file: "sdit-cis.html", inisial: "CS", kelas: "Robotic", progress: 80 },
+      { id: 7, nama: "SDIT Irsyadul Ibad 2", kota: "Pandeglang", jenjang: "sd", file: "sd-irsyadul-ibad-2.html", inisial: "IB", kelas: "Coding", progress: 70 },
+      { id: 8, nama: "SDIT Al-Izzah 1", kota: "Kota Serang", jenjang: "sd", file: "sd-al-izzah-1.html", inisial: "A1", kelas: "Robotic", progress: 85 },
+      { id: 9, nama: "SDIT Al-Izzah 2", kota: "Kota Serang", jenjang: "sd", file: "sd-al-izzah-2.html", inisial: "A2", kelas: "Robotic", progress: 78 },
+      { id: 10, nama: "MIN 1 Cilegon", kota: "Kota Cilegon", jenjang: "sd", file: "min1cilegon.html", inisial: "M1", kelas: "Robotic", progress: 92 },
+      { id: 11, nama: "SD Peradaban", kota: "Kota Cilegon", jenjang: "sd", file: "sdperadaban.html", inisial: "PD", kelas: "Robotic", progress: 80 },
+      { id: 12, nama: "SMA Al Azhar", kota: "Kota Cilegon", jenjang: "sma", file: "sma-al-azhar.html", inisial: "AZ", kelas: "IoT Class", progress: 90 },
+      { id: 13, nama: "SD WR", kota: "Kota Cilegon", jenjang: "sd", file: "sd-wr.html", inisial: "WR", kelas: "Coding", progress: 65 },
+      { id: 14, nama: "MTsN 2 Cilegon", kota: "Kota Cilegon", jenjang: "smp", file: "mtsn2cilegon.html", inisial: "M2", kelas: "Robotic", progress: 85 },
+      { id: 15, nama: "SMP CIS", kota: "Kota Cilegon", jenjang: "smp", file: "smp-cis.html", inisial: "SC", kelas: "IoT Class", progress: 90 },
+      { id: 16, nama: "SIS", kota: "Kota Cilegon", jenjang: "smp", file: "sis.html", inisial: "SI", kelas: "Coding", progress: 85 },
+      { id: 17, nama: "SMP Al Azhar", kota: "Kota Cilegon", jenjang: "smp", file: "smp-al-azhar.html", inisial: "SA", kelas: "Robotic", progress: 82 },
+      { id: 18, nama: "SD YPKS 2 Cilegon", kota: "Kota Cilegon", jenjang: "sd", file: "sd-ypks-2-cilegon.html", inisial: "Y2", kelas: "Robotic", progress: 95 },
+      { id: 19, nama: "SD YPKS 4 Cilegon", kota: "Kota Cilegon", jenjang: "sd", file: "sd-ypks-4-cilegon.html", inisial: "Y4", kelas: "Robotic", progress: 90 },
+      { id: 20, nama: "SD YPKS 5 Cilegon", kota: "Kota Cilegon", jenjang: "sd", file: "sd-ypks-5-cilegon.html", inisial: "Y5", kelas: "Coding", progress: 88 },
+      { id: 21, nama: "TK Bosowa", kota: "Kota Cilegon", jenjang: "tk", file: "tk-bosowa.html", inisial: "TB", kelas: "Junior", progress: 75 },
+      { id: 22, nama: "SD Bosowa", kota: "Kota Cilegon", jenjang: "sd", file: "sdbosowa.html", inisial: "BS", kelas: "Robotic", progress: 92 },
+      { id: 23, nama: "SDIT Bina Insani", kota: "Kota Serang", jenjang: "sd", file: "bina-insani.html", inisial: "BI", kelas: "Coding", progress: 85 },
+      { id: 24, nama: "SDIT Bina Bangsa", kota: "Kota Serang", jenjang: "sd", file: "bina-bangsa.html", inisial: "BB", kelas: "Robotic", progress: 80 },
+      { id: 25, nama: "MTsN 1 Kota Serang", kota: "Kota Serang", jenjang: "smp", file: "mtsn1kotaserang.html", inisial: "S1", kelas: "Robotic", progress: 90 },
+      { id: 26, nama: "SMP Ibnu Syam", kota: "Kota Cilegon", jenjang: "smp", file: "ibnu-syam.html", inisial: "IS", kelas: "Robotic", progress: 70 },
+      { id: 27, nama: "SMA Al Bayan", kota: "Anyer", jenjang: "sma", file: "al-bayan.html", inisial: "AB", kelas: "IoT Class", progress: 92 }
+    ];
+
+    let activeFilter = 'all';
+
+    function getLocalStudentCount(schoolName) {
+      const storageKeys = {
+        "MIN 1 Cilegon": "min1cilegon_students",
+        "MTsN 1 Kota Serang": "mtsn1kotaserang_students",
+        "MTsN 2 Cilegon": "mtsn2cilegon_students",
+        "MTsN 3 Cilegon": "mtsn3cilegon_students",
+        "SD Bosowa": "sdbosowa_students",
+        "SD Daar El Latif": "sd-daar-el-latif_students", 
+        "SD Peradaban": "sdperadaban_students",
+        "SD Al Hanif": "sd-al-hanif_students",
+        "SD YPKS 2 Cilegon": "sd-ypks-2-cilegon_students"
+      };
+
+      const key = storageKeys[schoolName];
+      if (!key) return 0;
+      const data = localStorage.getItem(key);
+      if (!data) return 0;
       try {
-        const res = await fetch(file);
-        if (res.ok) {
-          const html = await res.text();
-          el.outerHTML = html;
-        }
-      } catch (err) {
-        console.warn("Gagal load partial:", file);
+        const parsed = JSON.parse(data);
+        return parsed.filter(s => s && s.nama && s.nama.trim() !== '').length;
+      } catch (e) {
+        return 0;
       }
     }
-  }
-  </script>
 
-  <!-- SCRIPT UTAMA -->
-  <script>
-const PRODUCTION_API_BASE = 'https://api.tech-c.my.id/api';
-const LOCAL_API_BASE = 'http://127.0.0.1:8000/api';
+    function renderCards(list) {
+      const container = document.getElementById('schoolListGrid');
+      const empty = document.getElementById('emptyNotice');
+      if (!container) return;
 
-function isLocalFrontend() {
-  return (
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1' ||
-    window.location.hostname === ''
-  );
-}
+      if (!list.length) {
+        container.innerHTML = '';
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+      if (empty) empty.classList.add('hidden');
 
-function getApiBase() {
-  const saved = localStorage.getItem('api_base');
-  if (isLocalFrontend()) {
-    return saved || LOCAL_API_BASE;
-  }
-  if (saved && !saved.includes('127.0.0.1') && !saved.includes('localhost')) {
-    return saved;
-  }
-  localStorage.setItem('api_base', PRODUCTION_API_BASE);
-  return PRODUCTION_API_BASE;
-}
-
-const API_BASE = getApiBase();
-let allSchools = [];
-
-const dummySchools = [
-  { id: 1, nama: "SD Daar El Latif", logo: "https://ui-avatars.com/api/?name=Daar+El+Latif&background=2563eb&color=fff&bold=true", status: "Aktif" },
-  { id: 2, nama: "SDIT Al-Khairiyah", logo: "https://ui-avatars.com/api/?name=Al+Khairiyah&background=06b6d4&color=fff&bold=true", status: "Aktif" },
-  { id: 3, nama: "SDIT BIS", logo: "https://ui-avatars.com/api/?name=BIS&background=7c3aed&color=fff&bold=true", status: "Aktif" },
-  { id: 4, nama: "SD Al Hanif", logo: "https://ui-avatars.com/api/?name=Al+Hanif&background=2563eb&color=fff&bold=true", status: "Aktif" },
-  { id: 5, nama: "MTsN 3 Cilegon", logo: "https://ui-avatars.com/api/?name=MTsN+3&background=0f172a&color=fff&bold=true", status: "Aktif" },
-  { id: 6, nama: "SDIT CIS", logo: "https://ui-avatars.com/api/?name=CIS&background=0891b2&color=fff&bold=true", status: "Aktif" },
-  { id: 7, nama: "SDIT Irsyadul Ibad 2", logo: "https://ui-avatars.com/api/?name=Irsyadul+Ibad&background=16a34a&color=fff&bold=true", status: "Aktif" },
-  { id: 8, nama: "SDIT Al-Izzah 1", logo: "https://ui-avatars.com/api/?name=Al+Izzah+1&background=ea580c&color=fff&bold=true", status: "Aktif" },
-  { id: 9, nama: "SDIT Al-Izzah 2", logo: "https://ui-avatars.com/api/?name=Al+Izzah+2&background=dc2626&color=fff&bold=true", status: "Aktif" },
-  { id: 10, nama: "MIN 1 Cilegon", logo: "https://ui-avatars.com/api/?name=MIN+1&background=059669&color=fff&bold=true", status: "Aktif" },
-  { id: 11, nama: "SD Peradaban", logo: "https://ui-avatars.com/api/?name=Peradaban&background=2563eb&color=fff&bold=true", status: "Aktif" },
-  { id: 12, nama: "SMA Al Azhar", logo: "https://ui-avatars.com/api/?name=Al+Azhar&background=7c3aed&color=fff&bold=true", status: "Aktif" },
-  { id: 13, nama: "SD WR", logo: "https://ui-avatars.com/api/?name=SD+WR&background=06b6d4&color=fff&bold=true", status: "Aktif" },
-  { id: 14, nama: "MTsN 2 Cilegon", logo: "https://ui-avatars.com/api/?name=MTsN+2&background=334155&color=fff&bold=true", status: "Aktif" },
-  { id: 15, nama: "SMP CIS", logo: "https://ui-avatars.com/api/?name=SMP+CIS&background=0ea5e9&color=fff&bold=true", status: "Aktif" },
-  { id: 16, nama: "SIS", logo: "https://ui-avatars.com/api/?name=SIS&background=1d4ed8&color=fff&bold=true", status: "Aktif" },
-  { id: 17, nama: "SMP Al Azhar", logo: "https://ui-avatars.com/api/?name=SMP+Al+Azhar&background=9333ea&color=fff&bold=true", status: "Aktif" },
-  { id: 18, nama: "SD YPKS 2 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+2&background=0891b2&color=fff&bold=true", status: "Aktif" },
-  { id: 19, nama: "SD YPKS 4 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+4&background=2563eb&color=fff&bold=true", status: "Aktif" },
-  { id: 20, nama: "SD YPKS 5 Cilegon", logo: "https://ui-avatars.com/api/?name=YPKS+5&background=16a34a&color=fff&bold=true", status: "Aktif" },
-  { id: 21, nama: "TK Bosowa", logo: "https://ui-avatars.com/api/?name=Bosowa&background=0f172a&color=fff&bold=true", status: "Aktif" },
-  { id: 22, nama: "SD Bosowa", logo: "https://ui-avatars.com/api/?name=Bosowa&background=2563eb&color=fff&bold=true", status: "Aktif" },
-  { id: 23, nama: "SDIT Bina Insani", logo: "https://ui-avatars.com/api/?name=Bina+Insani&background=0891b2&color=fff&bold=true", status: "Aktif" },
-  { id: 24, nama: "SDIT Bina Bangsa", logo: "https://ui-avatars.com/api/?name=Bina+Bangsa&background=7c3aed&color=fff&bold=true", status: "Aktif" },
-  { id: 25, nama: "MTsN 1 Kota Serang", logo: "https://ui-avatars.com/api/?name=MTsN+1&background=0f172a&color=fff&bold=true", status: "Aktif" },
-  { id: 26, nama: "SMP Ibnu Syam", logo: "https://ui-avatars.com/api/?name=Ibnu+Syam&background=06b6d4&color=fff&bold=true", status: "Aktif" },
-  { id: 27, nama: "SMA Al Bayan", logo: "https://ui-avatars.com/api/?name=Al+Bayan&background=2563eb&color=fff&bold=true", status: "Aktif" }
-];
-
-function setText(id, value) {
-  const el = document.getElementById(id);
-  if (el) el.innerText = value;
-}
-
-function setApiStatus(text, type = 'loading') {
-  const el = document.getElementById('apiStatus');
-  if (!el) return;
-  el.innerText = text;
-  el.className = 'mt-1 text-sm font-black';
-  if (type === 'success') el.classList.add('text-green-500');
-  else if (type === 'error') el.classList.add('text-red-500');
-  else el.classList.add('text-yellow-500');
-}
-
-function updateLastUpdate() {
-  const now = new Date();
-  setText('lastUpdate', now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }));
-}
-
-function escapeHtml(value) {
-  return String(value ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
-}
-
-function getSchoolName(school) {
-  return school.nama || school.name || school.school_name || 'Tanpa Nama';
-}
-
-function getSchoolStatus(school) {
-  return school.status || school.status_sekolah || 'Aktif';
-}
-
-function getSchoolLogo(school) {
-  const name = getSchoolName(school);
-  if (school.logo_url) return school.logo_url;
-  if (school.logo) {
-    if (String(school.logo).startsWith('http')) return school.logo;
-    return `http://127.0.0.1:8000/storage/${school.logo}`;
-  }
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
-}
-
-function getLocalStudentCount(schoolName) {
-  const storageKeys = {
-    "MIN 1 Cilegon": "min1cilegon_students",
-    "MTsN 1 Kota Serang": "mtsn1kotaserang_students",
-    "MTsN 2 Cilegon": "mtsn2cilegon_students",
-    "MTsN 3 Cilegon": "mtsn3cilegon_students",
-    "SD Bosowa": "sdbosowa_students",
-    "SD Daar El Latif": "sd-daar-el-latif_students", 
-    "SD Peradaban": "sdperadaban_students",
-    "SD Al Hanif": "sd-al-hanif_students"
-  };
-
-  const key = storageKeys[schoolName];
-  if (!key) return 0;
-  const data = localStorage.getItem(key);
-  if (!data) return 0;
-
-  try {
-    const students = JSON.parse(data);
-    return students.filter(s => s && s.nama && s.nama.trim() !== '').length;
-  } catch (error) {
-    return 0;
-  }
-}
-
-function updateStats(schools, shownSchools) {
-  const total = schools.length;
-  const aktif = schools.filter(s => String(getSchoolStatus(s)).toLowerCase() !== 'nonaktif').length;
-  const shown = shownSchools.length;
-
-  setText('statTotal', total);
-  setText('statAktif', aktif);
-  setText('statShown', shown);
-  setText('totalSekolahHero', total);
-  setText('totalSekolahCard', total);
-  setText('activeSchoolText', `${aktif} sekolah`);
-
-  const bar = document.getElementById('activeSchoolBar');
-  if (bar) {
-    const percent = total > 0 ? Math.round((aktif / total) * 100) : 0;
-    bar.style.width = `${percent}%`;
-  }
-}
-
-function renderSekolah(schools) {
-  const container = document.getElementById('schoolList');
-  const emptyState = document.getElementById('emptyState');
-  if (!container) return;
-
-  updateStats(allSchools, schools);
-
-  if (!schools.length) {
-    container.innerHTML = "";
-    if (emptyState) emptyState.classList.remove('hidden');
-    return;
-  }
-
-  if (emptyState) emptyState.classList.add('hidden');
-
-  container.innerHTML = schools.map(school => {
-    const id = school.id;
-    const name = getSchoolName(school);
-    const logo = getSchoolLogo(school);
-    const status = getSchoolStatus(school);
-    const totalSiswa = getLocalStudentCount(name);
-
-    const safeName = escapeHtml(name);
-    const safeStatus = escapeHtml(status);
-
-    return `
-      <div
-        onclick="pilihSekolah(${id}, '${encodeURIComponent(name)}')"
-        class="school-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
-      >
-        <div class="relative h-24 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500">
-          <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.35),transparent_35%)]"></div>
-          <div class="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-black text-white backdrop-blur">
-            ${safeStatus}
-          </div>
-        </div>
-
-        <div class="relative px-5 pb-5">
-          <div class="-mt-12 flex justify-center">
-            <img
-              src="${logo}"
-              onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true'"
-              class="h-24 w-24 rounded-full border-4 border-white object-cover shadow-xl dark:border-slate-900"
-              alt="${safeName}"
-            />
-          </div>
-
-          <div class="mt-4 text-center">
-            <h2 class="line-clamp-2 min-h-[56px] text-lg font-black leading-7 text-slate-900 dark:text-white">
-              ${safeName}
-            </h2>
-            <p class="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
-              Mitra Robotic & Coding
-            </p>
-          </div>
-
-          <div class="mt-5 grid grid-cols-2 gap-3">
-            <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
-              <p class="text-xs font-semibold text-slate-400">Pelajar</p>
-              <p class="mt-1 text-sm font-black text-blue-500">${totalSiswa}</p>
-            </div>
-            <div class="rounded-2xl bg-slate-50 p-3 text-center dark:bg-slate-950">
-              <p class="text-xs font-semibold text-slate-400">Status</p>
-              <p class="mt-1 text-sm font-black text-green-500">${safeStatus}</p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            class="mt-5 w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-950 dark:text-slate-300"
+      container.innerHTML = list.map(item => {
+        const studentCount = getLocalStudentCount(item.nama);
+        return `
+          <div 
+            onclick="masukSekolah('${item.file}', '${item.nama}', ${item.id})"
+            class="school-card group cursor-pointer overflow-hidden rounded-[1.8rem] border border-slate-100 bg-white shadow-sm flex flex-col justify-between"
           >
-            Masuk Sekolah
-          </button>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
+            <!-- TOP GRADIENT BANNER -->
+            <div class="relative h-24 bg-gradient-to-r from-blue-600 via-cyan-500 to-violet-500 p-4">
+              <span class="absolute right-4 top-3.5 rounded-full bg-white/25 px-2.5 py-0.5 text-[10px] font-black text-white backdrop-blur-sm">
+                Aktif
+              </span>
+            </div>
 
-function applyFilter() {
-  const search = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
-  const sort = document.getElementById('sortInput')?.value || 'az';
+            <!-- AVATAR INISIAL BULAT (PERSIS SEPERTI GAMBAR) -->
+            <div class="relative px-5 pb-5 pt-0 text-center flex-1 flex flex-col justify-between">
+              <div>
+                <div class="-mt-11 mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-blue-600 text-white text-xl font-black shadow-lg shadow-blue-500/30 ring-4 ring-white">
+                  ${item.inisial}
+                </div>
 
-  let filtered = allSchools.filter(school => {
-    const target = [getSchoolName(school), getSchoolStatus(school)].join(' ').toLowerCase();
-    return target.includes(search);
-  });
+                <h3 class="mt-3.5 text-base font-black text-slate-800 group-hover:text-blue-600 transition line-clamp-1">
+                  ${item.nama}
+                </h3>
+                <p class="text-xs font-semibold text-slate-400 mt-0.5">
+                  ${item.kota}
+                </p>
 
-  filtered.sort((a, b) => {
-    const nameA = getSchoolName(a).toLowerCase();
-    const nameB = getSchoolName(b).toLowerCase();
-    if (sort === 'az') return nameA.localeCompare(nameB);
-    if (sort === 'za') return nameB.localeCompare(nameA);
-    if (sort === 'newest') return Number(b.id || 0) - Number(a.id || 0);
-    if (sort === 'oldest') return Number(a.id || 0) - Number(b.id || 0);
-    return 0;
-  });
+                <!-- KOTAK KELAS & PROGRESS -->
+                <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+                  <div class="bg-slate-50/80 rounded-xl p-2.5 border border-slate-100/60">
+                    <span class="text-[10px] font-bold text-slate-400 block">Siswa</span>
+                    <span class="text-xs font-black text-slate-800 block mt-0.5">${studentCount} Murid</span>
+                  </div>
+                  <div class="bg-slate-50/80 rounded-xl p-2.5 border border-slate-100/60">
+                    <span class="text-[10px] font-bold text-slate-400 block">Program</span>
+                    <span class="text-xs font-black text-blue-600 block mt-0.5">${item.kelas}</span>
+                  </div>
+                </div>
 
-  renderSekolah(filtered);
-}
+                <!-- PROGRESS BAR KECIL -->
+                <div class="mt-4">
+                  <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
+                    <span>Progress Belajar</span>
+                    <span class="text-slate-600">${item.progress}%</span>
+                  </div>
+                  <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-600 to-cyan-500 h-full rounded-full" style="width: ${item.progress}%"></div>
+                  </div>
+                </div>
+              </div>
 
-async function apiGetSchools() {
-  const res = await fetch(`${API_BASE}/sekolah`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+              <!-- TOMBOL LIHAT DETAIL -->
+              <button class="mt-5 w-full rounded-xl bg-slate-100 group-hover:bg-blue-600 group-hover:text-white py-2.5 text-xs font-black text-slate-600 transition">
+                Lihat Detail
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Update badge dan statistik
+      document.getElementById('statShown').innerText = list.length;
+      document.getElementById('badgeSekolahCount').innerText = `${list.length} Sekolah`;
     }
-  });
 
-  const raw = await res.text();
-  let data;
-  try {
-    data = JSON.parse(raw);
-  } catch (err) {
-    throw new Error("API /sekolah bukan JSON");
-  }
+    function masukSekolah(file, nama, id) {
+      localStorage.setItem('school_id', id);
+      localStorage.setItem('school_name', nama);
+      // Membuka halaman absensi sekolah secara langsung
+      window.location.href = file;
+    }
 
-  if (!res.ok) throw new Error(data.message || `HTTP Error ${res.status}`);
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data.data)) return data.data;
-  if (Array.isArray(data.schools)) return data.schools;
-  if (Array.isArray(data.sekolah)) return data.sekolah;
-  return [];
-}
+    function setFilterJenjang(jenjang) {
+      activeFilter = jenjang;
+      const tabs = {
+        all: document.getElementById('btnTabAll'),
+        sd: document.getElementById('btnTabSD'),
+        smp: document.getElementById('btnTabSMP')
+      };
 
-async function loadHeaderUser() {
-  try {
-    const res = await fetch(`${API_BASE}/profile`, {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      Object.keys(tabs).forEach(k => {
+        if (k === jenjang) {
+          tabs[k].className = 'rounded-lg px-3.5 py-1.5 bg-blue-600 text-white transition';
+        } else {
+          tabs[k].className = 'rounded-lg px-3.5 py-1.5 text-slate-600 hover:text-blue-600 transition';
+        }
+      });
+
+      applyFilter();
+    }
+
+    function applyFilter() {
+      const search = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+      const sort = document.getElementById('sortInput')?.value || 'az';
+
+      let result = DATA_SEKOLAH.filter(item => {
+        const matchesSearch = item.nama.toLowerCase().includes(search) || item.kota.toLowerCase().includes(search);
+        if (activeFilter === 'all') return matchesSearch;
+        return matchesSearch && item.jenjang === activeFilter;
+      });
+
+      result.sort((a, b) => {
+        if (sort === 'az') return a.nama.localeCompare(b.nama);
+        if (sort === 'za') return b.nama.localeCompare(a.nama);
+        return 0;
+      });
+
+      renderCards(result);
+    }
+
+    function resetFilter() {
+      document.getElementById('searchInput').value = '';
+      setFilterJenjang('all');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Ambil nama profil dari localStorage jika ada
+      const savedName = localStorage.getItem('name');
+      if (savedName) {
+        document.getElementById('userName').innerText = savedName;
+        document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(savedName)}&background=2563eb&color=fff&bold=true`;
       }
+
+      // Jam update terakhir
+      const now = new Date();
+      document.getElementById('lastUpdate').innerText = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+      // Hitung statistik
+      const total = DATA_SEKOLAH.length;
+      const sdCount = DATA_SEKOLAH.filter(s => s.jenjang === 'sd').length;
+      const smpCount = DATA_SEKOLAH.filter(s => s.jenjang === 'smp').length;
+
+      document.getElementById('totalSekolahHero').innerText = total;
+      document.getElementById('totalSekolahBanner').innerText = total;
+      document.getElementById('activeSekolahCount').innerText = `${total} sekolah`;
+      document.getElementById('statSD').innerText = sdCount;
+      document.getElementById('statSMP').innerText = smpCount;
+      document.getElementById('statAktif').innerText = total;
+
+      document.getElementById('searchInput')?.addEventListener('input', applyFilter);
+      document.getElementById('sortInput')?.addEventListener('change', applyFilter);
+
+      renderCards(DATA_SEKOLAH);
     });
-    if (!res.ok) return;
-    const data = await res.json();
-    const name = data.name || localStorage.getItem('name') || 'Admin';
-    const email = data.email || localStorage.getItem('email') || '';
-
-    setText('header_name', name);
-    setText('dropdown_name', name);
-    setText('dropdown_email', email);
-
-    const avatar = document.getElementById('header_avatar');
-    if (avatar) {
-      avatar.src = data.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
-    }
-  } catch (err) {
-    console.warn("Header profile gagal:", err);
-  }
-}
-
-async function loadSekolah() {
-  try {
-    setApiStatus('Loading...', 'loading');
-    let data = [];
-    try {
-      data = await apiGetSchools();
-      if (data.length) {
-        setText('sourceStatus', 'Laravel');
-      } else {
-        data = dummySchools;
-        setText('sourceStatus', 'Dummy');
-      }
-    } catch (apiErr) {
-      data = dummySchools;
-      setText('sourceStatus', 'Dummy');
-    }
-
-    allSchools = data;
-    applyFilter();
-    setApiStatus('Connected', 'success');
-    updateLastUpdate();
-  } catch (err) {
-    console.error("Error load sekolah:", err);
-    setApiStatus('Disconnected', 'error');
-  }
-}
-
-function pilihSekolah(id, encodedName) {
-  const name = decodeURIComponent(encodedName || '');
-  localStorage.setItem('school_id', id);
-  localStorage.setItem('school_name', name);
-
-  switch (name) {
-    case "MIN 1 Cilegon":
-      window.location.href = "min1cilegon.html";
-      break;
-    case "MTsN 2 Cilegon":
-      window.location.href = "mtsn2cilegon.html";
-      break;
-    case "MTsN 1 Kota Serang":
-      window.location.href = "mtsn1kotaserang.html";
-      break;
-    case "MTsN 3 Cilegon":
-      window.location.href = "mtsn3cilegon.html";
-      break;
-    case "SD Bosowa":
-      window.location.href = "sdbosowa.html";
-      break;
-    case "SD Daar El Latif":
-      window.location.href = "sd-daar-el-latif.html";
-      break;
-    case "SD Peradaban":
-      window.location.href = "sdperadaban.html";
-      break;
-    case "SD Al Hanif":
-      window.location.href = "sd-al-hanif.html";
-      break;
-    case "SD YPKS 2 Cilegon":
-      window.location.href = "sd-ypks-2-cilegon.html";
-      break;
-    case "SD YPKS 4 Cilegon":
-      window.location.href = "sd-ypks-4-cilegon.html";
-      break;
-    case "SD YPKS 5 Cilegon":
-      window.location.href = "sd-ypks-5-cilegon.html";
-      break;
-    default:
-      alert("Halaman sekolah belum tersedia.");
-  }
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  await loadPartials();
-  await loadHeaderUser();
-  if (window.syncAdminProfileHeader) {
-    await window.syncAdminProfileHeader();
-  }
-  await loadSekolah();
-
-  const searchInput = document.getElementById('searchInput');
-  const sortInput = document.getElementById('sortInput');
-
-  if (searchInput) searchInput.addEventListener('input', applyFilter);
-  if (sortInput) sortInput.addEventListener('change', applyFilter);
-});
   </script>
-
 </body>
 </html>
