@@ -777,7 +777,7 @@ async function loadSekolah() {
   }
 }
 
-// FUNGSI NAVIGASI: MENGARAHKAN KE FILE ABSENSI DI DALAM FOLDER "sekolah/"
+// FUNGSI NAVIGASI ASLI (SEJAJAR DI FOLDER UTAMA TANPA SUBFOLDER)
 function pilihSekolah(id, encodedName) {
   const name = decodeURIComponent(encodedName || '');
 
@@ -786,47 +786,47 @@ function pilihSekolah(id, encodedName) {
 
   switch (name) {
     case "MIN 1 Cilegon":
-      window.location.href = "sekolah/min1cilegon.html";
+      window.location.href = "min1cilegon.html";
       break;
 
     case "MTsN 2 Cilegon":
-      window.location.href = "sekolah/mtsn2cilegon.html";
+      window.location.href = "mtsn2cilegon.html";
       break;
 
     case "MTsN 1 Kota Serang":
-      window.location.href = "sekolah/mtsn1kotaserang.html";
+      window.location.href = "mtsn1kotaserang.html";
       break;
 
     case "MTsN 3 Cilegon":
-      window.location.href = "sekolah/mtsn3cilegon.html";
+      window.location.href = "mtsn3cilegon.html";
       break;
 
     case "SD Bosowa":
-      window.location.href = "sekolah/sdbosowa.html";
+      window.location.href = "sdbosowa.html";
       break;
 
     case "SD Daar El Latif":
-      window.location.href = "sekolah/sd-daar-el-latif.html";
+      window.location.href = "sd-daar-el-latif.html";
       break;
 
     case "SD Peradaban":
-      window.location.href = "sekolah/sdperadaban.html";
+      window.location.href = "sdperadaban.html";
       break;
 
     case "SD Al Hanif":
-      window.location.href = "sekolah/sd-al-hanif.html";
+      window.location.href = "sd-al-hanif.html";
       break;
 
     case "SD YPKS 2 Cilegon":
-      window.location.href = "sekolah/sd-ypks-2-cilegon.html";
+      window.location.href = "sd-ypks-2-cilegon.html";
       break;
 
     case "SD YPKS 4 Cilegon":
-      window.location.href = "sekolah/sd-ypks-4-cilegon.html";
+      window.location.href = "sd-ypks-4-cilegon.html";
       break;
 
     case "SD YPKS 5 Cilegon":
-      window.location.href = "sekolah/sd-ypks-5-cilegon.html";
+      window.location.href = "sd-ypks-5-cilegon.html";
       break;
 
     default:
