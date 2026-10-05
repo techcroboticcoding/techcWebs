@@ -257,7 +257,7 @@
       const pesanWA = `Halo Admin TECH-C, saya wali murid dari *${params.siswa}*. Saya ingin mengonfirmasi pembayaran tagihan *Paket ${paketKe}* sebesar *${params.total}*. Berikut saya lampirkan bukti transfernya. Terima kasih!`;
       
       const cleanAdminNumber = NO_WA_ADMIN.replace(/\D/g, '');
-      document.getElementById('6281293552833').href = `https://api.whatsapp.com/send?phone=${cleanAdminNumber}&text=${encodeURIComponent(pesanWA)}`;
+      document.getElementById('btnKonfirmasiWA').href = `https://api.whatsapp.com/send?phone=66289522294728&text=${encodeURIComponent(pesanWA)}`;
     }
 
     // FUNGSI EXPORT & UNDUH PDF
