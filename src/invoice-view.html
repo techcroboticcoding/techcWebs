@@ -1,0 +1,55 @@
+async function kirimInvoicePDFkeWA() {
+  const waInput = document.getElementById('inputWaNumber');
+  let rawNumber = (waInput ? waInput.value : '').trim();
+
+  if (!rawNumber) {
+    alert("Silakan masukkan nomor WhatsApp wali murid terlebih dahulu.");
+    if (waInput) waInput.focus();
+    return;
+  }
+
+  let cleanNumber = rawNumber.replace(/\D/g, '');
+  if (cleanNumber.startsWith('0')) {
+    cleanNumber = '62' + cleanNumber.substring(1);
+  }
+
+  localStorage.setItem(WA_NUMBER_KEY, rawNumber);
+
+  const inv = generateInvoiceData();
+
+  // Susun parameter materi agar terbaca di halaman invoice-view.html
+  const materiQuery = (inv.sesiPaket || []).map(s => encodeURIComponent(s.materi || '')).join('|');
+
+  // Link invoice online yang dikirimkan ke orang tua
+  const baseUrl = window.location.origin;
+  const linkInvoice = `${baseUrl}/invoice-view.html?siswa=${encodeURIComponent(STUDENT_NAME)}&paket=${inv.paketKe}&total=${encodeURIComponent(inv.nominal)}&materi=${materiQuery}`;
+
+  const pesanWA = 
+`🧾 *INVOICE PEMBAYARAN PRIVATE CLASS TECH-C*
+--------------------------------------------------
+*No. Invoice :* ${inv.invoiceNo}
+*Tanggal      :* ${inv.tglCetak}
+*Nama Siswa   :* ${STUDENT_NAME}
+*Program      :* Private Robotic & IoT (Kantor TECH-C)
+*Periode      :* Paket ${inv.paketKe} (Pertemuan ${inv.awalSesi} - ${inv.akhirSesi})
+*Status       :* ⏳ Menunggu Pembayaran
+--------------------------------------------------
+*RINCIAN MATERI SELESAI:*
+${inv.daftarSesiText}
+
+--------------------------------------------------
+*TOTAL TAGIHAN : ${inv.nominal}*
+--------------------------------------------------
+📄 *Unduh / Lihat Dokumen Resmi Invoice (PDF):*
+👉 ${linkInvoice}
+
+*METODE TRANSFER:*
+🏦 *Bank BCA / Mandiri / BSI*
+💳 *No. Rekening :* 123-456-7890
+👤 *Atas Nama   :* TECH-C Robotic & Coding
+
+_Mohon konfirmasi dengan mengirimkan bukti transfer jika pembayaran sudah dilakukan. Terima kasih banyak Ayah/Bunda!_ 🙏`;
+
+  const waUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(pesanWA)}`;
+  window.open(waUrl, '_blank');
+}
