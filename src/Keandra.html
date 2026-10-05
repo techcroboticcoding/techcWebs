@@ -465,7 +465,10 @@
       const invoiceNo = `INV/TECHC/${now.getFullYear()}/PKT-${paketKe}`;
       const tglCetak = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
+      // Ambil sesi yang masuk dalam paket 4 pertemuan ini
       const sesiPaket = validMeetings.slice(awalSesi - 1, akhirSesi);
+      
+      // Format teks untuk chat WhatsApp
       const daftarSesiText = sesiPaket.map(s => 
         `• Sesi ${s.sesi} (${s.tanggal}): ${s.materi || 'Praktik Robotika & Coding'}`
       ).join('\n');
@@ -478,6 +481,7 @@
         akhirSesi,
         totalSelesai,
         daftarSesiText,
+        sesiPaket, // <-- Data sesi beserta materinya
         nominal: BIAYA_PAKET_4_SESI
       };
     }
@@ -490,16 +494,33 @@
       document.getElementById('invDate').innerText = inv.tglCetak;
       document.getElementById('invTotalNominal').innerText = inv.nominal;
 
+      // Generate rincian per-pertemuan beserta materi pembelajarannya
+      const listMateriHtml = (inv.sesiPaket || []).map(s => `
+        <div class="flex items-start justify-between py-1 text-[11px] text-slate-600 border-b border-slate-50 last:border-0">
+          <div class="flex items-center gap-2">
+            <span class="rounded bg-blue-50 text-blue-700 px-1.5 py-0.5 text-[10px] font-bold">P${s.sesi}</span>
+            <span class="font-medium text-slate-800">${escapeHtml(s.materi || 'Praktik Robotika & Coding')}</span>
+          </div>
+          <span class="text-slate-400 font-mono text-[10px]">${s.tanggal || '-'}</span>
+        </div>
+      `).join('');
+
       const itemBody = document.getElementById('invItemBody');
       if (itemBody) {
         itemBody.innerHTML = `
-          <tr class="border-b border-slate-50">
-            <td class="py-2.5">
-              <p class="font-bold text-slate-800">Paket Kursus Privat (Sesi ${inv.awalSesi} s/d ${inv.akhirSesi})</p>
-              <p class="text-[11px] text-slate-400">ESP32, Coding & Robotic Studio TECH-C</p>
+          <tr class="border-b border-slate-100">
+            <td class="py-3 pr-3">
+              <p class="font-bold text-slate-800 text-xs">Paket Kursus Privat (Sesi ${inv.awalSesi} s/d ${inv.akhirSesi})</p>
+              <p class="text-[11px] text-slate-400 mb-2">Robotic & IoT Studio TECH-C</p>
+              
+              <!-- DAFTAR MATERI PER PERTEMUAN -->
+              <div class="rounded-xl bg-slate-50 p-2.5 border border-slate-100 space-y-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Rincian Materi Selesai:</span>
+                ${listMateriHtml}
+              </div>
             </td>
-            <td class="py-2.5 text-center">4 Pertemuan</td>
-            <td class="py-2.5 text-right font-bold text-slate-900">${inv.nominal}</td>
+            <td class="py-3 text-center align-top text-xs font-semibold text-slate-600">4 Pertemuan</td>
+            <td class="py-3 text-right align-top font-black text-slate-900 text-xs">${inv.nominal}</td>
           </tr>
         `;
       }
