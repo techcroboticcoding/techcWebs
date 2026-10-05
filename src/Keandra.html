@@ -159,7 +159,7 @@
                 Invoice Privat Keandra Siap Dikirim!
               </h4>
               <p class="text-xs text-amber-800/90">
-                Paket 4 pertemuan telah selesai. Klik tombol di bawah untuk otomatis mengunduh PDF invoice resmi dan membuka WhatsApp wali murid.
+                Paket 4 pertemuan telah selesai. Klik tombol di bawah untuk otomatis mengunduh PDF invoice resmi (lengkap dengan materi) dan membuka chat WhatsApp wali murid.
               </p>
             </div>
           </div>
@@ -201,7 +201,7 @@
 
   </main>
 
-  <!-- MODAL STRUK INVOICE RESMI (TEMPLATE YANG AKAN DI-CONVERT MENJADI PDF) -->
+  <!-- MODAL STRUK INVOICE RESMI (TEMPLATE YANG DI-CONVERT KE PDF) -->
   <div id="modalInvoice" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-sm flex items-center justify-center">
     <div id="invoicePrintArea" class="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl">
       <!-- HEADER INVOICE -->
@@ -230,7 +230,7 @@
         </div>
       </div>
 
-      <!-- TABEL RINCIAN ITEM -->
+      <!-- TABEL RINCIAN ITEM DENGAN MATERI PEMBELAJARAN -->
       <div class="py-4 border-b border-slate-100">
         <table class="w-full text-xs">
           <thead>
@@ -241,7 +241,7 @@
             </tr>
           </thead>
           <tbody id="invItemBody" class="font-medium text-slate-700">
-            <!-- Diisi JS -->
+            <!-- Diisi otomatis oleh JavaScript -->
           </tbody>
         </table>
       </div>
@@ -271,20 +271,6 @@
       </div>
     </div>
   </div>
-
-  <!-- AUTOCOMPLETE LIST MATERI -->
-  <datalist id="materiList">
-    <option value="1. Pengenalan ESP32 & Setup Board"></option>
-    <option value="2. Mengenal Pin GPIO ESP32 (LED Blinking)"></option>
-    <option value="3. Install Software PictoBlox & Driver USB"></option>
-    <option value="4. Push Button Digital Input dengan ESP32"></option>
-    <option value="5. Kontrol Traffic Light 3 Warna"></option>
-    <option value="6. Mengendalikan Motor Servo 180 Derajat"></option>
-    <option value="7. Membaca Sensor Cahaya LDR"></option>
-    <option value="8. Sensor Ultrasonik (Pengukur Jarak)"></option>
-    <option value="9. Alarm Buzzer Otomatis"></option>
-    <option value="10. Mengirim Notifikasi ESP32 via WiFi"></option>
-  </datalist>
 
   <script>
     // Konfigurasi Khusus Keandra
@@ -362,9 +348,8 @@
           <td class="px-4 py-3.5">
             <input 
               type="text" 
-              list="materiList"
               value="${escapeHtml(m.materi || '')}" 
-              placeholder="Pilih atau ketik materi..." 
+              placeholder="Ketik materi (contoh: robotik, goma, mrt)..." 
               onchange="updateRow(${idx}, 'materi', this.value)"
               class="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
@@ -465,10 +450,7 @@
       const invoiceNo = `INV/TECHC/${now.getFullYear()}/PKT-${paketKe}`;
       const tglCetak = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
-      // Ambil sesi yang masuk dalam paket 4 pertemuan ini
       const sesiPaket = validMeetings.slice(awalSesi - 1, akhirSesi);
-      
-      // Format teks untuk chat WhatsApp
       const daftarSesiText = sesiPaket.map(s => 
         `• Sesi ${s.sesi} (${s.tanggal}): ${s.materi || 'Praktik Robotika & Coding'}`
       ).join('\n');
@@ -481,7 +463,7 @@
         akhirSesi,
         totalSelesai,
         daftarSesiText,
-        sesiPaket, // <-- Data sesi beserta materinya
+        sesiPaket,
         nominal: BIAYA_PAKET_4_SESI
       };
     }
@@ -494,7 +476,6 @@
       document.getElementById('invDate').innerText = inv.tglCetak;
       document.getElementById('invTotalNominal').innerText = inv.nominal;
 
-      // Generate rincian per-pertemuan beserta materi pembelajarannya
       const listMateriHtml = (inv.sesiPaket || []).map(s => `
         <div class="flex items-start justify-between py-1 text-[11px] text-slate-600 border-b border-slate-50 last:border-0">
           <div class="flex items-center gap-2">
@@ -541,7 +522,6 @@
       const printElement = document.getElementById('invoicePrintArea');
       const inv = generateInvoiceData();
 
-      // Sembunyikan elemen tombol agar tidak ikut tercetak di PDF
       const noPrintEls = printElement.querySelectorAll('.no-print');
       noPrintEls.forEach(el => el.style.display = 'none');
 
@@ -556,13 +536,12 @@
       try {
         await html2pdf().set(options).from(printElement).save();
       } finally {
-        // Tampilkan kembali tombol
         noPrintEls.forEach(el => el.style.display = '');
       }
     }
 
     /* =========================================================
-       FUNGSI 1-KLIK: DOWNLOAD PDF TAGIHAN + BUKA WHATSAPP
+       FUNGSI 1-KLIK: DOWNLOAD PDF TAGIHAN + KIRIM WA
     ========================================================= */
     async function kirimInvoicePDFkeWA() {
       const waInput = document.getElementById('inputWaNumber');
@@ -581,24 +560,38 @@
 
       localStorage.setItem(WA_NUMBER_KEY, rawNumber);
 
-      // 1. Download file PDF tagihan secara otomatis
+      const inv = generateInvoiceData();
+
+      // 1. Download file PDF invoice lengkap dengan materi
       await unduhInvoicePDF();
 
-      // 2. Siapkan format pesan pengantar lampiran dokumen
-      const inv = generateInvoiceData();
+      // 2. Format pesan lengkap dengan rincian materi
       const pesanWA = 
-`Yth. Ayah/Bunda dari *${STUDENT_NAME}*,
+`🧾 *INVOICE PEMBAYARAN PRIVATE CLASS TECH-C*
+--------------------------------------------------
+*No. Invoice :* ${inv.invoiceNo}
+*Tanggal      :* ${inv.tglCetak}
+*Nama Siswa   :* ${STUDENT_NAME}
+*Program      :* Private Robotic & IoT (Kantor TECH-C)
+*Periode      :* Paket ${inv.paketKe} (Pertemuan ${inv.awalSesi} - ${inv.akhirSesi})
+*Status       :* ⏳ Menunggu Pembayaran
+--------------------------------------------------
+*RINCIAN MATERI SELESAI:*
+${inv.daftarSesiText}
 
-Terima kasih atas kepercayaannya belajar di TECH-C Robotic & Coding Studio.
-Sesi pembelajaran paket ke-${inv.paketKe} (Pertemuan ${inv.awalSesi} - ${inv.akhirSesi}) telah selesai dilaksanakan dengan baik.
+--------------------------------------------------
+*TOTAL TAGIHAN : ${inv.nominal}*
+--------------------------------------------------
+📄 *File Tagihan Resmi PDF:* _(Telah dibuat: Invoice_${STUDENT_NAME}_Paket_${inv.paketKe}.pdf)_
 
-Berikut kami lampirkan dokumen resmi tagihan pembayaran:
-📄 *Dokumen:* Invoice_${STUDENT_NAME}_Paket_${inv.paketKe}.pdf
-💰 *Total Tagihan:* ${inv.nominal}
+*METODE TRANSFER:*
+🏦 *Bank BCA / Mandiri / BSI*
+💳 *No. Rekening :* 123-456-7890
+👤 *Atas Nama   :* TECH-C Robotic & Coding
 
-*(Dokumen PDF tagihan resmi terlampir pada pesan ini. Mohon lakukan konfirmasi dengan mengirimkan bukti transfer jika pembayaran sudah selesai. Terima kasih banyak Ayah/Bunda!)* 🙏`;
+_Mohon konfirmasi dengan mengirimkan bukti transfer jika pembayaran sudah dilakukan. Terima kasih Ayah/Bunda!_ 🙏`;
 
-      // 3. Buka WhatsApp chat dengan nomor wali murid
+      // 3. Buka WhatsApp
       const waUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(pesanWA)}`;
       
       setTimeout(() => {
@@ -609,12 +602,11 @@ Berikut kami lampirkan dokumen resmi tagihan pembayaran:
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-      }, 800);
+      }, 700);
     }
 
     function updateStatistics() {
       const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
-      
       const statTotal = document.getElementById('statTotalPertemuan');
       const statSiklus = document.getElementById('statSiklusBayar');
 
