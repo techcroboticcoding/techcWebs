@@ -557,75 +557,60 @@
       const waInput = document.getElementById('inputWaNumber');
       let rawNumber = (waInput ? waInput.value : '').trim();
 
-      // Validasi: Wajib isi nomor WA wali murid
       if (!rawNumber) {
-        alert("Silakan ketik nomor WhatsApp wali murid pada kotak input terlebih dahulu!");
+        alert("Silakan ketik nomor WhatsApp wali murid terlebih dahulu!");
         if (waInput) waInput.focus();
         return;
       }
 
-      // Bersihkan nomor dari spasi, tanda strip, atau karakter non-angka
       let cleanNumber = rawNumber.replace(/\D/g, '');
-
-      // Konversi otomatis format lokal 08... menjadi 628...
       if (cleanNumber.startsWith('0')) {
         cleanNumber = '62' + cleanNumber.substring(1);
       }
 
-      // Simpan nomor agar tidak hilang saat reload
       localStorage.setItem(WA_NUMBER_KEY, rawNumber);
 
       const inv = generateInvoiceData();
 
-      // Download file PDF invoice lengkap dengan materi
-      await unduhInvoicePDF();
+      // 1. Ambil Materi, Catatan Praktik, dan Tanggal untuk dimasukkan ke link
+      const sesiPaket = inv.sesiPaket || [];
+      const materiQuery = sesiPaket.map(s => encodeURIComponent(s.materi || '-')).join('|');
+      const catatanQuery = sesiPaket.map(s => encodeURIComponent(s.catatan || '-')).join('|');
+      const tanggalQuery = sesiPaket.map(s => encodeURIComponent(s.tanggal || '-')).join('|');
 
-      // Susun query materi untuk invoice-view.html
-      const materiQuery = (inv.sesiPaket || []).map(s => encodeURIComponent(s.materi || '')).join('|');
-
-      // Buat link online invoice resmi
+      // 2. Susun link invoice-view.html lengkap
       const baseUrl = window.location.origin;
-      const linkInvoice = `${baseUrl}/invoice-view.html?siswa=${encodeURIComponent(STUDENT_NAME)}&paket=${inv.paketKe}&total=${encodeURIComponent(inv.nominal)}&materi=${materiQuery}`;
+      const linkInvoice = `${baseUrl}/invoice-view.html?siswa=${encodeURIComponent(STUDENT_NAME)}&paket=${inv.paketKe}&total=${encodeURIComponent(inv.nominal)}&materi=${materiQuery}&catatan=${catatanQuery}&tanggal=${tanggalQuery}`;
 
-      // Susun pesan WhatsApp
-      const pesanWA = 
-`🧾 *INVOICE PEMBAYARAN PRIVATE CLASS TECH-C*
---------------------------------------------------
-*No. Invoice :* ${inv.invoiceNo}
-*Tanggal      :* ${inv.tglCetak}
-*Nama Siswa   :* ${STUDENT_NAME}
-*Program      :* Private Robotic & Coding
-*Periode      :* Paket ${inv.paketKe} (Pertemuan ${inv.awalSesi} - ${inv.akhirSesi})
-*Status       :* ⏳ Menunggu Pembayaran
---------------------------------------------------
-*RINCIAN MATERI SELESAI:*
-${inv.daftarSesiText}
+      // 3. Susun teks pesan WhatsApp
+        const pesanWA = 
+      `🧾 *INVOICE PEMBAYARAN PRIVATE CLASS TECH-C*
+      --------------------------------------------------
+      *No. Invoice :* ${inv.invoiceNo}
+      *Tanggal      :* ${inv.tglCetak}
+      *Nama Siswa   :* ${STUDENT_NAME}
+      *Program      :* Private Robotic & Coding
+      *Periode      :* Paket ${inv.paketKe} (Pertemuan ${inv.awalSesi} - ${inv.akhirSesi})
+      *Status       :* ⏳ Menunggu Pembayaran
+      --------------------------------------------------
+      *RINCIAN MATERI SELESAI:*
+      ${inv.daftarSesiText}
 
---------------------------------------------------
-*TOTAL TAGIHAN : ${inv.nominal}*
---------------------------------------------------
-📄 *Unduh / Lihat Dokumen Resmi Invoice (PDF):*
-👉 ${linkInvoice}
+      --------------------------------------------------
+      *TOTAL TAGIHAN : ${inv.nominal}*
+      --------------------------------------------------
+      📄 *Unduh / Lihat Dokumen Resmi Invoice (PDF):*
+      👉 ${linkInvoice}
 
-*METODE TRANSFER:*
-🏦 *Bank BCA*
-💳 *No. Rekening :* 6521157701 
-👤 *Atas Nama   :* Rizki Rahayu Pratama
+      *METODE TRANSFER:*
+      🏦 *Bank BCA*
+      💳 *No. Rekening :* 6521157701
+      👤 *Atas Nama   :* Rizki Rahayu Pratama
 
-_Mohon konfirmasi dengan mengirimkan bukti transfer jika pembayaran sudah dilakukan. Terima kasih banyak Ayah/Bunda!_ 🙏`;
+      _Mohon konfirmasi dengan mengirimkan bukti transfer jika pembayaran sudah dilakukan. Terima kasih banyak Ayah/Bunda!_ 🙏`;
 
-      // Buka obrolan WhatsApp ke nomor wali murid yang dimasukkan
-      const waUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(pesanWA)}`;
-      
-      setTimeout(() => {
-        const a = document.createElement('a');
-        a.href = waUrl;
-        a.target = '_blank';
-        a.rel = 'noreferrer noopener';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }, 700);
+        const waUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(pesanWA)}`;
+        window.open(waUrl, '_blank');
     }
 
     function updateStatistics() {
