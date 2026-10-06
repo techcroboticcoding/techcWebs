@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Detail Pelajar - Abi | TECH-C</title>
   
+  <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Library HTML to PDF Bundle -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     * {
@@ -42,7 +46,7 @@
         </a>
         <div>
           <span class="text-xs font-bold uppercase tracking-wider text-blue-600">TECH-C Private Management</span>
-          <h1 class="text-lg font-black text-slate-900 leading-tight">Detail Pelajar • Abi</h1>
+          <h1 class="text-lg font-black text-slate-900 leading-tight">Detail Pelajar • Abi </h1>
         </div>
       </div>
 
@@ -66,7 +70,7 @@
       <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div class="flex items-center gap-5">
           <div class="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 text-3xl font-black text-white shadow-lg shadow-blue-500/30 ring-4 ring-white">
-            AB
+            KE
             <span class="absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-2 border-white bg-emerald-500"></span>
           </div>
 
@@ -81,7 +85,7 @@
               </span>
             </div>
             <p class="mt-1 text-xs sm:text-sm font-medium text-slate-500">
-              Program: <b>Robotic & IoT Programming (ESP32 / PictoBlox)</b> • Studio TECH-C
+              Program: <b>Robotic & Coding</b> • Studio TECH-C
             </p>
           </div>
         </div>
@@ -137,7 +141,7 @@
         </table>
       </div>
 
-      <!-- KOTAK NOTIFIKASI PENGINGAT PEMBAYARAN & INVOICE -->
+      <!-- KOTAK NOTIFIKASI PENGINGAT PEMBAYARAN & BROADCAST INVOICE -->
       <div id="paymentAlertBox" class="hidden m-5 rounded-2xl border border-amber-300 bg-amber-50/95 p-5 shadow-sm notice-pulse">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div class="flex items-start gap-3.5">
@@ -155,7 +159,7 @@
                 Invoice Privat Abi Siap Dikirim!
               </h4>
               <p class="text-xs text-amber-800/90">
-                Paket 4 pertemuan telah tercapai. Anda dapat mengirimkan format Invoice Resmi via WhatsApp atau mencetak struk invoice.
+                Paket 4 pertemuan telah selesai. Ketik nomor WhatsApp orang tua di bawah, lalu klik tombol kirim.
               </p>
             </div>
           </div>
@@ -169,15 +173,16 @@
               <input 
                 type="text" 
                 id="inputWaNumber" 
-                placeholder="No WA: 081234..." 
-                class="w-40 rounded-xl border border-amber-300 bg-white py-2 pl-8 pr-3 text-xs font-bold text-slate-800 outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                placeholder="No WA: 08xxxxxxxxxx" 
+                oninput="simpanNomorWA(this.value)"
+                class="w-44 rounded-xl border border-amber-300 bg-white py-2 pl-8 pr-3 text-xs font-bold text-slate-800 outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
                 title="Nomor WhatsApp penerima invoice"
               />
             </div>
 
-            <!-- TOMBOL KIRIM INVOICE WA -->
-            <button onclick="kirimWhatsAppInvoice()" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white shadow-sm transition hover:bg-emerald-700">
-              <i class="fa-solid fa-paper-plane text-xs"></i> Kirim Invoice (WA)
+            <!-- TOMBOL 1-KLIK: DOWNLOAD PDF TAGIHAN & BUKA WA -->
+            <button onclick="kirimInvoicePDFkeWA()" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-black text-white shadow-sm transition hover:bg-emerald-700">
+              <i class="fa-solid fa-file-pdf text-amber-200"></i> Kirim Invoice (PDF & WA)
             </button>
 
             <!-- TOMBOL LIHAT STRUK INVOICE -->
@@ -197,9 +202,9 @@
 
   </main>
 
-  <!-- MODAL STRUK INVOICE RESMI (BISA DI-PRINT / DI-SAVE PDF) -->
+  <!-- MODAL STRUK INVOICE RESMI (TEMPLATE YANG DI-CONVERT KE PDF) -->
   <div id="modalInvoice" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-sm flex items-center justify-center">
-    <div class="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl">
+    <div id="invoicePrintArea" class="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl">
       <!-- HEADER INVOICE -->
       <div class="flex items-start justify-between border-b border-slate-100 pb-5">
         <div>
@@ -207,7 +212,7 @@
           <h3 class="mt-2 text-2xl font-black text-slate-900">INVOICE TAGIHAN</h3>
           <p class="text-xs font-mono text-slate-400" id="invNumber">INV/TECHC/2026/001</p>
         </div>
-        <button onclick="tutupModalInvoice()" class="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
+        <button onclick="tutupModalInvoice()" class="no-print rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
@@ -216,8 +221,8 @@
       <div class="grid grid-cols-2 gap-4 py-4 text-xs border-b border-slate-100">
         <div>
           <span class="text-slate-400 font-semibold">DITAGIHKAN KEPADA:</span>
-          <p class="mt-1 font-bold text-slate-800 text-sm">Wali Murid: Abi</p>
-          <p class="text-slate-500">Program: Privat Robotic & IoT</p>
+          <p class="mt-1 font-bold text-slate-800 text-sm">Wali Murid Abi</p>
+          <p class="text-slate-500">Program: Privat Robotic & Coding</p>
         </div>
         <div class="text-right">
           <span class="text-slate-400 font-semibold">TANGGAL TERBIT:</span>
@@ -226,7 +231,7 @@
         </div>
       </div>
 
-      <!-- TABEL RINCIAN ITEM -->
+      <!-- TABEL RINCIAN ITEM DENGAN MATERI PEMBELAJARAN -->
       <div class="py-4 border-b border-slate-100">
         <table class="w-full text-xs">
           <thead>
@@ -237,7 +242,7 @@
             </tr>
           </thead>
           <tbody id="invItemBody" class="font-medium text-slate-700">
-            <!-- Diisi JS -->
+            <!-- Diisi otomatis oleh JavaScript -->
           </tbody>
         </table>
       </div>
@@ -246,57 +251,36 @@
       <div class="py-4 bg-slate-50 rounded-2xl p-4 mt-4 border border-slate-100">
         <div class="flex justify-between items-center text-sm font-black text-slate-900 border-b border-slate-200/80 pb-3">
           <span>TOTAL TAGIHAN:</span>
-          <span class="text-lg text-blue-600" id="invTotalNominal">Rp 1000.000</span>
+          <span class="text-lg text-blue-600" id="invTotalNominal">Rp 500.000</span>
         </div>
         <div class="mt-3 text-xs text-slate-600 space-y-1">
           <p class="font-bold text-slate-800">Metode Transfer Pembayaran:</p>
           <p>Bank: <b>BCA</b></p>
-          <p>No. Rekening: <b>6521157701</b> a.n. Rizki Rahayu Pratama</p>
+          <p>No. Rekening: 6521157701</b> a.n. Rizki Rahayu Pratama</p>
           <p class="text-[11px] text-slate-400 italic mt-1">*Mohon kirimkan bukti transfer setelah pembayaran.</p>
         </div>
       </div>
 
-      <!-- FOOTER ACTION MODAL -->
-      <div class="mt-6 flex justify-end gap-2.5">
-        <button onclick="window.print()" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100">
-          <i class="fa-solid fa-print"></i> Cetak / Save PDF
+      <!-- FOOTER ACTION MODAL (DISEMBUNYIKAN SAAT EXPORT PDF) -->
+      <div class="no-print mt-6 flex justify-end gap-2.5">
+        <button onclick="unduhInvoicePDF()" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100">
+          <i class="fa-solid fa-download"></i> Unduh PDF
         </button>
-        <button onclick="kirimWhatsAppInvoice()" class="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white hover:bg-emerald-700">
-          <i class="fa-brands fa-whatsapp"></i> Kirim ke WhatsApp
+        <button onclick="kirimInvoicePDFkeWA()" class="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white hover:bg-emerald-700">
+          <i class="fa-brands fa-whatsapp"></i> Buka WhatsApp
         </button>
       </div>
     </div>
   </div>
 
-  <!-- AUTOCOMPLETE LIST MATERI -->
-  <datalist id="materiList">
-    <option value="1. Pengenalan ESP32 & Setup Board"></option>
-    <option value="2. Mengenal Pin GPIO ESP32 (LED Blinking)"></option>
-    <option value="3. Install Software PictoBlox & Driver USB"></option>
-    <option value="4. Push Button Digital Input dengan ESP32"></option>
-    <option value="5. Kontrol Traffic Light 3 Warna"></option>
-    <option value="6. Mengendalikan Motor Servo 180 Derajat"></option>
-    <option value="7. Membaca Sensor Cahaya LDR"></option>
-    <option value="8. Sensor Ultrasonik (Pengukur Jarak)"></option>
-    <option value="9. Alarm Buzzer Otomatis"></option>
-    <option value="10. Mengirim Notifikasi ESP32 via WiFi"></option>
-  </datalist>
-
   <script>
+    // Konfigurasi Khusus Siswa Abi
     const STUDENT_NAME = "Abi";
     const STORAGE_KEY = "techc_student_meetings_abi";
     const PAYMENT_STATUS_KEY = "techc_payment_cleared_abi";
     const WA_NUMBER_KEY = "techc_target_wa_abi";
 
-    // Konfigurasi Biaya Paket (Dapat Anda sesuaikan harganya)
-    const BIAYA_PAKET_4_SESI = "Rp 1000.000"; 
-
-    const DEFAULT_MEETINGS = [
-      { sesi: 1, tanggal: "2026-09-02", materi: "1. Pengenalan ESP32 & Setup Board", catatan: "Cepat memahami struktur pin board" },
-      { sesi: 2, tanggal: "2026-09-09", materi: "2. Mengenal Pin GPIO ESP32 (LED Blinking)", catatan: "Praktik logika blink di PictoBlox lancar" },
-      { sesi: 3, tanggal: "2026-09-16", materi: "3. Install Software PictoBlox & Driver USB", catatan: "Berhasil upload kode mandiri" },
-      { sesi: 4, tanggal: "2026-09-23", materi: "4. Push Button Digital Input dengan ESP32", catatan: "Membuat tombol saklar LED" }
-    ];
+    const BIAYA_PAKET_4_SESI = "Rp 500.000"; 
 
     let meetings = [];
 
@@ -306,12 +290,13 @@
         try {
           meetings = JSON.parse(saved);
         } catch (e) {
-          meetings = DEFAULT_MEETINGS;
+          meetings = [];
         }
       } else {
-        meetings = DEFAULT_MEETINGS;
+        meetings = [];
       }
 
+      // Ambil nomor WA yang tersimpan sebelumnya
       const savedWa = localStorage.getItem(WA_NUMBER_KEY);
       const waInput = document.getElementById('inputWaNumber');
       if (waInput && savedWa) {
@@ -319,6 +304,12 @@
       }
 
       renderTable();
+    }
+
+    function simpanNomorWA(value) {
+      if (value !== undefined) {
+        localStorage.setItem(WA_NUMBER_KEY, value.trim());
+      }
     }
 
     function simpanKeStorage(showToast = false) {
@@ -365,9 +356,8 @@
           <td class="px-4 py-3.5">
             <input 
               type="text" 
-              list="materiList"
               value="${escapeHtml(m.materi || '')}" 
-              placeholder="Pilih atau ketik materi..." 
+              placeholder="Ketik materi (contoh: robotik, goma, mrt, brickspeed)..." 
               onchange="updateRow(${idx}, 'materi', this.value)"
               class="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
@@ -434,10 +424,12 @@
       const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
       const lastClearedMilestone = parseInt(localStorage.getItem(PAYMENT_STATUS_KEY) || '0', 10);
 
+      // Muncul setiap kelipatan 4 pertemuan
       if (totalSelesai >= 4 && (totalSelesai % 4 === 0) && totalSelesai > lastClearedMilestone) {
         alertBox.classList.remove('hidden');
+        const awal = totalSelesai - 3;
         if (textNotice) {
-          textNotice.innerText = `Selesai ${totalSelesai} Pertemuan (Paket Tercapai)`;
+          textNotice.innerText = `Tagihan Sesi ${awal} s/d ${totalSelesai} (Paket ${totalSelesai / 4})`;
         }
       } else {
         alertBox.classList.add('hidden');
@@ -455,28 +447,20 @@
       alert(`Pembayaran paket 4 pertemuan ke-${totalSelesai} untuk Abi berhasil ditandai LUNAS!`);
     }
 
-    // ==========================================================
-    // LOGIKA GENERATE DATA INVOICE PAKET 4 PERTEMUAN
-    // ==========================================================
     function generateInvoiceData() {
-      // Ambil pertemuan yang sudah memiliki tanggal valid
       const validMeetings = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '');
       const totalSelesai = validMeetings.length;
       const now = new Date();
       
-      // Tentukan blok/siklus paket 4 pertemuan
-      // Contoh: jika selesai 12, akhir = 12, awal = 9 (Sesi 9 - 12)
-      // Jika selesai 4, akhir = 4, awal = 1 (Sesi 1 - 4)
-      const akhirSesi = Math.floor(totalSelesai / 4) * 4;
+      const akhirSesi = Math.max(4, Math.floor(totalSelesai / 4) * 4);
       const awalSesi = akhirSesi - 3;
       const paketKe = akhirSesi / 4;
 
       const invoiceNo = `INV/TECHC/${now.getFullYear()}/PKT-${paketKe}`;
       const tglCetak = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
-      // Ambil 4 sesi tepat pada periode tagihan ini (misal sesi 9 s/d 12)
+      // Ambil pertemuan paket yang relevan
       const sesiPaket = validMeetings.slice(awalSesi - 1, akhirSesi);
-      
       const daftarSesiText = sesiPaket.map(s => 
         `• Sesi ${s.sesi} (${s.tanggal}): ${s.materi || 'Praktik Robotika & Coding'}`
       ).join('\n');
@@ -489,102 +473,11 @@
         akhirSesi,
         totalSelesai,
         daftarSesiText,
+        sesiPaket,
         nominal: BIAYA_PAKET_4_SESI
       };
     }
 
-    // ==========================================================
-    // CEK NOTIFIKASI PEMBAYARAN (AKTIF PADA SESI 4, 8, 12, DST)
-    // ==========================================================
-    function checkPaymentNotification() {
-      const alertBox = document.getElementById('paymentAlertBox');
-      const textNotice = document.getElementById('alertPertemuanKe');
-      if (!alertBox) return;
-
-      const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
-      const lastClearedMilestone = parseInt(localStorage.getItem(PAYMENT_STATUS_KEY) || '0', 10);
-
-      // Muncul saat total pertemuan minimal 4 dan merupakan kelipatan 4 (4, 8, 12, ...)
-      // Serta sesi tersebut belum ditandai lunas
-      if (totalSelesai >= 4 && (totalSelesai % 4 === 0) && totalSelesai > lastClearedMilestone) {
-        alertBox.classList.remove('hidden');
-        const awal = totalSelesai - 3;
-        if (textNotice) {
-          textNotice.innerText = `Tagihan Sesi ${awal} s/d ${totalSelesai} (Paket ${totalSelesai / 4})`;
-        }
-      } else {
-        alertBox.classList.add('hidden');
-      }
-    }
-
-    // ==========================================================
-    // KIRIM INVOICE WHATSAPP
-    // ==========================================================
-    function kirimWhatsAppInvoice() {
-      const waInput = document.getElementById('inputWaNumber');
-      let rawNumber = (waInput ? waInput.value : '').trim();
-
-      if (!rawNumber) {
-        alert("Silakan masukkan nomor WhatsApp tujuan terlebih dahulu.");
-        if (waInput) waInput.focus();
-        return;
-      }
-
-      let cleanNumber = rawNumber.replace(/\D/g, '');
-      if (cleanNumber.startsWith('0')) {
-        cleanNumber = '62' + cleanNumber.substring(1);
-      }
-
-      localStorage.setItem(WA_NUMBER_KEY, rawNumber);
-
-      const inv = generateInvoiceData();
-
-      // FORMAT PESAN INVOICE RESMI
-      const pesanInvoice = 
-`🧾 *INVOICE PEMBAYARAN PRIVATE CLASS TECH-C*
---------------------------------------------------
-*No. Invoice :* ${inv.invoiceNo}
-*Tanggal      :* ${inv.tglCetak}
-*Nama Siswa   :* Abi
-*Program      :* Private Robotic
-*Periode      :* Paket ${inv.paketKe} (Pertemuan ${inv.awalSesi} - ${inv.akhirSesi})
-*Status       :* ⏳ Menunggu Pembayaran
---------------------------------------------------
-*RINCIAN SESI BELAJAR SELESAI:*
-${inv.daftarSesiText}
-
---------------------------------------------------
-*TOTAL TAGIHAN : ${inv.nominal}*
---------------------------------------------------
-
-*METODE TRANSFER:*
-Silakan melakukan transfer melalui rekening resmi:
-🏦 *Bank BCA*
-💳 *No. Rekening :* 6521157701
-👤 *Atas Nama   :* Rizki Rahayu Pratama
-
-_Mohon konfirmasi dengan mengirimkan bukti transfer jika sudah melakukan pembayaran. Terima kasih Ayah/Bunda!_ 🙏`;
-
-      // Copy ke Clipboard
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(pesanInvoice).catch(() => {});
-      }
-
-      // Buka tautan WhatsApp
-      const waUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(pesanInvoice)}`;
-      
-      const a = document.createElement('a');
-      a.href = waUrl;
-      a.target = '_blank';
-      a.rel = 'noreferrer noopener';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
-    // ==========================================================
-    // TAMPILKAN POP-UP STRUK INVOICE
-    // ==========================================================
     function bukaModalInvoice() {
       const modal = document.getElementById('modalInvoice');
       const inv = generateInvoiceData();
@@ -593,16 +486,32 @@ _Mohon konfirmasi dengan mengirimkan bukti transfer jika sudah melakukan pembaya
       document.getElementById('invDate').innerText = inv.tglCetak;
       document.getElementById('invTotalNominal').innerText = inv.nominal;
 
+      const listMateriHtml = (inv.sesiPaket || []).map(s => `
+        <div class="flex items-start justify-between py-1 text-[11px] text-slate-600 border-b border-slate-50 last:border-0">
+          <div class="flex items-center gap-2">
+            <span class="rounded bg-blue-50 text-blue-700 px-1.5 py-0.5 text-[10px] font-bold">P${s.sesi}</span>
+            <span class="font-medium text-slate-800">${escapeHtml(s.materi || 'Praktik Robotika & Coding')}</span>
+          </div>
+          <span class="text-slate-400 font-mono text-[10px]">${s.tanggal || '-'}</span>
+        </div>
+      `).join('');
+
       const itemBody = document.getElementById('invItemBody');
       if (itemBody) {
         itemBody.innerHTML = `
-          <tr class="border-b border-slate-50">
-            <td class="py-2.5">
-              <p class="font-bold text-slate-800">Paket Kursus Privat (Sesi ${inv.awalSesi} s/d ${inv.akhirSesi})</p>
-              <p class="text-[11px] text-slate-400">ESP32, Coding & Robotic Studio TECH-C</p>
+          <tr class="border-b border-slate-100">
+            <td class="py-3 pr-3">
+              <p class="font-bold text-slate-800 text-xs">Paket Kursus Privat (Sesi ${inv.awalSesi} s/d ${inv.akhirSesi})</p>
+              <p class="text-[11px] text-slate-400 mb-2">TECH-C Robotic & Coding </p>
+              
+              <!-- DAFTAR MATERI PER PERTEMUAN -->
+              <div class="rounded-xl bg-slate-50 p-2.5 border border-slate-100 space-y-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Rincian Materi Selesai:</span>
+                ${listMateriHtml}
+              </div>
             </td>
-            <td class="py-2.5 text-center">4 Pertemuan</td>
-            <td class="py-2.5 text-right font-bold text-slate-900">${inv.nominal}</td>
+            <td class="py-3 text-center align-top text-xs font-semibold text-slate-600">4 Pertemuan</td>
+            <td class="py-3 text-right align-top font-black text-slate-900 text-xs">${inv.nominal}</td>
           </tr>
         `;
       }
@@ -615,9 +524,112 @@ _Mohon konfirmasi dengan mengirimkan bukti transfer jika sudah melakukan pembaya
       if (modal) modal.classList.add('hidden');
     }
 
+    /* =========================================================
+       FUNGSI EXPORT & DOWNLOAD PDF TAGIHAN RESMI
+    ========================================================= */
+    async function unduhInvoicePDF() {
+      bukaModalInvoice();
+      const printElement = document.getElementById('invoicePrintArea');
+      const inv = generateInvoiceData();
+
+      const noPrintEls = printElement.querySelectorAll('.no-print');
+      noPrintEls.forEach(el => el.style.display = 'none');
+
+      const options = {
+        margin:       [10, 10, 10, 10],
+        filename:     `Invoice_${STUDENT_NAME}_Paket_${inv.paketKe}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      try {
+        await html2pdf().set(options).from(printElement).save();
+      } finally {
+        noPrintEls.forEach(el => el.style.display = '');
+      }
+    }
+
+    /* =========================================================
+       FUNGSI: DOWNLOAD PDF TAGIHAN + KIRIM WA KE NOMOR TUJUAN
+    ========================================================= */
+    async function kirimInvoicePDFkeWA() {
+      const waInput = document.getElementById('inputWaNumber');
+      let rawNumber = (waInput ? waInput.value : '').trim();
+
+      // Validasi: Wajib isi nomor WA wali murid
+      if (!rawNumber) {
+        alert("Silakan ketik nomor WhatsApp wali murid pada kotak input terlebih dahulu!");
+        if (waInput) waInput.focus();
+        return;
+      }
+
+      // Bersihkan nomor dari spasi, tanda strip, atau karakter non-angka
+      let cleanNumber = rawNumber.replace(/\D/g, '');
+
+      // Konversi otomatis format lokal 08... menjadi 628...
+      if (cleanNumber.startsWith('0')) {
+        cleanNumber = '62' + cleanNumber.substring(1);
+      }
+
+      // Simpan nomor agar tidak hilang saat reload
+      localStorage.setItem(WA_NUMBER_KEY, rawNumber);
+
+      const inv = generateInvoiceData();
+
+      // Download file PDF invoice lengkap dengan materi
+      await unduhInvoicePDF();
+
+      // Susun query materi untuk invoice-view.html
+      const materiQuery = (inv.sesiPaket || []).map(s => encodeURIComponent(s.materi || '')).join('|');
+
+      // Buat link online invoice resmi
+      const baseUrl = window.location.origin;
+      const linkInvoice = `${baseUrl}/invoice-view.html?siswa=${encodeURIComponent(STUDENT_NAME)}&paket=${inv.paketKe}&total=${encodeURIComponent(inv.nominal)}&materi=${materiQuery}`;
+
+      // Susun pesan WhatsApp
+      const pesanWA = 
+`🧾 *INVOICE PEMBAYARAN PRIVATE CLASS TECH-C*
+--------------------------------------------------
+*No. Invoice :* ${inv.invoiceNo}
+*Tanggal      :* ${inv.tglCetak}
+*Nama Siswa   :* ${STUDENT_NAME}
+*Program      :* Private Robotic & Coding
+*Periode      :* Paket ${inv.paketKe} (Pertemuan ${inv.awalSesi} - ${inv.akhirSesi})
+*Status       :* ⏳ Menunggu Pembayaran
+--------------------------------------------------
+*RINCIAN MATERI SELESAI:*
+${inv.daftarSesiText}
+
+--------------------------------------------------
+*TOTAL TAGIHAN : ${inv.nominal}*
+--------------------------------------------------
+📄 *Unduh / Lihat Dokumen Resmi Invoice (PDF):*
+👉 ${linkInvoice}
+
+*METODE TRANSFER:*
+🏦 *Bank BCA*
+💳 *No. Rekening :* 6521157701 
+👤 *Atas Nama   :* Rizki Rahayu Pratama
+
+_Mohon konfirmasi dengan mengirimkan bukti transfer jika pembayaran sudah dilakukan. Terima kasih banyak Ayah/Bunda!_ 🙏`;
+
+      // Buka obrolan WhatsApp ke nomor wali murid yang dimasukkan
+      const waUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(pesanWA)}`;
+      
+      setTimeout(() => {
+        const a = document.createElement('a');
+        a.href = waUrl;
+        a.target = '_blank';
+        a.rel = 'noreferrer noopener';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }, 700);
+    }
+
     function updateStatistics() {
       const totalSelesai = meetings.filter(m => m.tanggal && m.tanggal.trim() !== '').length;
-      
       const statTotal = document.getElementById('statTotalPertemuan');
       const statSiklus = document.getElementById('statSiklusBayar');
 
