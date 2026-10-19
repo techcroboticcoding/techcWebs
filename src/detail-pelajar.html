@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detail Progres Siswa | TECH-C</title>
+<style>
+:root{font-family:Inter,Segoe UI,system-ui,-apple-system,sans-serif;color:#13213d;background:#f4f8fc;font-synthesis:none}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#effaff 0%,#f4f3ff 45%,#f8fafc 100%);min-height:100vh}.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 56px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}.back{border:0;border-radius:13px;padding:12px 16px;background:#e8eef8;color:#233c62;font-weight:800;cursor:pointer;text-decoration:none}.brand{font-weight:900;color:#2264e8;letter-spacing:.02em}.hero,.panel,.metric{background:rgba(255,255,255,.9);border:1px solid #dce8f7;border-radius:24px;box-shadow:0 12px 32px rgba(47,88,147,.07)}.hero{padding:28px;margin-bottom:20px;display:flex;justify-content:space-between;gap:24px;align-items:center}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#2872e6}.hero h1{margin:8px 0;font-size:clamp(26px,4vw,38px);line-height:1.12;color:#12213c}.meta{margin:0;color:#62748f;line-height:1.8}.overall{min-width:150px;text-align:center;padding:20px;border-radius:20px;background:linear-gradient(135deg,#0867f4,#10b9d2 60%,#8462ff);color:white}.pct{font-size:38px;font-weight:950}.overall small{font-weight:750;color:#eaf7ff}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}.metric{padding:18px}.metric span{display:block;color:#72839c;font-size:12px;font-weight:800}.metric strong{display:block;font-size:26px;font-weight:950;margin-top:7px;color:#185fe1}.progress-track{height:9px;background:#e9eff8;border-radius:99px;overflow:hidden;margin-top:10px}.progress-track div{height:100%;background:linear-gradient(90deg,#1465ed,#0bb4ce);border-radius:99px}.panel{padding:24px;margin-top:18px}.panel h2{margin:0 0 6px;font-size:20px}.muted{color:#70819a;font-size:13px}.tracks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.track{border:1px solid #e0eaf6;border-radius:18px;padding:18px}.track-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.track h3{margin:0}.track strong{color:#1664e8}.table-wrap{overflow-x:auto;margin-top:16px}table{width:100%;border-collapse:collapse;min-width:640px}th,td{text-align:left;padding:13px 12px;border-bottom:1px solid #e7edf6;vertical-align:top;font-size:13px}th{color:#70819a;font-size:11px;text-transform:uppercase;letter-spacing:.06em}td b{color:#172742}.pill{display:inline-flex;align-items:center;border-radius:99px;padding:5px 9px;background:#edf3fc;color:#435875;font-size:11px;font-weight:900}.pill.done{background:#def8e9;color:#087747}.pill.partial{background:#fff3d6;color:#925b00}.pill.help{background:#fee8e8;color:#b42323}.reflection{max-width:360px;white-space:normal;overflow-wrap:anywhere;color:#66758d}.empty,.loading,.error{padding:30px;text-align:center;color:#718099;background:#f8fbff;border:1px dashed #d4e2f4;border-radius:16px}.error{color:#b42323;background:#fff6f6;border-color:#ffcaca}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.refresh{border:0;border-radius:12px;padding:11px 14px;background:#1768ed;color:white;font-weight:850;cursor:pointer}.footer{margin-top:18px;text-align:center;color:#8a99ad;font-size:12px}@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{align-items:flex-start;flex-direction:column}.overall{width:100%}.tracks{grid-template-columns:1fr}}@media(max-width:480px){.wrap{padding:16px 12px 36px}.hero,.panel{padding:18px}.grid{gap:10px}.metric{padding:14px}.metric strong{font-size:22px}.top{align-items:flex-start;flex-direction:column}}
+</style>
+<script>
+const dashboardToken = localStorage.getItem('token');
+const dashboardRole = localStorage.getItem('role');
+if (!dashboardToken || dashboardRole !== 'admin') window.location.href = './login.html';
+</script>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="./pelajar.html">← Kembali ke daftar siswa</a><div class="brand">TECH-C · STUDENT PROGRESS</div></div>
+  <section class="hero" id="hero"><div><div class="eyebrow">Detail siswa</div><h1 id="studentName">Memuat data siswa…</h1><p class="meta" id="studentMeta">Menghubungkan ke Laravel Dashboard</p></div><div class="overall"><div class="pct" id="overallPercent">0%</div><small>Progres di Dashboard</small><div class="progress-track" style="background:rgba(255,255,255,.25)"><div id="overallBar" style="width:0%;background:#fff"></div></div></div></section>
+  <div id="mainStatus" class="loading">Mengambil riwayat materi dari API…</div>
+  <section id="summarySection" class="grid" hidden></section>
+  <section id="tracksSection" class="panel" hidden><h2>Progres per kurikulum</h2><p class="muted">Satu kurikulum berisi 28 pertemuan. Materi dihitung selesai setelah siswa mengirim refleksi berstatus “Selesai”.</p><div id="tracks" class="tracks"></div></section>
+  <section id="lessonsSection" class="panel" hidden><div class="actions"><div style="flex:1"><h2>Materi dan refleksi siswa</h2><p class="muted">Riwayat ini berasal dari sesi kelas TECH-C CLASS yang tersimpan di Laravel.</p></div><button class="refresh" id="refreshButton" type="button">Refresh</button></div><div id="lessonsTable" class="table-wrap"></div></section>
+  <div class="footer">TECH-C CLASS · Sumber data: Dashboard Laravel API</div>
+</div>
+<script>
+const API_BASE = 'https://api.tech-c.my.id/api';
+const studentId = new URLSearchParams(window.location.search).get('id');
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+function dateLabel(v) { if (!v) return '—'; const d = new Date(v); return Number.isNaN(d.getTime()) ? '—' : d.toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'}); }
+function curriculumLabel(v) { return String(v || '').toLowerCase() === 'arduino' ? 'Arduino' : String(v || '').toLowerCase() === 'scratch' ? 'Scratch' : (v || '—'); }
+function levelLabel(v, completed) { if (completed || v === 'selesai') return 'Selesai'; if (v === 'sebagian') return 'Sebagian'; if (v === 'butuh-bantuan') return 'Butuh bantuan'; return 'Belum ada refleksi'; }
+function levelClass(v, completed) { if (completed || v === 'selesai') return 'pill done'; if (v === 'sebagian') return 'pill partial'; if (v === 'butuh-bantuan') return 'pill help'; return 'pill'; }
+function renderSummary(data) {
+  const s = data.summary || {};
+  const items = [
+    ['Materi selesai', `${(s.scratch?.completed_count || 0) + (s.arduino?.completed_count || 0)}`, 'Total per kurikulum; pertemuan berbeda dihitung terpisah'],
+    ['Sesi tercatat', s.sessions_count || 0, 'Sesi check-in di TECH-C CLASS'],
+    ['Refleksi dikirim', s.reflection_count || 0, 'Refleksi selesai/sebagian/butuh bantuan'],
+    ['Aktivitas terakhir', dateLabel(s.last_activity_at), 'Check-in kelas terbaru']
+  ];
+  $('summarySection').innerHTML = items.map(([label,value,sub]) => `<div class="metric"><span>${esc(label)}</span><strong style="font-size:${String(value).length>12?'16px':'25px'}">${esc(value)}</strong><p class="muted">${esc(sub)}</p></div>`).join('');
+  $('summarySection').hidden = false;
+  const tracks = [['Scratch',s.scratch || {}],['Arduino',s.arduino || {}]];
+  $('tracks').innerHTML = tracks.map(([name,t]) => `<div class="track"><div class="track-head"><h3>${name}</h3><strong>${Number(t.percent || 0)}%</strong></div><p class="muted">${Number(t.completed_count || 0)} dari ${Number(t.total_lessons || 28)} materi selesai</p><div class="progress-track"><div style="width:${Math.max(0,Math.min(100,Number(t.percent || 0)))}%"></div></div></div>`).join('');
+  $('tracksSection').hidden = false;
+}
+function renderLessons(lessons) {
+  if (!lessons.length) {
+    $('lessonsTable').innerHTML = '<div class="empty">Belum ada materi yang tercatat untuk siswa ini. Setelah siswa mengikuti kelas dan mengirim refleksi, riwayat materi akan tampil di sini.</div>';
+  } else {
+    $('lessonsTable').innerHTML = `<table><thead><tr><th>Tanggal</th><th>Kurikulum</th><th>Materi</th><th>Status</th><th>Refleksi siswa</th></tr></thead><tbody>${lessons.map(l => `<tr><td>${esc(dateLabel(l.date))}</td><td><span class="pill">${esc(curriculumLabel(l.curriculum))}</span><br><span class="muted">${esc(l.lesson_id)}</span></td><td><b>${esc(l.lesson_title || l.lesson_id || 'Materi')}</b>${l.room_code ? `<div class="muted">Room ${esc(l.room_code)}</div>` : ''}</td><td><span class="${levelClass(l.progress_level,l.completed)}">${esc(l.completed ? 'Selesai' : levelLabel(l.progress_level,false))}</span></td><td><div class="reflection">${esc(l.progress_text || (l.progress_submitted_at ? 'Tidak ada catatan tambahan.' : 'Refleksi belum dikirim.'))}</div></td></tr>`).join('')}</tbody></table>`;
+  }
+  $('lessonsSection').hidden = false;
+}
+async function loadDetail() {
+  if (!/^\d+$/.test(String(studentId || ''))) { $('mainStatus').className='error'; $('mainStatus').textContent='ID siswa tidak valid. Kembali ke daftar siswa dan klik Lihat Progres Materi.'; return; }
+  $('mainStatus').className='loading'; $('mainStatus').textContent='Mengambil riwayat materi dari API…';
+  try {
+    const response = await fetch(`${API_BASE}/techc-class/students/${encodeURIComponent(studentId)}/progress`, { headers: { 'Accept':'application/json', 'Authorization': `Bearer ${dashboardToken}` }, cache:'no-store' });
+    const raw = await response.text(); let data;
+    try { data = JSON.parse(raw); } catch { throw new Error(`API mengembalikan respons bukan JSON (HTTP ${response.status}).`); }
+    if (response.status === 401) { localStorage.clear(); window.location.href='./login.html'; return; }
+    if (!response.ok) throw new Error(data.message || `Gagal membaca progres (HTTP ${response.status}).`);
+    const student = data.student || {};
+    $('studentName').textContent = student.name || 'Siswa';
+    $('studentMeta').textContent = `${student.school_name || 'Sekolah belum diisi'} · Kelas ${student.class_name || 'Belum diisi'} · Status ${student.status || 'Aktif'}`;
+    const percent = Math.max(0,Math.min(100,Number(data.summary?.dashboard_percent ?? student.progress_belajar ?? 0)));
+    $('overallPercent').textContent = `${percent}%`; $('overallBar').style.width = `${percent}%`;
+    renderSummary(data);
+    renderLessons(Array.isArray(data.lessons) ? data.lessons : []);
+    $('mainStatus').hidden = true;
+  } catch (error) {
+    $('mainStatus').hidden = false; $('mainStatus').className='error'; $('mainStatus').textContent = error.message || 'Gagal mengambil data progres.';
+  }
+}
+$('refreshButton').addEventListener('click', loadDetail);
+loadDetail();
+</script>
+</body>
+</html>
