@@ -305,7 +305,7 @@ if (!token) {
             </div>
           </div>
 
-          <!-- DUA KOTAK CONTAINER (KANTOR & RUMAH) -->
+          <!-- DAFTAR PELAJAR BERDASARKAN DATA LARAVEL API -->
           <div class="space-y-10">
 
             <!-- ==============================================
@@ -353,6 +353,23 @@ if (!token) {
 
               <div id="pelajarListRumah" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                 <!-- Siswa Privat Rumah akan di-render di sini -->
+              </div>
+            </div>
+
+            <!-- SISWA REGULER / TIPE LAIN DARI DATABASE LARAVEL -->
+            <div id="sectionLainnya" class="rounded-[2.2rem] border border-violet-100 bg-white/75 p-6 shadow-xl shadow-slate-200/50 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/80">
+              <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 dark:border-slate-800">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600 text-2xl text-white shadow-lg shadow-violet-500/30">🎓</div>
+                  <div>
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white">Pelajar Reguler / Sekolah</h2>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Pelajar dengan tipe Laravel selain privat kantor atau rumah</p>
+                  </div>
+                </div>
+                <span id="badgeCountLainnya" class="self-start rounded-full bg-violet-50 px-3 py-1 text-xs font-black text-violet-600 dark:bg-violet-950 dark:text-violet-400">0 Pelajar</span>
+              </div>
+              <div id="pelajarListLainnya" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                <!-- Pelajar reguler/sekolah dirender dari Laravel API -->
               </div>
             </div>
 
@@ -433,23 +450,8 @@ const API_BASE = getApiBase();
 let allStudents = [];
 let activeCategory = 'all'; // 'all' | 'kantor' | 'rumah'
 
-// 1. DAFTAR NAMA SISWA PRIVAT KANTOR
-const KANTOR_STUDENT_NAMES = [
-  'ahmad',
-  'zein',
-  'kenzie',
-  'rafka',
-  'keandra'
-];
-
-// 2. DAFTAR NAMA SISWA PRIVAT KE RUMAH
-const RUMAH_STUDENT_NAMES = [
-  'ulul',
-  'abi',
-  'charles',
-  'ludwig',
-  'Malka'
-];
+// Data siswa sepenuhnya mengikuti respons Laravel API.
+// Tidak ada daftar nama siswa yang ditanam langsung di HTML.
 
 function setText(id, value) {
   const el = document.getElementById(id);
@@ -490,11 +492,11 @@ function getStudentPhoto(student) {
   if (student.photo_url) return student.photo_url;
   if (student.photo) {
     if (String(student.photo).startsWith('http')) return student.photo;
-    return `http://127.0.0.1:8000/storage/${student.photo}`;
+    return `https://api.tech-c.my.id/storage/${student.photo}`;
   }
   if (student.logo) {
     if (String(student.logo).startsWith('http')) return student.logo;
-    return `http://127.0.0.1:8000/storage/${student.logo}`;
+    return `https://api.tech-c.my.id/storage/${student.logo}`;
   }
 
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
@@ -517,42 +519,34 @@ function getStudentProgress(student) {
   return Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
 }
 
-// Menentukan apakah murid masuk ke 'kantor' atau 'rumah'
+// Kategori ditentukan dari field yang disimpan di Laravel, bukan dari nama siswa.
 function getStudentCategory(student) {
-  const name = getStudentName(student).toLowerCase().trim();
-  const rawType = String(
-    student.tipe_privat || 
-    student.kategori_privat || 
-    student.type || 
-    student.program || 
-    student.lokasi || 
-    ''
-  ).toLowerCase();
+  const rawType = [
+    student.student_type,
+    student.studentType,
+    student.tipe_privat,
+    student.kategori_privat,
+    student.type,
+    student.program,
+    student.lokasi,
+    student.student_category,
+    student.kategori_level
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+    .trim();
 
-  // 1. Cek apakah cocok dengan daftar Privat Kantor
-  for (const kName of KANTOR_STUDENT_NAMES) {
-    if (name.includes(kName)) {
-      return 'kantor';
-    }
-  }
-
-  // 2. Cek apakah cocok dengan daftar Privat Rumah
-  for (const rName of RUMAH_STUDENT_NAMES) {
-    if (name.includes(rName)) {
-      return 'rumah';
-    }
-  }
-
-  // 3. Fallback jika dari data API/database ada kata kunci lokasi
   if (rawType.includes('kantor') || rawType.includes('office') || rawType.includes('studio')) {
     return 'kantor';
   }
-  if (rawType.includes('rumah') || rawType.includes('home')) {
+
+  if (rawType.includes('rumah') || rawType.includes('home') || rawType.includes('kunjungan')) {
     return 'rumah';
   }
 
-  // Standar awal jika belum didaftarkan
-  return 'rumah';
+  // Tipe "sekolah" atau tipe lain tetap tampil tanpa salah dikategorikan.
+  return 'lainnya';
 }
 
 function escapeHtml(value) {
@@ -695,38 +689,49 @@ function updateStats(students, shownStudents) {
 function renderPelajar(students) {
   const containerKantor = document.getElementById('pelajarListKantor');
   const containerRumah = document.getElementById('pelajarListRumah');
+  const containerLainnya = document.getElementById('pelajarListLainnya');
   const sectionKantor = document.getElementById('sectionKantor');
   const sectionRumah = document.getElementById('sectionRumah');
+  const sectionLainnya = document.getElementById('sectionLainnya');
   const emptyState = document.getElementById('emptyState');
 
-  if (!containerKantor || !containerRumah) return;
+  if (!containerKantor || !containerRumah || !containerLainnya) return;
 
   updateStats(allStudents, students);
 
   const listKantor = students.filter(s => getStudentCategory(s) === 'kantor');
   const listRumah = students.filter(s => getStudentCategory(s) === 'rumah');
+  const listLainnya = students.filter(s => getStudentCategory(s) === 'lainnya');
 
   setText('badgeCountKantor', `${listKantor.length} Pelajar`);
   setText('badgeCountRumah', `${listRumah.length} Pelajar`);
+  setText('badgeCountLainnya', `${listLainnya.length} Pelajar`);
 
   if (activeCategory === 'kantor') {
     sectionKantor.classList.remove('hidden');
     sectionRumah.classList.add('hidden');
+    sectionLainnya.classList.add('hidden');
   } else if (activeCategory === 'rumah') {
     sectionKantor.classList.add('hidden');
     sectionRumah.classList.remove('hidden');
+    sectionLainnya.classList.add('hidden');
   } else {
     sectionKantor.classList.remove('hidden');
     sectionRumah.classList.remove('hidden');
+    sectionLainnya.classList.remove('hidden');
   }
 
-  containerKantor.innerHTML = listKantor.length 
-    ? listKantor.map(renderStudentCard).join('') 
+  containerKantor.innerHTML = listKantor.length
+    ? listKantor.map(renderStudentCard).join('')
     : `<p class="col-span-full py-8 text-center text-sm font-semibold text-slate-400">Tidak ada data murid privat kantor</p>`;
 
-  containerRumah.innerHTML = listRumah.length 
-    ? listRumah.map(renderStudentCard).join('') 
+  containerRumah.innerHTML = listRumah.length
+    ? listRumah.map(renderStudentCard).join('')
     : `<p class="col-span-full py-8 text-center text-sm font-semibold text-slate-400">Tidak ada data murid privat ke rumah</p>`;
+
+  containerLainnya.innerHTML = listLainnya.length
+    ? listLainnya.map(renderStudentCard).join('')
+    : `<p class="col-span-full py-8 text-center text-sm font-semibold text-slate-400">Tidak ada data pelajar reguler/sekolah</p>`;
 
   if (!students.length) {
     if (emptyState) emptyState.classList.remove('hidden');
@@ -862,20 +867,9 @@ async function loadPelajar() {
     setApiStatus('Loading...', 'loading');
     showSkeleton();
 
+    // Render hanya record yang dikembalikan Laravel API.
+    // Tidak menambahkan siswa contoh/fallback ke daftar.
     const data = await apiGetStudents();
-    const isKeandraExist = data.some(s => (s.name || s.nama || '').toLowerCase().includes('keandra'));
-    if (!isKeandraExist) {
-    data.push({
-      id: 999,
-      name: "Keandra",
-      school_name: "Private Class TECH-C",
-      kelas: "Private Class",
-      progress: 0,
-      status: "Aktif",
-      tipe_privat: "kantor"
-    });
-}
-    
     allStudents = data;
     applyFilter();
 
