@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Materi PDF | TECH-C Dashboard</title>
+  <meta name="theme-color" content="#1769ef">
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#15223a;background:#f5f8fd;font-synthesis:none;text-rendering:optimizeLegibility}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#edf8ff,#f6f5ff 45%,#f8fbff);min-height:100vh}.topbar{height:76px;background:#fff;border-bottom:1px solid #e3eaf6;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,4vw,48px);gap:16px;position:sticky;top:0;z-index:5}.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:45px;height:45px;border-radius:13px;object-fit:contain}.brand b{display:block;font-size:16px;letter-spacing:.02em}.brand b span{color:#1875ef}.brand small{display:block;color:#7890b0;font-size:10px;font-weight:800;letter-spacing:.12em;margin-top:3px}.top-actions{display:flex;align-items:center;gap:10px}.user-pill{font-size:12px;color:#667d9c;font-weight:800;background:#f2f6fd;border-radius:999px;padding:9px 13px}.btn{border:0;border-radius:12px;padding:11px 15px;font-weight:850;font-size:12px;cursor:pointer;transition:.16s}.btn:disabled{opacity:.55;cursor:not-allowed}.btn-primary{color:#fff;background:linear-gradient(120deg,#1769ef,#09b9cf);box-shadow:0 7px 18px #1769ef28}.btn-muted{color:#536987;background:#edf2f9}.btn-danger{color:#ba3348;background:#fff0f1}.btn:hover:not(:disabled){transform:translateY(-1px)}.wrap{width:min(1160px,calc(100% - 32px));margin:32px auto 70px}.page-intro{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin:0 0 24px}.eyebrow{color:#1676e7;text-transform:uppercase;font-size:10px;letter-spacing:.16em;font-weight:950}.page-intro h1{margin:8px 0 8px;font-size:clamp(27px,4vw,38px);letter-spacing:-.04em;line-height:1.1}.page-intro p{margin:0;color:#6c819f;font-size:14px;line-height:1.65;max-width:680px}.sync-badge{display:inline-flex;gap:8px;align-items:center;background:#e2f8ee;color:#15834d;border-radius:99px;padding:10px 13px;font-weight:900;font-size:11px;white-space:nowrap}.sync-badge i{width:7px;height:7px;border-radius:50%;background:#18b66a;box-shadow:0 0 0 4px #18b66a1e}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}.stat{padding:19px 20px;background:#fff;border:1px solid #e1eaf6;border-radius:20px;box-shadow:0 10px 32px #3258810b}.stat small{display:block;color:#8194ad;font-size:11px;font-weight:850}.stat strong{display:block;font-size:30px;margin-top:9px;letter-spacing:-.03em}.stat em{font-style:normal;color:#1880ee;font-size:11px;font-weight:850}.layout{display:grid;grid-template-columns: minmax(300px,.78fr) minmax(0,1.5fr);gap:20px;align-items:start}.panel{background:#fff;border:1px solid #e1eaf6;border-radius:22px;box-shadow:0 12px 36px #345e8b0c;overflow:hidden}.panel-head{padding:20px 22px;border-bottom:1px solid #edf1f7}.panel-head h2{font-size:17px;margin:0 0 7px}.panel-head p{font-size:12px;line-height:1.55;color:#7890ad;margin:0}.panel-body{padding:22px}.field{display:block;margin-bottom:16px}.field label{display:block;font-size:12px;font-weight:900;color:#405775;margin-bottom:7px}.field input,.field textarea,.field select{font:inherit;width:100%;border:1px solid #d6e2f2;background:#fbfdff;border-radius:12px;padding:12px 13px;outline:none;color:#1c2d48;font-size:13px}.field textarea{min-height:88px;resize:vertical;line-height:1.55}.field input:focus,.field textarea:focus,.field select:focus{border-color:#4291f4;box-shadow:0 0 0 3px #2887f31b}.upload-drop{border:1.5px dashed #a9c9ed;border-radius:15px;background:#f5faff;padding:17px;text-align:center;cursor:pointer}.upload-drop b{display:block;margin-bottom:5px;font-size:13px}.upload-drop span{font-size:11px;color:#7a8eaa}.upload-drop input{padding:9px;background:#fff;margin-top:12px;font-size:11px}.checkline{display:flex;align-items:center;gap:9px;color:#49617e;font-weight:800;font-size:12px;margin:5px 0 18px}.checkline input{accent-color:#1672ea;width:16px;height:16px}.hint{font-size:11px;color:#8394ac;line-height:1.6;margin:12px 0 0}.message{display:none;border-radius:12px;padding:11px 13px;margin:0 0 16px;font-size:12px;font-weight:800;line-height:1.5}.message.show{display:block}.message.error{background:#fff0f1;color:#b12b45}.message.success{background:#e7f9ef;color:#197d4c}.library-toolbar{display:flex;gap:10px;padding:15px 18px;border-bottom:1px solid #edf1f7}.library-toolbar input{flex:1;min-width:0;padding:10px 12px;border-radius:11px;border:1px solid #dce6f3;font:inherit;font-size:12px;outline:none}.library-toolbar select{padding:10px;border-radius:11px;border:1px solid #dce6f3;background:#fff;color:#536987;font:inherit;font-size:12px;font-weight:800}.list{padding:12px}.material-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:14px;padding:16px;border-bottom:1px solid #eef2f8}.material-row:last-child{border-bottom:0}.file-icon{width:46px;height:50px;border-radius:12px;background:linear-gradient(155deg,#e7f2ff,#f1f0ff);display:grid;place-items:center;font-size:23px}.material-info{min-width:0}.material-info h3{margin:0;font-size:14px;overflow-wrap:anywhere}.material-info p{font-size:11px;line-height:1.5;color:#7489a6;margin:5px 0 8px;overflow-wrap:anywhere}.meta{display:flex;flex-wrap:wrap;gap:6px}.tag{display:inline-flex;align-items:center;border-radius:99px;padding:5px 8px;background:#f0f4fa;color:#6a7f9c;font-size:10px;font-weight:900}.tag.published{background:#e1f8eb;color:#17834d}.tag.hidden{background:#fff3de;color:#a66b13}.row-actions{display:flex;flex-direction:column;gap:7px;min-width:118px}.row-actions .btn{padding:8px 10px;font-size:11px}.empty{padding:46px 18px;text-align:center;color:#8395ad}.empty span{display:block;font-size:33px;margin-bottom:10px}.empty b{display:block;color:#405775;margin-bottom:6px}.empty p{max-width:300px;margin:0 auto;font-size:12px;line-height:1.6}.footer-note{color:#91a1b6;font-size:10px;text-align:center;margin-top:20px}.login-cover{position:fixed;inset:0;z-index:20;background:#13264255;backdrop-filter:blur(7px);display:none;place-items:center;padding:20px}.login-cover.show{display:grid}.login-card{width:min(420px,100%);background:#fff;border-radius:24px;padding:28px;box-shadow:0 24px 90px #10234240}.login-card h2{font-size:24px;margin:12px 0 8px}.login-card>p{font-size:12px;color:#7b8da6;line-height:1.6;margin:0 0 22px}.login-card .field{margin-bottom:13px}.login-card .btn{width:100%;padding:14px}.small-link{background:none;border:0;color:#647e9e;font-size:11px;font-weight:800;text-decoration:underline;cursor:pointer;margin-top:12px;width:100%}.hide{display:none!important}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.page-intro{align-items:flex-start;flex-direction:column}.stats{gap:9px}.stat{padding:14px}.stat strong{font-size:25px}}
+    @media(max-width:560px){.topbar{height:auto;min-height:70px;padding:12px 14px;align-items:flex-start}.user-pill{display:none}.wrap{width:calc(100% - 22px);margin-top:22px}.stats{grid-template-columns:1fr}.stat{display:flex;align-items:center;justify-content:space-between}.stat strong{margin:0}.material-row{grid-template-columns:40px minmax(0,1fr)}.file-icon{width:40px;height:44px}.row-actions{grid-column:2;flex-direction:row;flex-wrap:wrap}.library-toolbar{flex-wrap:wrap}.library-toolbar input{flex-basis:100%}.top-actions .btn{padding:9px 10px}.brand-mark{width:38px;height:38px}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><img class="brand-mark" src="./techc-class-logo.png" alt="TECH-C" onerror="this.style.display='none'"><div><b>TECH-C <span>ROBOTIC CODING</span></b><small>DASHBOARD ADMINISTRATOR</small></div></div>
+    <div class="top-actions"><span id="currentAdmin" class="user-pill">Admin Dashboard</span><button id="refreshButton" class="btn btn-muted" type="button">↻ Refresh</button><button id="logoutButton" class="btn btn-muted" type="button">Keluar Materi</button></div>
+  </header>
+  <main class="wrap">
+    <section class="page-intro"><div><div class="eyebrow">LIBRARY MANAGEMENT</div><h1>Materi Pembelajaran</h1><p>Unggah PDF yang akan tersedia untuk TECH-C CLASS. Daftar di ruang guru dan aplikasi siswa diperbarui otomatis dari Laravel, tanpa perlu build ulang aplikasi.</p></div><span class="sync-badge"><i></i> Sinkronisasi otomatis</span></section>
+    <section class="stats"><div class="stat"><div><small>Total materi</small><em>Semua file di library</em></div><strong id="totalCount">—</strong></div><div class="stat"><div><small>Dipublikasikan</small><em>Tersedia untuk kelas</em></div><strong id="publishedCount">—</strong></div><div class="stat"><div><small>Draft / nonaktif</small><em>Belum tersedia untuk siswa</em></div><strong id="draftCount">—</strong></div></section>
+    <div class="layout">
+      <section class="panel">
+        <div class="panel-head"><h2>＋ Tambah materi PDF</h2><p>Unggah satu PDF untuk menambah materi ke library. Setelah dipublikasikan, guru dapat memilihnya pada room TECH-C CLASS.</p></div>
+        <form id="uploadForm" class="panel-body">
+          <div id="uploadMessage" class="message"></div>
+          <div class="field"><label for="title">Nama materi *</label><input id="title" name="title" maxlength="160" required placeholder="Contoh: Pengenalan Sensor Ultrasonik"></div>
+          <div class="field"><label for="category">Kategori (opsional)</label><input id="category" name="category" maxlength="80" placeholder="Contoh: Robotik, Coding, STEM"></div>
+          <div class="field"><label for="description">Deskripsi (opsional)</label><textarea id="description" name="description" maxlength="2000" placeholder="Tujuan belajar atau ringkasan materi"></textarea></div>
+          <div class="field"><label for="pdf">File PDF *</label><div class="upload-drop"><b>📄 Pilih file materi</b><span>PDF saja · Maksimal 50 MB</span><input id="pdf" name="pdf" type="file" accept="application/pdf,.pdf" required></div></div>
+          <label class="checkline"><input id="isPublished" name="is_published" type="checkbox" checked> Langsung publikasikan agar tersedia di aplikasi siswa</label>
+          <button id="uploadSubmit" class="btn btn-primary" type="submit">⬆ Unggah materi</button>
+          <p class="hint">File disimpan di storage Laravel, bukan di folder publik. Jangan unggah dokumen berisi data pribadi siswa.</p>
+        </form>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Daftar Materi</h2><p id="lastSync">Memuat materi dari Laravel…</p></div>
+        <div class="library-toolbar"><input id="search" type="search" placeholder="Cari judul atau kategori…"><select id="statusFilter"><option value="all">Semua status</option><option value="published">Dipublikasikan</option><option value="draft">Nonaktif</option></select></div>
+        <div id="materialsList" class="list"><div class="empty"><span>📚</span><b>Memuat materi…</b></div></div>
+      </section>
+    </div>
+    <div class="footer-note">TECH-C CLASS · Pengelolaan PDF dari Dashboard · daftar dan status diperbarui otomatis tiap 8 detik</div>
+  </main>
+
+  <div id="loginCover" class="login-cover"><form id="loginForm" class="login-card"><div class="eyebrow">AKSES ADMIN</div><h2>Login Pengelola Materi</h2><p>Gunakan akun admin Dashboard Tech-C. Password tidak diperlukan oleh siswa; form ini hanya untuk admin yang mengunggah dan mengelola PDF.</p><div id="loginMessage" class="message"></div><div class="field"><label for="adminEmail">Email admin</label><input id="adminEmail" type="email" autocomplete="username" required></div><div class="field"><label for="adminPassword">Password admin</label><input id="adminPassword" type="password" autocomplete="current-password" required></div><button id="loginSubmit" class="btn btn-primary" type="submit">Login dan kelola materi</button><button id="loginCancel" class="small-link" type="button">Kembali ke Dashboard</button></form></div>
+
+  <script>
+    const API = 'https://api.tech-c.my.id/api';
+    const TOKEN_KEY = 'tcMaterialsAdminToken';
+    const dashboardToken = localStorage.getItem('token');
+    const dashboardRole = localStorage.getItem('role');
+    if (!dashboardToken || dashboardRole !== 'admin') window.location.replace('./login.html');
+
+    let adminToken = localStorage.getItem(TOKEN_KEY) || '';
+    let materials = [];
+    let busy = false;
+    let pollHandle = null;
+
+    const $ = (id) => document.getElementById(id);
+    function escapeHtml(v) { return String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+    function sizeLabel(bytes) { const n=Number(bytes||0); if(n<1024) return `${n} B`; if(n<1024*1024) return `${(n/1024).toFixed(0)} KB`; return `${(n/1024/1024).toFixed(1)} MB`; }
+    function dateLabel(value) { if(!value) return '—'; const d=new Date(value); return Number.isNaN(d.getTime())?'—':d.toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'}); }
+    function message(id,text,type='error') { const el=$(id); el.className=`message show ${type}`; el.textContent=text; }
+    function clearMessage(id) { const el=$(id); el.className='message'; el.textContent=''; }
+    function showLogin(text='') { $('loginCover').classList.add('show'); if(text) message('loginMessage',text); else clearMessage('loginMessage'); $('adminEmail').value=localStorage.getItem('email')||''; $('adminPassword').focus(); }
+    function hideLogin() { $('loginCover').classList.remove('show'); clearMessage('loginMessage'); }
+
+    async function api(path, options={}) {
+      const headers = { Accept:'application/json', ...(options.headers||{}) };
+      if (adminToken) headers.Authorization = `Bearer ${adminToken}`;
+      if (options.body && !(options.body instanceof FormData)) headers['Content-Type']='application/json';
+      const res = await fetch(`${API}${path}`, { ...options, headers });
+      let data = {}; try { data = await res.json(); } catch (_) {}
+      if (res.status === 401 && path !== '/techc-class/admin/login') {
+        adminToken=''; localStorage.removeItem(TOKEN_KEY); showLogin('Sesi pengelola materi berakhir. Login ulang untuk melanjutkan.');
+      }
+      if (!res.ok) { const details = data?.errors ? Object.values(data.errors).flat().join(' ') : ''; throw new Error(details || data?.message || `HTTP ${res.status}`); }
+      return data;
+    }
+
+    async function signIn(email,password) {
+      const res = await fetch(`${API}/techc-class/admin/login`, { method:'POST', headers:{'Content-Type':'application/json',Accept:'application/json'}, body:JSON.stringify({email,password}) });
+      let data={}; try { data=await res.json(); } catch (_) {}
+      if(!res.ok) throw new Error(data.message || `Login gagal (${res.status})`);
+      if(!data.token) throw new Error('Server tidak mengembalikan token admin.');
+      adminToken=data.token; localStorage.setItem(TOKEN_KEY,adminToken); $('currentAdmin').textContent=data.user?.name || data.user?.email || 'Admin';
+      $('adminPassword').value=''; hideLogin();
+    }
+
+    async function loadMaterials({quiet=false}={}) {
+      if(!adminToken) { showLogin(); return; }
+      if(busy && quiet) return;
+      try {
+        if(!quiet) { $('lastSync').textContent='Memuat daftar dari Laravel…'; }
+        const data=await api('/techc-class/admin/materials');
+        materials=Array.isArray(data.materials)?data.materials:[];
+        $('totalCount').textContent=materials.length;
+        $('publishedCount').textContent=materials.filter(m=>m.is_published).length;
+        $('draftCount').textContent=materials.filter(m=>!m.is_published).length;
+        $('lastSync').textContent=`Sinkron ${new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'})} · auto refresh 8 detik`;
+        renderMaterials();
+      } catch(err) {
+        $('lastSync').textContent='Gagal memuat data';
+        if(!quiet) message('uploadMessage',err.message || 'Gagal memuat materi.');
+      }
+    }
+
+    function renderMaterials() {
+      const term=$('search').value.trim().toLocaleLowerCase('id-ID');
+      const status=$('statusFilter').value;
+      const filtered=materials.filter(m=>{
+        const target=`${m.title||''} ${m.category||''} ${m.description||''} ${m.original_name||''}`.toLocaleLowerCase('id-ID');
+        return (!term||target.includes(term)) && (status==='all'||(status==='published'?Boolean(m.is_published):!m.is_published));
+      });
+      if(!filtered.length) {
+        $('materialsList').innerHTML=`<div class="empty"><span>📚</span><b>${materials.length?'Materi tidak ditemukan':'Belum ada materi PDF'}</b><p>${materials.length?'Ubah kata pencarian atau filter status.':'Upload PDF pertama di formulir sebelah kiri. Setelah dipublikasikan, guru dapat memilihnya di aplikasi TECH-C CLASS.'}</p></div>`;
+        return;
+      }
+      $('materialsList').innerHTML=filtered.map(m=>`<article class="material-row">
+        <div class="file-icon">📄</div>
+        <div class="material-info"><h3>${escapeHtml(m.title)}</h3><p>${escapeHtml(m.description||m.original_name||'PDF pembelajaran')} · ${sizeLabel(m.file_size)} · ${dateLabel(m.created_at)}</p><div class="meta"><span class="tag ${m.is_published?'published':'hidden'}">${m.is_published?'● Dipublikasikan':'○ Nonaktif'}</span>${m.category?`<span class="tag">${escapeHtml(m.category)}</span>`:''}<span class="tag">ID ${escapeHtml(m.id)}</span></div></div>
+        <div class="row-actions"><button class="btn btn-muted" type="button" data-action="toggle" data-id="${escapeHtml(m.id)}">${m.is_published?'Nonaktifkan':'Publikasikan'}</button><button class="btn btn-danger" type="button" data-action="delete" data-id="${escapeHtml(m.id)}">Hapus PDF</button></div>
+      </article>`).join('');
+    }
+
+    $('loginForm').addEventListener('submit', async (e)=>{
+      e.preventDefault(); clearMessage('loginMessage'); $('loginSubmit').disabled=true;
+      try { await signIn($('adminEmail').value.trim(),$('adminPassword').value); await loadMaterials(); startPolling(); }
+      catch(err){ message('loginMessage',err.message || 'Login admin gagal.'); }
+      finally { $('loginSubmit').disabled=false; }
+    });
+    $('loginCancel').addEventListener('click',()=>{ window.location.href='./pelajar.html'; });
+    $('uploadForm').addEventListener('submit', async (e)=>{
+      e.preventDefault(); clearMessage('uploadMessage');
+      const file=$('pdf').files?.[0];
+      if(!file) return message('uploadMessage','Pilih file PDF terlebih dahulu.');
+      if(!(file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf'))) return message('uploadMessage','File harus berformat PDF.');
+      if(file.size>50*1024*1024) return message('uploadMessage','Ukuran PDF maksimal 50 MB.');
+      const form=new FormData(); form.append('title',$('title').value.trim()); form.append('category',$('category').value.trim()); form.append('description',$('description').value.trim()); form.append('is_published',$('isPublished').checked?'1':'0'); form.append('pdf',file);
+      $('uploadSubmit').disabled=true; $('uploadSubmit').textContent='Mengunggah PDF…';
+      try { const data=await api('/techc-class/admin/materials',{method:'POST',body:form}); $('uploadForm').reset(); $('isPublished').checked=true; message('uploadMessage',data.message||'Materi PDF berhasil ditambahkan.','success'); await loadMaterials(); }
+      catch(err){ message('uploadMessage',err.message||'Upload gagal.'); }
+      finally { $('uploadSubmit').disabled=false; $('uploadSubmit').textContent='⬆ Unggah materi'; }
+    });
+    $('materialsList').addEventListener('click', async (e)=>{
+      const btn=e.target.closest('button[data-action]'); if(!btn) return;
+      const item=materials.find(m=>String(m.id)===String(btn.dataset.id)); if(!item) return;
+      if(btn.dataset.action==='delete'&&!confirm(`Hapus materi "${item.title}"? PDF akan dihapus dari penyimpanan Laravel.`)) return;
+      btn.disabled=true;
+      try {
+        if(btn.dataset.action==='toggle') await api(`/techc-class/admin/materials/${encodeURIComponent(item.id)}`,{method:'PATCH',body:JSON.stringify({is_published:!item.is_published})});
+        else if(btn.dataset.action==='delete') await api(`/techc-class/admin/materials/${encodeURIComponent(item.id)}`,{method:'DELETE'});
+        await loadMaterials();
+      } catch(err) { alert(err.message||'Perubahan gagal.'); btn.disabled=false; }
+    });
+    $('search').addEventListener('input',renderMaterials);
+    $('statusFilter').addEventListener('change',renderMaterials);
+    $('refreshButton').addEventListener('click',()=>loadMaterials());
+    $('logoutButton').addEventListener('click',async()=>{
+      try { if(adminToken) await api('/techc-class/admin/logout',{method:'POST'}); } catch(_) {}
+      adminToken=''; localStorage.removeItem(TOKEN_KEY); showLogin('Login ulang untuk mengelola materi.');
+    });
+    function startPolling(){ if(pollHandle) clearInterval(pollHandle); pollHandle=setInterval(()=>loadMaterials({quiet:true}),8000); }
+
+    if(adminToken) {
+      api('/techc-class/admin/materials').then(data=>{
+        materials=Array.isArray(data.materials)?data.materials:[];
+        $('currentAdmin').textContent=localStorage.getItem('name')||'Admin Dashboard';
+        $('totalCount').textContent=materials.length;
+        $('publishedCount').textContent=materials.filter(m=>m.is_published).length;
+        $('draftCount').textContent=materials.filter(m=>!m.is_published).length;
+        $('lastSync').textContent='Terhubung ke Laravel'; renderMaterials(); startPolling();
+      }).catch(()=>{adminToken='';localStorage.removeItem(TOKEN_KEY);showLogin();});
+    } else {
+      $('currentAdmin').textContent=localStorage.getItem('name')||'Admin Dashboard';
+      showLogin();
+    }
+  </script>
+</body>
+</html>
