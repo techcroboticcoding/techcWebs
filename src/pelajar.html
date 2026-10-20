@@ -488,15 +488,24 @@ function getStudentName(student) {
 
 function getStudentPhoto(student) {
   const name = getStudentName(student);
+  const photoUrl = String(student.photo_url || student.photoUrl || '').trim();
+  const photo = String(student.photo || '').trim();
+  const id = String(student.id ?? '').trim();
+  const apiBase = String(API_BASE || 'https://api.tech-c.my.id/api').replace(/\/+$/, '');
+  const isHttpUrl = (value) => /^https?:\/\//i.test(value);
 
-  if (student.photo_url) return student.photo_url;
-  if (student.photo) {
-    if (String(student.photo).startsWith('http')) return student.photo;
-    return `https://api.tech-c.my.id/storage/${student.photo}`;
+  // Old deployments returned /storage/... URLs; use the Laravel photo endpoint instead.
+  // It reads from the public disk directly and does not depend on public/storage symlink.
+  if (photoUrl && isHttpUrl(photoUrl) && !/\/storage\//i.test(photoUrl)) return photoUrl;
+  if (photo && isHttpUrl(photo)) return photo;
+  if ((photo || photoUrl) && /^\d+$/.test(id)) {
+    return `${apiBase}/techc-class/students/${encodeURIComponent(id)}/photo`;
   }
+  if (photoUrl) return photoUrl;
   if (student.logo) {
-    if (String(student.logo).startsWith('http')) return student.logo;
-    return `https://api.tech-c.my.id/storage/${student.logo}`;
+    if (isHttpUrl(String(student.logo))) return String(student.logo);
+    const apiOrigin = apiBase.replace(/\/api\/?$/i, '');
+    return `${apiOrigin}/storage/${String(student.logo).replace(/^\/?storage\//i, '')}`;
   }
 
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true`;
@@ -658,7 +667,7 @@ function renderStudentCard(student) {
           type="button"
           class="mt-5 w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-950 dark:text-slate-300"
         >
-          Lihat Detail
+          Lihat Progres Materi
         </button>
       </div>
     </div>
@@ -937,20 +946,16 @@ async function loadPelajar() {
   }
 }
 
-// FUNGSI NAVIGASI: MEMBUKA FILE HTML SPESIFIK SESUAI NAMA ANAK
+// Buka halaman detail progres berdasarkan ID database, bukan membuat nama file seperti NamaSiswa.html.
 function pilihPelajar(namaLengkap, studentId) {
-  if (studentId) {
-    localStorage.setItem('student_id', studentId);
+  const id = String(studentId ?? '').trim();
+  if (!/^\d+$/.test(id)) {
+    alert('ID siswa tidak valid. Muat ulang daftar siswa lalu coba lagi.');
+    return;
   }
 
-  // Mengambil kata pertama nama anak (contoh: "Abi" -> "Abi", "Ahmad Rizki" -> "Ahmad")
-  const namaPanggilan = (namaLengkap || '').trim().split(' ')[0];
-
-  // Mengubah menjadi huruf awal kapital (Abi.html, Ulul.html, Charles.html)
-  const namaFile = namaPanggilan.charAt(0).toUpperCase() + namaPanggilan.slice(1).toLowerCase();
-
-  // Pindah halaman ke file HTML anak yang bersangkutan
-  window.location.href = `${namaFile}.html`;
+  localStorage.setItem('student_id', id);
+  window.location.href = `detail-pelajar.html?id=${encodeURIComponent(id)}`;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
