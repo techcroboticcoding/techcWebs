@@ -584,6 +584,7 @@ function renderStudentCard(student) {
   const id = student.id;
   const name = getStudentName(student);
   const photo = getStudentPhoto(student);
+  const safePhoto = escapeHtml(photo);
   const school = getStudentSchool(student);
   const kelas = getStudentClass(student);
   const status = getStudentStatus(student);
@@ -596,10 +597,7 @@ function renderStudentCard(student) {
 
   return `
     <div
-      onclick="lihatDetailPelajar(${Number(id) || 0})"
-      role="button"
-      tabindex="0"
-      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();lihatDetailPelajar(${Number(id) || 0})}"
+      onclick="pilihPelajar('${safeName}', ${id})"
       class="student-card group cursor-pointer overflow-hidden rounded-[1.7rem] border border-white/70 bg-white/90 shadow-xl shadow-slate-200/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/20"
     >
       <div class="relative h-24 bg-gradient-to-br from-blue-600 via-cyan-500 to-violet-500">
@@ -613,7 +611,7 @@ function renderStudentCard(student) {
       <div class="relative px-5 pb-5">
         <div class="-mt-12 flex justify-center">
           <img
-            src="${photo}"
+            src="${safePhoto}"
             onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&bold=true'"
             class="h-24 w-24 rounded-full border-4 border-white object-cover shadow-xl dark:border-slate-900"
             alt="${safeName}"
@@ -658,10 +656,9 @@ function renderStudentCard(student) {
 
         <button
           type="button"
-          onclick="event.stopPropagation(); lihatDetailPelajar(${Number(id) || 0})"
           class="mt-5 w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white dark:bg-slate-950 dark:text-slate-300"
         >
-          Lihat Progres Materi
+          Lihat Detail
         </button>
       </div>
     </div>
@@ -830,11 +827,39 @@ async function apiGetStudents() {
     throw new Error(data.message || `HTTP Error ${res.status}`);
   }
 
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data.data)) return data.data;
-  if (Array.isArray(data.students)) return data.students;
+  let students = [];
+  if (Array.isArray(data)) students = data;
+  else if (Array.isArray(data.data)) students = data.data;
+  else if (Array.isArray(data.students)) students = data.students;
 
-  return [];
+  // Merge photo fields from the narrow TECH-C CLASS directory endpoint too.
+  // The main Dashboard /students endpoint may omit optional fields in some versions.
+  try {
+    const photoRes = await fetch(`${API_BASE}/techc-class/students`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    if (photoRes.ok) {
+      const photoData = await photoRes.json();
+      const photoRows = Array.isArray(photoData)
+        ? photoData
+        : (Array.isArray(photoData.students) ? photoData.students : []);
+      const photoById = new Map(photoRows.map((row) => [String(row.id), row]));
+      students = students.map((student) => {
+        const profile = photoById.get(String(student.id));
+        if (!profile) return student;
+        return {
+          ...student,
+          photo: profile.photo || student.photo || '',
+          photo_url: profile.photo_url || student.photo_url || null
+        };
+      });
+    }
+  } catch (photoLookupError) {
+    console.debug('Foto siswa dari TECH-C CLASS directory belum tersedia:', photoLookupError);
+  }
+
+  return students;
 }
 
 async function loadHeaderUser() {
@@ -912,14 +937,20 @@ async function loadPelajar() {
   }
 }
 
-// Buka halaman detail secara dinamis berdasarkan ID siswa di database Laravel.
-function lihatDetailPelajar(studentId) {
-  const id = String(studentId ?? '').trim();
-  if (!/^\d+$/.test(id) || Number(id) <= 0) {
-    alert('ID siswa dari Laravel tidak valid. Tekan Refresh lalu coba lagi.');
-    return;
+// FUNGSI NAVIGASI: MEMBUKA FILE HTML SPESIFIK SESUAI NAMA ANAK
+function pilihPelajar(namaLengkap, studentId) {
+  if (studentId) {
+    localStorage.setItem('student_id', studentId);
   }
-  window.location.href = `detail-pelajar.html?id=${encodeURIComponent(id)}`;
+
+  // Mengambil kata pertama nama anak (contoh: "Abi" -> "Abi", "Ahmad Rizki" -> "Ahmad")
+  const namaPanggilan = (namaLengkap || '').trim().split(' ')[0];
+
+  // Mengubah menjadi huruf awal kapital (Abi.html, Ulul.html, Charles.html)
+  const namaFile = namaPanggilan.charAt(0).toUpperCase() + namaPanggilan.slice(1).toLowerCase();
+
+  // Pindah halaman ke file HTML anak yang bersangkutan
+  window.location.href = `${namaFile}.html`;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
