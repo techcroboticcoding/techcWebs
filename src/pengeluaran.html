@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengeluaran Operasional | TECH-C</title>
+  <style>
+    :root {
+      --blue: #3478f6;
+      --blue-dark: #205fe0;
+      --ink: #111a30;
+      --muted: #687b9b;
+      --line: #e4eaf3;
+      --surface: #ffffff;
+      --background: #f4f8fd;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--background);
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 250px;
+      flex: 0 0 250px;
+      background: #fff;
+      border-right: 1px solid #dfe6f0;
+      padding: 22px 16px;
+    }
+    .brand {
+      color: var(--blue);
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1;
+      margin: 2px 0 6px;
+    }
+    .brand small {
+      display: block;
+      font-size: 11px;
+      letter-spacing: .3px;
+      margin-left: 42px;
+      margin-top: 4px;
+    }
+    .nav { margin-top: 28px; }
+    .nav-label {
+      color: #93a1b8;
+      font-size: 11px;
+      letter-spacing: .5px;
+      margin: 25px 4px 10px;
+      text-transform: uppercase;
+    }
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #17233d;
+      padding: 12px 13px;
+      border-radius: 10px;
+      margin: 4px 0;
+      font-size: 14px;
+    }
+    .nav a.active {
+      color: var(--blue-dark);
+      background: #edf4ff;
+      font-weight: 700;
+    }
+    .nav .logout { color: #ff4054; margin-top: 15px; }
+    .main { min-width: 0; flex: 1; padding: 30px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--blue-dark);
+      background: #edf4ff;
+      border: 1px solid #d9e8ff;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #4bd69b; }
+    h1 { margin: 14px 0 7px; font-size: clamp(25px, 3vw, 35px); letter-spacing: -1.1px; }
+    .subtitle { margin: 0; color: var(--muted); line-height: 1.6; }
+    .admin-chip {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 15px;
+      white-space: nowrap;
+      color: #506482;
+      font-size: 13px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin: 25px 0;
+    }
+    .stat, .panel {
+      background: var(--surface);
+      border: 1px solid #edf1f7;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(35, 69, 120, .045);
+    }
+    .stat { padding: 20px; }
+    .stat-label { color: var(--muted); font-size: 13px; font-weight: 600; }
+    .stat-value { font-size: 27px; font-weight: 850; letter-spacing: -.8px; margin: 10px 0 5px; }
+    .stat-note { color: #8a9bb5; font-size: 12px; }
+    .panel { padding: 22px; margin-bottom: 20px; }
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    h2 { margin: 0; font-size: 18px; letter-spacing: -.3px; }
+    .panel-note { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 17px;
+    }
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field.full { grid-column: 1 / -1; }
+    label { font-size: 13px; color: #435674; font-weight: 650; }
+    input, select, textarea {
+      width: 100%;
+      font: inherit;
+      font-size: 14px;
+      color: var(--ink);
+      border: 1px solid #dce5f0;
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px 13px;
+      outline: none;
+    }
+    textarea { resize: vertical; min-height: 88px; }
+    .placeholder { color: #8b9ab0; }
+    .form-actions { display: flex; justify-content: flex-end; margin-top: 20px; }
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 17px;
+      font: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: default;
+    }
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-secondary { background: #edf3fb; color: #3f587b; }
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(150px, .8fr) minmax(150px, .8fr);
+      gap: 12px;
+      margin-bottom: 17px;
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 650px; }
+    th, td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #edf1f7; font-size: 13px; }
+    th { color: #71829d; font-size: 11px; text-transform: uppercase; letter-spacing: .45px; background: #f9fbfe; }
+    td { color: #40516e; }
+    .empty { text-align: center; padding: 30px 12px; color: #8a9bb5; }
+    .tag { display: inline-block; padding: 5px 9px; border-radius: 999px; background: #edf4ff; color: #2f68d7; font-size: 11px; font-weight: 700; }
+    .footer-note { text-align: center; color: #91a0b6; font-size: 12px; padding: 5px 0 15px; }
+    @media (max-width: 980px) {
+      .sidebar { width: 210px; flex-basis: 210px; }
+      .main { padding: 22px; }
+      .stats { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .app { display: block; }
+      .sidebar { width: 100%; padding: 15px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .brand { font-size: 24px; }
+      .nav { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 16px; }
+      .nav-label { width: 100%; margin: 12px 4px 3px; }
+      .nav a { padding: 9px 10px; margin: 0; }
+      .main { padding: 17px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .panel { padding: 16px; }
+      .panel-head { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body
+  x-data="{ page: 'pengeluaran', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+  x-init="darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false; $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+  :class="{'dark bg-slate-950': darkMode === true}"
+  class="bg-slate-50"
+>
+  <div class="app">
+    <include src="./partials/sidebar.html"></include>
+    <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
+      <include src="./partials/overlay.html"></include>
+      <include src="./partials/header.html"></include>
+    <main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> Admin Control Center</div>
+          <h1>Pengeluaran Operasional</h1>
+          <p class="subtitle">Kelola pencatatan biaya kantor dan kegiatan TECH-C dalam satu halaman.</p>
+        </div>
+        <div class="admin-chip">Mode: <strong>Admin</strong></div>
+      </header>
+
+      <section class="stats" aria-label="Ringkasan pengeluaran">
+        <article class="stat">
+          <div class="stat-label">Total Pengeluaran</div>
+          <div class="stat-value">Rp0</div>
+          <div class="stat-note">Akumulasi pada periode terpilih</div>
+        </article>
+        <article class="stat">
+          <div class="stat-label">Jumlah Transaksi</div>
+          <div class="stat-value">0</div>
+          <div class="stat-note">Transaksi tercatat</div>
+        </article>
+        <article class="stat">
+          <div class="stat-label">Anggaran Tersedia</div>
+          <div class="stat-value">—</div>
+          <div class="stat-note">Belum terhubung ke data anggaran</div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Form Pengeluaran</h2>
+            <div class="panel-note">Rancangan tampilan untuk input transaksi.</div>
+          </div>
+          <span class="tag">Mode desain</span>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="tanggal">Tanggal transaksi</label>
+            <input id="tanggal" type="date">
+          </div>
+          <div class="field">
+            <label for="kegiatan">Nama kegiatan</label>
+            <input id="kegiatan" type="text" placeholder="Contoh: Kegiatan lomba robotika">
+          </div>
+          <div class="field">
+            <label for="kategori">Kategori pengeluaran</label>
+            <select id="kategori">
+              <option value="">Pilih kategori</option>
+              <option>Konsumsi</option>
+              <option>Transportasi</option>
+              <option>Perlengkapan</option>
+              <option>Operasional kantor</option>
+              <option>Perawatan alat</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="nominal">Nominal (Rp)</label>
+            <input id="nominal" type="number" min="0" placeholder="Contoh: 250000">
+          </div>
+          <div class="field full">
+            <label for="keterangan">Keterangan</label>
+            <textarea id="keterangan" placeholder="Jelaskan tujuan atau rincian pengeluaran..."></textarea>
+          </div>
+          <div class="field full">
+            <label for="bukti">Bukti transaksi (opsional)</label>
+            <input id="bukti" type="file" accept="image/*,.pdf">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" type="button">+ Tambah Pengeluaran</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Riwayat Pengeluaran</h2>
+            <div class="panel-note">Tabel contoh untuk rancangan halaman.</div>
+          </div>
+          <button class="btn btn-secondary" type="button">Ekspor Laporan</button>
+        </div>
+        <div class="filters">
+          <input type="search" placeholder="Cari kegiatan atau keterangan..." aria-label="Cari transaksi">
+          <select aria-label="Filter kategori">
+            <option value="">Semua kategori</option>
+            <option>Konsumsi</option>
+            <option>Transportasi</option>
+            <option>Perlengkapan</option>
+            <option>Operasional kantor</option>
+            <option>Perawatan alat</option>
+            <option>Lainnya</option>
+          </select>
+          <input type="month" aria-label="Filter bulan">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Kegiatan</th>
+                <th>Kategori</th>
+                <th>Keterangan</th>
+                <th>Nominal</th>
+                <th>Bukti</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="6" class="empty">Belum ada data. Ini hanya tampilan HTML; transaksi belum disimpan.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <div class="footer-note">TECH-C Robotic And Coding · Pratinjau halaman Pengeluaran Operasional</div>
+    </main>
+    </div>
+  </div>
+
+<script src="./admin-profile-sync.js"></script>
+<script>
+const token = localStorage.getItem('token');
+const role = localStorage.getItem('role');
+if (!token) {
+  window.location.href = './login.html';
+} else if (role === 'siswa') {
+  window.location.href = './dashboardSiswa.html';
+} else if (role !== 'admin') {
+  localStorage.clear();
+  window.location.href = './login.html';
+}
+async function loadPartials() {
+  const includes = document.querySelectorAll('include');
+  for (const el of includes) {
+    const file = el.getAttribute('src');
+    try {
+      const res = await fetch(file);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      el.outerHTML = await res.text();
+    } catch (err) {
+      console.error('Gagal load partial:', file, err);
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadPartials();
+  if (window.syncAdminProfileHeader) await window.syncAdminProfileHeader();
+});
+</script>
+
+</body>
+</html>
