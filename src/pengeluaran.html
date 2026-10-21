@@ -197,18 +197,29 @@
     }
   </style>
 </head>
-<body
-  x-data="{ page: 'pengeluaran', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
-  x-init="darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false; $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
-  :class="{'dark bg-slate-950': darkMode === true}"
-  class="bg-slate-50"
->
+<body>
   <div class="app">
-    <include src="./partials/sidebar.html"></include>
-    <div id="pageScroller" class="relative flex min-h-0 flex-1 flex-col">
-      <include src="./partials/overlay.html"></include>
-      <include src="./partials/header.html"></include>
-    <main class="grid-bg relative min-h-screen overflow-visible p-4 pb-16 sm:p-6 sm:pb-16 lg:p-8 lg:pb-20">
+    <aside class="sidebar">
+      <div class="brand">◉ TECH-C<small>Robotic And Coding</small></div>
+      <nav class="nav" aria-label="Navigasi admin">
+        <a href="pengajar.html">Pengajar</a>
+        <a href="pelajaran.html">Pelajaran</a>
+        <a href="kirim-dokumentasi.html">Kirim Dokumentasi</a>
+        <div class="nav-label">Transaksi</div>
+        <a href="invoice.html">Invoice</a>
+        <a href="#" class="active" aria-current="page">▣ &nbsp; Pengeluaran</a>
+        <div class="nav-label">Management</div>
+        <a href="penggajian.html">Penggajian</a>
+        <div class="nav-label">Report</div>
+        <a href="laporan.html">Laporan</a>
+        <div class="nav-label">Akun</div>
+        <a href="profile-admin.html">Profile Admin</a>
+        <a href="absensi.html">◷ &nbsp; Absensi</a>
+        <a href="logout" class="logout">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main">
       <header class="topbar">
         <div>
           <div class="eyebrow"><span class="dot"></span> Admin Control Center</div>
@@ -326,39 +337,6 @@
       </section>
       <div class="footer-note">TECH-C Robotic And Coding · Pratinjau halaman Pengeluaran Operasional</div>
     </main>
-    </div>
   </div>
-
-<script src="./admin-profile-sync.js"></script>
-<script>
-const token = localStorage.getItem('token');
-const role = localStorage.getItem('role');
-if (!token) {
-  window.location.href = './login.html';
-} else if (role === 'siswa') {
-  window.location.href = './dashboardSiswa.html';
-} else if (role !== 'admin') {
-  localStorage.clear();
-  window.location.href = './login.html';
-}
-async function loadPartials() {
-  const includes = document.querySelectorAll('include');
-  for (const el of includes) {
-    const file = el.getAttribute('src');
-    try {
-      const res = await fetch(file);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      el.outerHTML = await res.text();
-    } catch (err) {
-      console.error('Gagal load partial:', file, err);
-    }
-  }
-}
-document.addEventListener('DOMContentLoaded', async () => {
-  await loadPartials();
-  if (window.syncAdminProfileHeader) await window.syncAdminProfileHeader();
-});
-</script>
-
 </body>
 </html>
