@@ -548,50 +548,83 @@
       return;
     }
 
-    // CSV kompatibel dengan Excel. Tidak membuat HTML bersarang di dalam script.
+    // Membuat workbook Excel XML (.xls) agar kolom dan format terbaca langsung.
     const total = transaksi.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
     const sisa = anggaran - total;
     const tanggalEkspor = new Date().toLocaleDateString("id-ID");
 
-    const dataLaporan = [
-      ["LAPORAN PENGELUARAN OPERASIONAL TECH-C"],
-      ["TECH-C Robotic And Coding"],
-      ["Tanggal ekspor", tanggalEkspor],
-      [],
-      ["RINGKASAN ANGGARAN"],
-      ["Total Anggaran (Rp)", anggaran],
-      ["Total Pengeluaran (Rp)", total],
-      ["Sisa Anggaran (Rp)", sisa],
-      ["Jumlah Transaksi", transaksi.length],
-      [],
-      ["No.", "Tanggal", "Nama Kegiatan", "Kategori", "Nominal (Rp)", "Keterangan", "Nama Bukti"],
-      ...[...transaksi]
-        .sort((a, b) => a.tanggal.localeCompare(b.tanggal))
-        .map((item, index) => [
-          index + 1,
-          item.tanggal,
-          item.kegiatan,
-          item.kategori,
-          Number(item.nominal) || 0,
-          item.keterangan || "-",
-          item.buktiNama || "-"
-        ])
-    ];
+    const xmlEscape = (value) => String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&apos;");
 
-    const csv = dataLaporan.map(row =>
-      row.map(value => {
-        const aman = String(value ?? "").replace(/"/g, '""');
-        return `"${aman}"`;
-      }).join(";")
-    ).join("\r\n");
+    const cell = (value, style = "Text") =>
+      `<Cell ss:StyleID="${style}"><Data ss:Type="String">${xmlEscape(value)}</Data></Cell>`;
+    const numberCell = (value, style = "Number") =>
+      `<Cell ss:StyleID="${style}"><Data ss:Type="Number">${Number(value) || 0}</Data></Cell>`;
+    const row = (cells) => `<Row>${cells.join("")}</Row>`;
 
-    const blob = new Blob(["\uFEFF" + csv], {
-      type: "text/csv;charset=utf-8;"
+    const sorted = [...transaksi].sort((a, b) => a.tanggal.localeCompare(b.tanggal));
+    const transactionRows = sorted.map((item, index) => row([
+      numberCell(index + 1, "Center"),
+      cell(item.tanggal, "Center"),
+      cell(item.kegiatan),
+      cell(item.kategori, "Center"),
+      numberCell(item.nominal, "Money"),
+      cell(item.keterangan || "-"),
+      cell(item.buktiNama || "-")
+    ])).join("");
+
+    const xml = `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal"><Alignment ss:Vertical="Center"/><Font ss:FontName="Calibri" ss:Size="10"/></Style>
+  <Style ss:ID="Title"><Alignment ss:Horizontal="Center" ss:Vertical="Center"/><Font ss:FontName="Calibri" ss:Size="16" ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#245FC7" ss:Pattern="Solid"/></Style>
+  <Style ss:ID="Subtitle"><Alignment ss:Horizontal="Center"/><Font ss:Italic="1" ss:Color="#53657F"/></Style>
+  <Style ss:ID="Section"><Font ss:Bold="1" ss:Color="#234F96"/><Interior ss:Color="#EAF1FC" ss:Pattern="Solid"/></Style>
+  <Style ss:ID="Label"><Font ss:Bold="1"/><Interior ss:Color="#F2F5FA" ss:Pattern="Solid"/></Style>
+  <Style ss:ID="Value"><Alignment ss:Horizontal="Right"/><NumberFormat ss:Format="#,##0"/></Style>
+  <Style ss:ID="Header"><Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#245FC7" ss:Pattern="Solid"/><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FFFFFF"/></Borders></Style>
+  <Style ss:ID="Text"><Alignment ss:Vertical="Top" ss:WrapText="1"/><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D7E0ED"/></Borders></Style>
+  <Style ss:ID="Center"><Alignment ss:Horizontal="Center" ss:Vertical="Center"/><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D7E0ED"/></Borders></Style>
+  <Style ss:ID="Number"><Alignment ss:Horizontal="Right"/><NumberFormat ss:Format="#,##0"/><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D7E0ED"/></Borders></Style>
+  <Style ss:ID="Money"><Alignment ss:Horizontal="Right"/><NumberFormat ss:Format:"Rp" #,##0"/><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D7E0ED"/></Borders></Style>
+  <Style ss:ID="TotalLabel"><Font ss:Bold="1" ss:Color="#234F96"/><Interior ss:Color="#EAF1FC" ss:Pattern="Solid"/></Style>
+  <Style ss:ID="TotalMoney"><Font ss:Bold="1" ss:Color="#234F96"/><Interior ss:Color="#EAF1FC" ss:Pattern="Solid"/><Alignment ss:Horizontal="Right"/><NumberFormat ss:Format="#,##0"/></Style>
+ </Styles>
+ <Worksheet ss:Name="Laporan Pengeluaran">
+  <Table>
+   <Column ss:Width="45"/><Column ss:Width="90"/><Column ss:Width="190"/><Column ss:Width="115"/><Column ss:Width="115"/><Column ss:Width="220"/><Column ss:Width="150"/>
+   <Row ss:Height="30">${cell("LAPORAN PENGELUARAN OPERASIONAL TECH-C", "Title")}<Cell ss:MergeAcross="6" ss:StyleID="Title"/></Row>
+   <Row><Cell ss:MergeAcross="6" ss:StyleID="Subtitle"><Data ss:Type="String">TECH-C Robotic And Coding</Data></Cell></Row>
+   <Row><Cell ss:MergeAcross="6" ss:StyleID="Subtitle"><Data ss:Type="String">Tanggal ekspor: ${xmlEscape(tanggalEkspor)}</Data></Cell></Row>
+   <Row/>
+   <Row><Cell ss:MergeAcross="6" ss:StyleID="Section"><Data ss:Type="String">RINGKASAN ANGGARAN</Data></Cell></Row>
+   ${row([cell("Total Anggaran (Rp)", "Label"), numberCell(anggaran, "Value"), cell("Total Pengeluaran (Rp)", "Label"), numberCell(total, "Value"), cell("Jumlah Transaksi", "Label"), numberCell(transaksi.length, "Value"), cell("")])}
+   ${row([cell("Sisa Anggaran (Rp)", "Label"), numberCell(sisa, "Value"), cell("Status Anggaran", "Label"), cell(anggaran > 0 ? (sisa < 0 ? "Melebihi anggaran" : "Dalam anggaran") : "Belum ditetapkan"), cell(""), cell(""), cell("")])}
+   <Row/>
+   <Row><Cell ss:MergeAcross="6" ss:StyleID="Section"><Data ss:Type="String">RINCIAN TRANSAKSI</Data></Cell></Row>
+   <Row ss:Height="28">${["No.", "Tanggal", "Nama Kegiatan", "Kategori", "Nominal (Rp)", "Keterangan", "Nama Bukti"].map(v => cell(v, "Header")).join("")}</Row>
+   ${transactionRows}
+   <Row ss:Height="24"><Cell ss:MergeAcross="3" ss:StyleID="TotalLabel"><Data ss:Type="String">TOTAL PENGELUARAN</Data></Cell>${numberCell(total, "TotalMoney")}<Cell ss:MergeAcross="1"/></Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel"><PageSetup><Layout x:Orientation="Landscape"/></PageSetup><Print><FitWidth>1</FitWidth><FitHeight>0</FitHeight></Print><FreezePanes/><FrozenNoSplit/><SplitHorizontal>10</SplitHorizontal><TopRowBottomPane>10</TopRowBottomPane><ActivePane>2</ActivePane></WorksheetOptions>
+ </Worksheet>
+</Workbook>`;
+
+    const blob = new Blob(["\uFEFF", xml], {
+      type: "application/vnd.ms-excel;charset=utf-8"
     });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "Laporan_Pengeluaran_TECH-C.csv";
+    link.download = "Laporan_Pengeluaran_TECH-C.xls";
     document.body.appendChild(link);
     link.click();
     link.remove();
