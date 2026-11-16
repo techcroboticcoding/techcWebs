@@ -511,7 +511,7 @@
     }
   }
 
-  $("simpanAnggaran").addEventListener("click", () => {
+  $("simpanAnggaran").addEventListener("click", () =>{
     const nilai = Number($("inputAnggaran").value);
     if (!Number.isFinite(nilai) || nilai <= 0) {
       alert("Masukkan nominal anggaran lebih besar dari 0.");
