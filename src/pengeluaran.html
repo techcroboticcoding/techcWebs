@@ -547,21 +547,55 @@
       alert("Belum ada data untuk diekspor.");
       return;
     }
-    const kolom = ["Tanggal", "Nama Kegiatan", "Kategori", "Nominal (Rp)", "Keterangan", "Nama Bukti"];
-    const baris = transaksi.map(item => [
-      item.tanggal, item.kegiatan, item.kategori, item.nominal,
-      item.keterangan || "", item.buktiNama || ""
-    ]);
-    const csv = [kolom, ...baris].map(row =>
-      row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(";")
+
+    // CSV kompatibel dengan Excel. Tidak membuat HTML bersarang di dalam script.
+    const total = transaksi.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
+    const sisa = anggaran - total;
+    const tanggalEkspor = new Date().toLocaleDateString("id-ID");
+
+    const dataLaporan = [
+      ["LAPORAN PENGELUARAN OPERASIONAL TECH-C"],
+      ["TECH-C Robotic And Coding"],
+      ["Tanggal ekspor", tanggalEkspor],
+      [],
+      ["RINGKASAN ANGGARAN"],
+      ["Total Anggaran (Rp)", anggaran],
+      ["Total Pengeluaran (Rp)", total],
+      ["Sisa Anggaran (Rp)", sisa],
+      ["Jumlah Transaksi", transaksi.length],
+      [],
+      ["No.", "Tanggal", "Nama Kegiatan", "Kategori", "Nominal (Rp)", "Keterangan", "Nama Bukti"],
+      ...[...transaksi]
+        .sort((a, b) => a.tanggal.localeCompare(b.tanggal))
+        .map((item, index) => [
+          index + 1,
+          item.tanggal,
+          item.kegiatan,
+          item.kategori,
+          Number(item.nominal) || 0,
+          item.keterangan || "-",
+          item.buktiNama || "-"
+        ])
+    ];
+
+    const csv = dataLaporan.map(row =>
+      row.map(value => {
+        const aman = String(value ?? "").replace(/"/g, '""');
+        return `"${aman}"`;
+      }).join(";")
     ).join("\r\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+
+    const blob = new Blob(["\uFEFF" + csv], {
+      type: "text/csv;charset=utf-8;"
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "laporan-pengeluaran-techc.csv";
+    link.download = "Laporan_Pengeluaran_TECH-C.csv";
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
   if (!$("tanggal").value) $("tanggal").value = new Date().toISOString().slice(0, 10);
