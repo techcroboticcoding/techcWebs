@@ -242,9 +242,30 @@
         </article>
         <article class="stat">
           <div class="stat-label">Anggaran Tersedia</div>
-          <div class="stat-value">—</div>
-          <div class="stat-note">Belum terhubung ke data anggaran</div>
+          <div class="stat-value" id="anggaranTersedia">Rp0</div>
+          <div class="stat-note" id="catatanAnggaran">Atur total anggaran di bawah</div>
         </article>
+      </section>
+
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Anggaran Pengeluaran</h2>
+            <div class="panel-note">Atur batas anggaran. Sisa anggaran dihitung otomatis dari total pengeluaran.</div>
+          </div>
+          <span class="tag">Tersimpan lokal</span>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="inputAnggaran">Total anggaran (Rp)</label>
+            <input id="inputAnggaran" type="number" min="0" step="1" placeholder="Contoh: 5000000">
+          </div>
+          <div class="field" style="justify-content:flex-end">
+            <button class="btn btn-primary" id="simpanAnggaran" type="button" style="cursor:pointer">Simpan Anggaran</button>
+          </div>
+        </div>
+        <div class="panel-note" id="statusAnggaran" aria-live="polite" style="margin-top:12px">Belum ada anggaran yang ditetapkan.</div>
       </section>
 
       <section class="panel">
@@ -344,8 +365,10 @@
 
   // Data hanya disimpan di browser ini, bukan dikirim ke server/database.
   const STORAGE_KEY = "techc_pengeluaran_lokal_v1";
+  const BUDGET_KEY = "techc_anggaran_lokal_v1";
   const $ = (id) => document.getElementById(id);
   let transaksi = [];
+  let anggaran = Number(localStorage.getItem(BUDGET_KEY) || 0);
 
   const rupiah = (angka) => new Intl.NumberFormat("id-ID", {
     style: "currency", currency: "IDR", maximumFractionDigits: 0
@@ -375,8 +398,20 @@
 
   function renderRingkasan() {
     const total = transaksi.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
+    const sisa = anggaran - total;
     $("totalPengeluaran").textContent = rupiah(total);
     $("jumlahTransaksi").textContent = transaksi.length;
+    $("anggaranTersedia").textContent = anggaran > 0 ? rupiah(sisa) : "Belum diatur";
+    $("catatanAnggaran").textContent = anggaran > 0
+      ? (sisa < 0 ? "Pengeluaran melebihi anggaran" : "Sisa anggaran")
+      : "Atur total anggaran di bawah";
+    $("statusAnggaran").textContent = anggaran > 0
+      ? `Anggaran ditetapkan: ${rupiah(anggaran)} · Terpakai: ${rupiah(total)} · Sisa: ${rupiah(sisa)}`
+      : "Belum ada anggaran yang ditetapkan.";
+    $("statusAnggaran").style.color = anggaran > 0 && sisa < 0 ? "#d33b4b" : "";
+    if (document.activeElement !== $("inputAnggaran")) {
+      $("inputAnggaran").value = anggaran > 0 ? anggaran : "";
+    }
   }
 
   function renderTabel() {
@@ -475,6 +510,19 @@
       tombol.textContent = "+ Tambah Pengeluaran";
     }
   }
+
+  $("simpanAnggaran").addEventListener("click", () => {
+    const nilai = Number($("inputAnggaran").value);
+    if (!Number.isFinite(nilai) || nilai <= 0) {
+      alert("Masukkan nominal anggaran lebih besar dari 0.");
+      $("inputAnggaran").focus();
+      return;
+    }
+    anggaran = nilai;
+    localStorage.setItem(BUDGET_KEY, String(anggaran));
+    renderRingkasan();
+    alert("Anggaran berhasil disimpan di browser ini.");
+  });
 
   $("tambahPengeluaran").addEventListener("click", tambahPengeluaran);
 
