@@ -242,30 +242,9 @@
         </article>
         <article class="stat">
           <div class="stat-label">Anggaran Tersedia</div>
-          <div class="stat-value" id="anggaranTersedia">Rp0</div>
-          <div class="stat-note" id="catatanAnggaran">Atur total anggaran di bawah</div>
+          <div class="stat-value">—</div>
+          <div class="stat-note">Belum terhubung ke data anggaran</div>
         </article>
-      </section>
-
-
-      <section class="panel">
-        <div class="panel-head">
-          <div>
-            <h2>Anggaran Pengeluaran</h2>
-            <div class="panel-note">Atur batas anggaran. Sisa anggaran dihitung otomatis dari total pengeluaran.</div>
-          </div>
-          <span class="tag">Tersimpan lokal</span>
-        </div>
-        <div class="form-grid">
-          <div class="field">
-            <label for="inputAnggaran">Total anggaran (Rp)</label>
-            <input id="inputAnggaran" type="number" min="0" step="1" placeholder="Contoh: 5000000">
-          </div>
-          <div class="field" style="justify-content:flex-end">
-            <button class="btn btn-primary" id="simpanAnggaran" type="button" style="cursor:pointer">Simpan Anggaran</button>
-          </div>
-        </div>
-        <div class="panel-note" id="statusAnggaran" aria-live="polite" style="margin-top:12px">Belum ada anggaran yang ditetapkan.</div>
       </section>
 
       <section class="panel">
@@ -365,10 +344,8 @@
 
   // Data hanya disimpan di browser ini, bukan dikirim ke server/database.
   const STORAGE_KEY = "techc_pengeluaran_lokal_v1";
-  const BUDGET_KEY = "techc_anggaran_lokal_v1";
   const $ = (id) => document.getElementById(id);
   let transaksi = [];
-  let anggaran = Number(localStorage.getItem(BUDGET_KEY) || 0);
 
   const rupiah = (angka) => new Intl.NumberFormat("id-ID", {
     style: "currency", currency: "IDR", maximumFractionDigits: 0
@@ -398,20 +375,8 @@
 
   function renderRingkasan() {
     const total = transaksi.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
-    const sisa = anggaran - total;
     $("totalPengeluaran").textContent = rupiah(total);
     $("jumlahTransaksi").textContent = transaksi.length;
-    $("anggaranTersedia").textContent = anggaran > 0 ? rupiah(sisa) : "Belum diatur";
-    $("catatanAnggaran").textContent = anggaran > 0
-      ? (sisa < 0 ? "Pengeluaran melebihi anggaran" : "Sisa anggaran")
-      : "Atur total anggaran di bawah";
-    $("statusAnggaran").textContent = anggaran > 0
-      ? `Anggaran ditetapkan: ${rupiah(anggaran)} · Terpakai: ${rupiah(total)} · Sisa: ${rupiah(sisa)}`
-      : "Belum ada anggaran yang ditetapkan.";
-    $("statusAnggaran").style.color = anggaran > 0 && sisa < 0 ? "#d33b4b" : "";
-    if (document.activeElement !== $("inputAnggaran")) {
-      $("inputAnggaran").value = anggaran > 0 ? anggaran : "";
-    }
   }
 
   function renderTabel() {
@@ -511,19 +476,6 @@
     }
   }
 
-  $("simpanAnggaran").addEventListener("click", () => {
-    const nilai = Number($("inputAnggaran").value);
-    if (!Number.isFinite(nilai) || nilai <= 0) {
-      alert("Masukkan nominal anggaran lebih besar dari 0.");
-      $("inputAnggaran").focus();
-      return;
-    }
-    anggaran = nilai;
-    localStorage.setItem(BUDGET_KEY, String(anggaran));
-    renderRingkasan();
-    alert("Anggaran berhasil disimpan di browser ini.");
-  });
-
   $("tambahPengeluaran").addEventListener("click", tambahPengeluaran);
 
   $("daftarPengeluaran").addEventListener("click", (event) => {
@@ -547,104 +499,21 @@
       alert("Belum ada data untuk diekspor.");
       return;
     }
-
-    const total = transaksi.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
-    const sisa = anggaran - total;
-    const tanggalEkspor = new Date().toLocaleDateString("id-ID", {
-      day: "2-digit", month: "long", year: "numeric"
-    });
-    const angkaExcel = (nilai) => Number(nilai) || 0;
-
-    const detailBaris = [...transaksi]
-      .sort((a, b) => String(a.tanggal).localeCompare(String(b.tanggal)))
-      .map((item, index) => `
-        <tr>
-          <td class="center">${index + 1}</td>
-          <td class="center">${escapeHTML(item.tanggal || "-")}</td>
-          <td>${escapeHTML(item.kegiatan || "-")}</td>
-          <td class="center">${escapeHTML(item.kategori || "-")}</td>
-          <td class="money">${angkaExcel(item.nominal)}</td>
-          <td>${escapeHTML(item.keterangan || "-")}</td>
-          <td>${escapeHTML(item.buktiNama || "-")}</td>
-        </tr>
-      `).join("");
-
-    const laporan = `
-      <html xmlns:o="urn:schemas-microsoft-com:office:office"
-            xmlns:x="urn:schemas-microsoft-com:office:excel"
-            xmlns="http://www.w3.org/TR/REC-html40">
-      <head>
-        <meta charset="UTF-8">
-        <style>
-          body { font-family: Arial, sans-serif; color: #26344d; }
-          table { border-collapse: collapse; width: 100%; }
-          td { border: 1px solid #d8e1ef; padding: 8px; vertical-align: top; }
-          .judul { background: #245fc7; color: #fff; font-size: 17pt; font-weight: bold; text-align: center; padding: 14px; }
-          .subjudul { color: #526782; text-align: center; border: 0; padding: 5px; }
-          .bagian { background: #eaf1fc; color: #24539c; font-weight: bold; padding: 9px; }
-          .label { background: #f3f6fb; font-weight: bold; }
-          .nilai { text-align: right; }
-          .header { background: #245fc7; color: #fff; font-weight: bold; text-align: center; }
-          .center { text-align: center; }
-          .money { text-align: right; mso-number-format: '"Rp" #,##0; }
-          .total-label { background: #eaf1fc; font-weight: bold; text-align: right; }
-          .total-money { background: #eaf1fc; font-weight: bold; text-align: right; mso-number-format: '"Rp" #,##0; }
-          .catatan { color: #71829d; font-size: 9pt; font-style: italic; border: 0; }
-        </style>
-      </head>
-      <body>
-        <table>
-          <tr><td colspan="7" class="judul">LAPORAN PENGELUARAN OPERASIONAL TECH-C</td></tr>
-          <tr><td colspan="7" class="subjudul">TECH-C Robotic And Coding</td></tr>
-          <tr><td colspan="7" class="subjudul">Tanggal ekspor: ${escapeHTML(tanggalEkspor)}</td></tr>
-          <tr><td colspan="7" style="border:0"></td></tr>
-          <tr><td colspan="7" class="bagian">RINGKASAN ANGGARAN</td></tr>
-          <tr>
-            <td colspan="2" class="label">Total Anggaran</td>
-            <td colspan="2" class="nilai money">${angkaExcel(anggaran)}</td>
-            <td colspan="2" class="label">Total Pengeluaran</td>
-            <td class="nilai money">${total}</td>
-          </tr>
-          <tr>
-            <td colspan="2" class="label">Sisa Anggaran</td>
-            <td colspan="2" class="nilai money">${sisa}</td>
-            <td colspan="2" class="label">Jumlah Transaksi</td>
-            <td class="center">${transaksi.length}</td>
-          </tr>
-          <tr><td colspan="7" style="border:0"></td></tr>
-          <tr><td colspan="7" class="bagian">RINCIAN TRANSAKSI</td></tr>
-          <tr>
-            <td class="header">No.</td>
-            <td class="header">Tanggal</td>
-            <td class="header">Nama Kegiatan</td>
-            <td class="header">Kategori</td>
-            <td class="header">Nominal (Rp)</td>
-            <td class="header">Keterangan</td>
-            <td class="header">Nama Bukti</td>
-          </tr>
-          ${detailBaris}
-          <tr>
-            <td colspan="4" class="total-label">TOTAL PENGELUARAN</td>
-            <td class="total-money">${total}</td>
-            <td colspan="2"></td>
-          </tr>
-          <tr><td colspan="7" class="catatan">Catatan: Data laporan berasal dari penyimpanan lokal browser dan tidak disimpan ke database.</td></tr>
-        </table>
-      </body>
-      </html>
-    `;
-
-    const blob = new Blob(["\\uFEFF" + laporan], {
-      type: "application/vnd.ms-excel;charset=utf-8;"
-    });
+    const kolom = ["Tanggal", "Nama Kegiatan", "Kategori", "Nominal (Rp)", "Keterangan", "Nama Bukti"];
+    const baris = transaksi.map(item => [
+      item.tanggal, item.kegiatan, item.kategori, item.nominal,
+      item.keterangan || "", item.buktiNama || ""
+    ]);
+    const csv = [kolom, ...baris].map(row =>
+      row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(";")
+    ).join("\r\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "Laporan_Pengeluaran_TECH-C.xls";
-    document.body.appendChild(link);
+    link.download = "laporan-pengeluaran-techc.csv";
     link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    URL.revokeObjectURL(url);
   });
 
   if (!$("tanggal").value) $("tanggal").value = new Date().toISOString().slice(0, 10);
