@@ -232,12 +232,12 @@
       <section class="stats" aria-label="Ringkasan pengeluaran">
         <article class="stat">
           <div class="stat-label">Total Pengeluaran</div>
-          <div class="stat-value">Rp0</div>
+          <div class="stat-value" id="totalPengeluaran">Rp0</div>
           <div class="stat-note">Akumulasi pada periode terpilih</div>
         </article>
         <article class="stat">
           <div class="stat-label">Jumlah Transaksi</div>
-          <div class="stat-value">0</div>
+          <div class="stat-value" id="jumlahTransaksi">0</div>
           <div class="stat-note">Transaksi tercatat</div>
         </article>
         <article class="stat">
@@ -251,22 +251,22 @@
         <div class="panel-head">
           <div>
             <h2>Form Pengeluaran</h2>
-            <div class="panel-note">Rancangan tampilan untuk input transaksi.</div>
+            <div class="panel-note">Isi transaksi, lalu data akan langsung muncul pada Riwayat Pengeluaran di bawah.</div>
           </div>
-          <span class="tag">Mode desain</span>
+          <span class="tag">Penyimpanan lokal</span>
         </div>
         <div class="form-grid">
           <div class="field">
             <label for="tanggal">Tanggal transaksi</label>
-            <input id="tanggal" type="date">
+            <input id="tanggal" type="date" required>
           </div>
           <div class="field">
             <label for="kegiatan">Nama kegiatan</label>
-            <input id="kegiatan" type="text" placeholder="Contoh: Kegiatan lomba robotika">
+            <input id="kegiatan" type="text" placeholder="Contoh: Kegiatan lomba robotika" required>
           </div>
           <div class="field">
             <label for="kategori">Kategori pengeluaran</label>
-            <select id="kategori">
+            <select id="kategori" required>
               <option value="">Pilih kategori</option>
               <option>Konsumsi</option>
               <option>Transportasi</option>
@@ -278,7 +278,7 @@
           </div>
           <div class="field">
             <label for="nominal">Nominal (Rp)</label>
-            <input id="nominal" type="number" min="0" placeholder="Contoh: 250000">
+            <input id="nominal" type="number" min="1" step="1" placeholder="Contoh: 250000" required>
           </div>
           <div class="field full">
             <label for="keterangan">Keterangan</label>
@@ -290,7 +290,7 @@
           </div>
         </div>
         <div class="form-actions">
-          <button class="btn btn-primary" type="button">+ Tambah Pengeluaran</button>
+          <button class="btn btn-primary" id="tambahPengeluaran" type="button" style="cursor:pointer">+ Tambah Pengeluaran</button>
         </div>
       </section>
 
@@ -300,11 +300,11 @@
             <h2>Riwayat Pengeluaran</h2>
             <div class="panel-note">Tabel contoh untuk rancangan halaman.</div>
           </div>
-          <button class="btn btn-secondary" type="button">Ekspor Laporan</button>
+          <button class="btn btn-secondary" id="eksporLaporan" type="button" style="cursor:pointer">Ekspor Laporan</button>
         </div>
         <div class="filters">
-          <input type="search" placeholder="Cari kegiatan atau keterangan..." aria-label="Cari transaksi">
-          <select aria-label="Filter kategori">
+          <input id="cariTransaksi" type="search" placeholder="Cari kegiatan atau keterangan..." aria-label="Cari transaksi">
+          <select id="filterKategori" aria-label="Filter kategori">
             <option value="">Semua kategori</option>
             <option>Konsumsi</option>
             <option>Transportasi</option>
@@ -313,7 +313,7 @@
             <option>Perawatan alat</option>
             <option>Lainnya</option>
           </select>
-          <input type="month" aria-label="Filter bulan">
+          <input id="filterBulan" type="month" aria-label="Filter bulan">
         </div>
         <div class="table-wrap">
           <table>
@@ -325,12 +325,11 @@
                 <th>Keterangan</th>
                 <th>Nominal</th>
                 <th>Bukti</th>
+                <th>Aksi</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td colspan="6" class="empty">Belum ada data. Ini hanya tampilan HTML; transaksi belum disimpan.</td>
-              </tr>
+            <tbody id="daftarPengeluaran">
+              <tr><td colspan="7" class="empty">Belum ada data pengeluaran.</td></tr>
             </tbody>
           </table>
         </div>
@@ -338,5 +337,190 @@
       <div class="footer-note">TECH-C Robotic And Coding · Pratinjau halaman Pengeluaran Operasional</div>
     </main>
   </div>
+
+<script>
+(() => {
+  "use strict";
+
+  // Data hanya disimpan di browser ini, bukan dikirim ke server/database.
+  const STORAGE_KEY = "techc_pengeluaran_lokal_v1";
+  const $ = (id) => document.getElementById(id);
+  let transaksi = [];
+
+  const rupiah = (angka) => new Intl.NumberFormat("id-ID", {
+    style: "currency", currency: "IDR", maximumFractionDigits: 0
+  }).format(Number(angka) || 0);
+
+  const escapeHTML = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[char]);
+
+  function simpanLokal() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(transaksi));
+    } catch (error) {
+      alert("Penyimpanan browser penuh. Coba gunakan bukti transaksi berukuran lebih kecil.");
+      throw error;
+    }
+  }
+
+  function muatLokal() {
+    try {
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      transaksi = Array.isArray(data) ? data : [];
+    } catch {
+      transaksi = [];
+    }
+  }
+
+  function renderRingkasan() {
+    const total = transaksi.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
+    $("totalPengeluaran").textContent = rupiah(total);
+    $("jumlahTransaksi").textContent = transaksi.length;
+  }
+
+  function renderTabel() {
+    const kataKunci = $("cariTransaksi").value.trim().toLowerCase();
+    const kategori = $("filterKategori").value;
+    const bulan = $("filterBulan").value;
+
+    const hasil = transaksi
+      .map((item, index) => ({ ...item, index }))
+      .filter(item => {
+        const cocokKata = !kataKunci ||
+          [item.kegiatan, item.keterangan, item.kategori].join(" ").toLowerCase().includes(kataKunci);
+        const cocokKategori = !kategori || item.kategori === kategori;
+        const cocokBulan = !bulan || item.tanggal.startsWith(bulan);
+        return cocokKata && cocokKategori && cocokBulan;
+      })
+      .sort((a, b) => b.tanggal.localeCompare(a.tanggal));
+
+    const tbody = $("daftarPengeluaran");
+    if (!hasil.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty">Tidak ada transaksi yang sesuai.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = hasil.map(item => `
+      <tr>
+        <td>${escapeHTML(item.tanggal)}</td>
+        <td>${escapeHTML(item.kegiatan)}</td>
+        <td><span class="tag">${escapeHTML(item.kategori)}</span></td>
+        <td>${escapeHTML(item.keterangan || "-")}</td>
+        <td><strong>${rupiah(item.nominal)}</strong></td>
+        <td>${item.buktiData
+          ? `<a href="${item.buktiData}" download="${escapeHTML(item.buktiNama || "bukti-transaksi")}" target="_blank" rel="noopener">Lihat bukti</a>`
+          : "-"}</td>
+        <td><button type="button" class="btn btn-secondary" data-hapus="${item.index}" style="cursor:pointer;padding:7px 10px">Hapus</button></td>
+      </tr>
+    `).join("");
+  }
+
+  function render() {
+    renderRingkasan();
+    renderTabel();
+  }
+
+  function bacaBukti(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) return resolve({ buktiData: "", buktiNama: "" });
+      if (file.size > 2 * 1024 * 1024) {
+        return reject(new Error("Ukuran bukti maksimal 2 MB agar dapat disimpan di browser."));
+      }
+      const reader = new FileReader();
+      reader.onload = () => resolve({ buktiData: reader.result, buktiNama: file.name });
+      reader.onerror = () => reject(new Error("File bukti tidak dapat dibaca."));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function tambahPengeluaran() {
+    const tanggal = $("tanggal").value;
+    const kegiatan = $("kegiatan").value.trim();
+    const kategori = $("kategori").value;
+    const nominal = Number($("nominal").value);
+    const keterangan = $("keterangan").value.trim();
+    const file = $("bukti").files[0];
+
+    if (!tanggal || !kegiatan || !kategori || !Number.isFinite(nominal) || nominal <= 0) {
+      alert("Lengkapi tanggal, nama kegiatan, kategori, dan nominal dengan benar.");
+      return;
+    }
+
+    const tombol = $("tambahPengeluaran");
+    tombol.disabled = true;
+    tombol.textContent = "Menyimpan...";
+
+    try {
+      const bukti = await bacaBukti(file);
+      transaksi.push({
+        id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()),
+        tanggal, kegiatan, kategori, nominal, keterangan,
+        ...bukti,
+        dibuatPada: new Date().toISOString()
+      });
+      simpanLokal();
+      $("tanggal").value = new Date().toISOString().slice(0, 10);
+      $("kegiatan").value = "";
+      $("kategori").value = "";
+      $("nominal").value = "";
+      $("keterangan").value = "";
+      $("bukti").value = "";
+      render();
+      alert("Pengeluaran berhasil ditambahkan ke Riwayat Pengeluaran.");
+    } catch (error) {
+      alert(error.message || "Pengeluaran gagal disimpan.");
+    } finally {
+      tombol.disabled = false;
+      tombol.textContent = "+ Tambah Pengeluaran";
+    }
+  }
+
+  $("tambahPengeluaran").addEventListener("click", tambahPengeluaran);
+
+  $("daftarPengeluaran").addEventListener("click", (event) => {
+    const tombol = event.target.closest("[data-hapus]");
+    if (!tombol) return;
+    const index = Number(tombol.dataset.hapus);
+    if (!Number.isInteger(index) || !transaksi[index]) return;
+    if (confirm("Hapus transaksi pengeluaran ini?")) {
+      transaksi.splice(index, 1);
+      simpanLokal();
+      render();
+    }
+  });
+
+  ["cariTransaksi", "filterKategori", "filterBulan"].forEach(id => {
+    $(id).addEventListener(id === "cariTransaksi" ? "input" : "change", renderTabel);
+  });
+
+  $("eksporLaporan").addEventListener("click", () => {
+    if (!transaksi.length) {
+      alert("Belum ada data untuk diekspor.");
+      return;
+    }
+    const kolom = ["Tanggal", "Nama Kegiatan", "Kategori", "Nominal (Rp)", "Keterangan", "Nama Bukti"];
+    const baris = transaksi.map(item => [
+      item.tanggal, item.kegiatan, item.kategori, item.nominal,
+      item.keterangan || "", item.buktiNama || ""
+    ]);
+    const csv = [kolom, ...baris].map(row =>
+      row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(";")
+    ).join("\r\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "laporan-pengeluaran-techc.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+
+  if (!$("tanggal").value) $("tanggal").value = new Date().toISOString().slice(0, 10);
+  muatLokal();
+  render();
+})();
+</script>
+
 </body>
 </html>
