@@ -547,21 +547,103 @@
       alert("Belum ada data untuk diekspor.");
       return;
     }
-    const kolom = ["Tanggal", "Nama Kegiatan", "Kategori", "Nominal (Rp)", "Keterangan", "Nama Bukti"];
-    const baris = transaksi.map(item => [
-      item.tanggal, item.kegiatan, item.kategori, item.nominal,
-      item.keterangan || "", item.buktiNama || ""
-    ]);
-    const csv = [kolom, ...baris].map(row =>
-      row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(";")
-    ).join("\r\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+
+    const total = transaksi.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
+    const sisa = anggaran - total;
+    const formatTanggal = new Date().toLocaleDateString("id-ID", {
+      day: "2-digit", month: "long", year: "numeric"
+    });
+
+    const escapeExcel = (value) => escapeHTML(value ?? "").replace(/\r?\n/g, "<br>");
+
+    const rows = [...transaksi]
+      .sort((a, b) => a.tanggal.localeCompare(b.tanggal))
+      .map((item, i) => `
+        <tr>
+          <td class="center">${i + 1}</td>
+          <td class="center">${escapeExcel(item.tanggal)}</td>
+          <td>${escapeExcel(item.kegiatan)}</td>
+          <td class="center">${escapeExcel(item.kategori)}</td>
+          <td class="money">${Number(item.nominal) || 0}</td>
+          <td>${escapeExcel(item.keterangan || "-")}</td>
+          <td>${escapeExcel(item.buktiNama || "-")}</td>
+        </tr>
+      `).join("");
+
+    const report = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: Arial, sans-serif; color: #24324a; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { border: 1px solid #d7e0ed; padding: 8px; vertical-align: top; }
+  .title { background: #245fc7; color: #fff; font-size: 18pt; font-weight: bold; text-align: center; padding: 14px; }
+  .subtitle { text-align: center; color: #53657f; border: 0; padding: 5px; }
+  .section { background: #eaf1fc; color: #234f96; font-weight: bold; }
+  .label { background: #f4f7fc; font-weight: bold; }
+  .value { text-align: right; }
+  .head { background: #245fc7; color: #fff; font-weight: bold; text-align: center; }
+  .center { text-align: center; }
+  .money { text-align: right; mso-number-format: "#,##0"; }
+  .total-label { background: #eaf1fc; font-weight: bold; text-align: right; }
+  .total-money { background: #eaf1fc; font-weight: bold; text-align: right; mso-number-format: "#,##0"; }
+  .note { color: #71829d; font-style: italic; border: 0; }
+</style>
+</head>
+<body>
+<table>
+  <tr><td colspan="7" class="title">LAPORAN PENGELUARAN OPERASIONAL TECH-C</td></tr>
+  <tr><td colspan="7" class="subtitle">TECH-C Robotic And Coding</td></tr>
+  <tr><td colspan="7" class="subtitle">Tanggal ekspor: ${escapeExcel(formatTanggal)}</td></tr>
+  <tr><td colspan="7"></td></tr>
+  <tr><td colspan="7" class="section">RINGKASAN ANGGARAN</td></tr>
+  <tr>
+    <td colspan="2" class="label">Total Anggaran (Rp)</td>
+    <td class="value money">${anggaran}</td>
+    <td class="label">Total Pengeluaran (Rp)</td>
+    <td class="value money">${total}</td>
+    <td class="label">Jumlah Transaksi</td>
+    <td class="value">${transaksi.length}</td>
+  </tr>
+  <tr>
+    <td colspan="2" class="label">Sisa Anggaran (Rp)</td>
+    <td class="value money">${sisa}</td>
+    <td colspan="4"></td>
+  </tr>
+  <tr><td colspan="7"></td></tr>
+  <tr><td colspan="7" class="section">RINCIAN TRANSAKSI</td></tr>
+  <tr>
+    <th class="head">No.</th>
+    <th class="head">Tanggal</th>
+    <th class="head">Nama Kegiatan</th>
+    <th class="head">Kategori</th>
+    <th class="head">Nominal (Rp)</th>
+    <th class="head">Keterangan</th>
+    <th class="head">Nama Bukti</th>
+  </tr>
+  ${rows}
+  <tr>
+    <td colspan="4" class="total-label">TOTAL PENGELUARAN</td>
+    <td class="total-money">${total}</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr><td colspan="7" class="note">Catatan: Data diambil dari penyimpanan lokal browser, bukan database.</td></tr>
+</table>
+</body>
+</html>`;
+
+    const blob = new Blob(["\uFEFF", report], {
+      type: "application/vnd.ms-excel;charset=utf-8"
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "laporan-pengeluaran-techc.csv";
+    link.download = "Laporan_Pengeluaran_TECH-C.xls";
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
   if (!$("tanggal").value) $("tanggal").value = new Date().toISOString().slice(0, 10);
