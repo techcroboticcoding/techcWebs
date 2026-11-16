@@ -542,27 +542,193 @@
     $(id).addEventListener(id === "cariTransaksi" ? "input" : "change", renderTabel);
   });
 
+
   $("eksporLaporan").addEventListener("click", () => {
-    if (!transaksi.length) {
-      alert("Belum ada data untuk diekspor.");
-      return;
-    }
-    const kolom = ["Tanggal", "Nama Kegiatan", "Kategori", "Nominal (Rp)", "Keterangan", "Nama Bukti"];
-    const baris = transaksi.map(item => [
-      item.tanggal, item.kegiatan, item.kategori, item.nominal,
-      item.keterangan || "", item.buktiNama || ""
-    ]);
-    const csv = [kolom, ...baris].map(row =>
-      row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(";")
-    ).join("\r\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "laporan-pengeluaran-techc.csv";
-    link.click();
-    URL.revokeObjectURL(url);
+      if (!transaksi.length) {
+          alert("Belum ada data untuk diekspor.");
+          return;
+      }
+
+      const urut = [...transaksi].sort((a, b) =>
+          a.tanggal.localeCompare(b.tanggal)
+      );
+
+      const total = urut.reduce(
+          (sum, item) => sum + Number(item.nominal || 0), 0
+      );
+
+      const sisa = anggaran - total;
+
+      const tanggalCetak = new Date().toLocaleDateString("id-ID");
+
+      const safe = (value) => escapeHTML(value ?? "");
+
+      const rows = urut.map((item, index) => `
+          <tr>
+              <td class="center">${index + 1}</td>
+              <td>${safe(item.tanggal)}</td>
+              <td>${safe(item.kegiatan)}</td>
+              <td>${safe(item.kategori)}</td>
+              <td class="number">${Number(item.nominal || 0)}</td>
+              <td>${safe(item.keterangan || "-")}</td>
+              <td>${safe(item.buktiNama || "-")}</td>
+          </tr>
+      `).join("");
+
+      const excelHTML = `
+      <!DOCTYPE html>
+      <html xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:x="urn:schemas-microsoft-com:office:excel"
+            xmlns="http://www.w3.org/TR/REC-html40">
+
+      <head>
+          <meta charset="UTF-8">
+          <style>
+              body {
+                  font-family: Calibri, Arial, sans-serif;
+                  color: #24324a;
+              }
+
+              table {
+                  border-collapse: collapse;
+                  width: 100%;
+              }
+
+              td, th {
+                  border: 1px solid #d7e0ec;
+                  padding: 8px;
+              }
+
+              .title {
+                  font-size: 18pt;
+                  font-weight: bold;
+                  color: #205fe0;
+                  border: none;
+              }
+
+              .subtitle {
+                  color: #687b9b;
+                  border: none;
+              }
+
+              .header th {
+                  background: #3478f6;
+                  color: white;
+                  font-weight: bold;
+                  text-align: center;
+              }
+
+              .summary-label {
+                  background: #edf4ff;
+                  font-weight: bold;
+              }
+
+              .number {
+                  text-align: right;
+                  mso-number-format: '\\0022Rp\\0022 #,##0';
+              }
+
+              .center {
+                  text-align: center;
+              }
+
+              .total {
+                  background: #e8f0ff;
+                  font-weight: bold;
+              }
+
+              .total-value {
+                  background: #e8f0ff;
+                  font-weight: bold;
+                  text-align: right;
+                  mso-number-format: '\\0022Rp\\0022 #,##0';
+              }
+          </style>
+      </head>
+
+      <body>
+          <table>
+              <tr>
+                  <td colspan="7" class="title">
+                      LAPORAN PENGELUARAN OPERASIONAL TECH-C
+                  </td>
+              </tr>
+
+              <tr>
+                  <td colspan="7" class="subtitle">
+                      Tanggal ekspor: ${safe(tanggalCetak)}
+                  </td>
+              </tr>
+
+              <tr><td colspan="7"></td></tr>
+
+              <tr>
+                  <td class="summary-label">Total Anggaran</td>
+                  <td class="number">${anggaran}</td>
+
+                  <td class="summary-label">Total Pengeluaran</td>
+                  <td class="number">${total}</td>
+
+                  <td class="summary-label">Sisa Anggaran</td>
+                  <td class="number">${anggaran > 0 ? sisa : 0}</td>
+
+                  <td class="summary-label">
+                      Jumlah Transaksi: ${urut.length}
+                  </td>
+              </tr>
+
+              <tr><td colspan="7"></td></tr>
+
+              <thead>
+                  <tr class="header">
+                      <th>No.</th>
+                      <th>Tanggal</th>
+                      <th>Nama Kegiatan</th>
+                      <th>Kategori</th>
+                      <th>Nominal (Rp)</th>
+                      <th>Keterangan</th>
+                      <th>Nama Bukti</th>
+                  </tr>
+              </thead>
+
+              <tbody>
+                  ${rows}
+              </tbody>
+
+              <tfoot>
+                  <tr>
+                      <td colspan="4" class="total">
+                          TOTAL PENGELUARAN
+                      </td>
+
+                      <td class="total-value">${total}</td>
+
+                      <td colspan="2" class="total"></td>
+                  </tr>
+              </tfoot>
+          </table>
+      </body>
+      </html>
+      `;
+
+      const blob = new Blob(
+          ["\uFEFF", excelHTML],
+          { type: "application/vnd.ms-excel;charset=utf-8;" }
+      );
+
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Laporan_Pengeluaran_TECH-C.xls";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
+
 
   if (!$("tanggal").value) $("tanggal").value = new Date().toISOString().slice(0, 10);
   muatLokal();
