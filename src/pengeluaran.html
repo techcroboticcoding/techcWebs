@@ -730,7 +730,8 @@
   });
 
 
-  if (!$("tanggal").value) $("tanggal").value = new Date().toISOString().slice(0, 10);
+   if (!$("tanggal").value)
+      $("tanggal").value = new Date().toISOString().slice(0, 10);
   muatLokal();
   render();
 })();
