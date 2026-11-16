@@ -547,21 +547,115 @@
       alert("Belum ada data untuk diekspor.");
       return;
     }
-    const kolom = ["Tanggal", "Nama Kegiatan", "Kategori", "Nominal (Rp)", "Keterangan", "Nama Bukti"];
-    const baris = transaksi.map(item => [
-      item.tanggal, item.kegiatan, item.kategori, item.nominal,
-      item.keterangan || "", item.buktiNama || ""
-    ]);
-    const csv = [kolom, ...baris].map(row =>
-      row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(";")
-    ).join("\r\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+
+    const totalPengeluaran = transaksi.reduce(
+      (sum, item) => sum + Number(item.nominal || 0), 0
+    );
+    const sisaAnggaran = anggaran - totalPengeluaran;
+    const tanggalEkspor = new Date().toLocaleDateString("id-ID", {
+      day: "2-digit", month: "long", year: "numeric"
+    });
+
+    const formatAngka = (angka) =>
+      new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(Number(angka) || 0);
+
+    const barisTransaksi = [...transaksi]
+      .sort((a, b) => a.tanggal.localeCompare(b.tanggal))
+      .map((item, index) => `
+        <tr>
+          <td class="center">${index + 1}</td>
+          <td class="center">${escapeHTML(item.tanggal)}</td>
+          <td>${escapeHTML(item.kegiatan)}</td>
+          <td class="center">${escapeHTML(item.kategori)}</td>
+          <td class="number">${formatAngka(item.nominal)}</td>
+          <td>${escapeHTML(item.keterangan || "-")}</td>
+          <td>${escapeHTML(item.buktiNama || "-")}</td>
+        </tr>
+      `).join("");
+
+    const excelHTML = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:x="urn:schemas-microsoft-com:office:excel"
+            xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="UTF-8">
+        <!--[if gte mso 9]><xml>
+          <x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+            <x:Name>Laporan Pengeluaran</x:Name>
+            <x:WorksheetOptions><x:DisplayGridlines>False</x:DisplayGridlines></x:WorksheetOptions>
+          </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook>
+        </xml><![endif]-->
+        <style>
+          body { font-family: Arial, sans-serif; color: #24324a; }
+          table { border-collapse: collapse; width: 100%; }
+          .title { background: #245fc7; color: #ffffff; font-size: 18pt; font-weight: bold; text-align: center; padding: 14px; }
+          .subtitle { color: #53657f; font-size: 10pt; text-align: center; padding: 7px; }
+          .section { background: #eaf1fc; color: #234f96; font-weight: bold; padding: 8px; }
+          .summary-label { background: #f4f7fc; font-weight: bold; padding: 8px; border: 1px solid #d9e2f0; }
+          .summary-value { padding: 8px; border: 1px solid #d9e2f0; text-align: right; }
+          .header { background: #245fc7; color: #ffffff; font-weight: bold; text-align: center; padding: 9px; border: 1px solid #1c4fa8; }
+          td { padding: 8px; border: 1px solid #d9e2f0; vertical-align: top; }
+          .number { text-align: right; mso-number-format: '"Rp" #,##0; }
+          .center { text-align: center; }
+          .total-label { background: #eaf1fc; font-weight: bold; text-align: right; }
+          .total-value { background: #eaf1fc; font-weight: bold; text-align: right; mso-number-format: '"Rp" #,##0; }
+          .note { color: #71829d; font-size: 9pt; font-style: italic; }
+        </style>
+      </head>
+      <body>
+        <table>
+          <tr><td colspan="7" class="title">LAPORAN PENGELUARAN OPERASIONAL TECH-C</td></tr>
+          <tr><td colspan="7" class="subtitle">TECH-C Robotic And Coding</td></tr>
+          <tr><td colspan="7" class="subtitle">Tanggal ekspor: ${escapeHTML(tanggalEkspor)}</td></tr>
+          <tr><td colspan="7"></td></tr>
+          <tr><td colspan="7" class="section">RINGKASAN ANGGARAN</td></tr>
+          <tr>
+            <td colspan="2" class="summary-label">Total Anggaran</td>
+            <td colspan="2" class="summary-value number">${anggaran}</td>
+            <td colspan="2" class="summary-label">Total Pengeluaran</td>
+            <td class="summary-value number">${totalPengeluaran}</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="summary-label">Sisa Anggaran</td>
+            <td colspan="2" class="summary-value number">${sisaAnggaran}</td>
+            <td colspan="2" class="summary-label">Jumlah Transaksi</td>
+            <td class="summary-value center">${transaksi.length}</td>
+          </tr>
+          <tr><td colspan="7"></td></tr>
+          <tr><td colspan="7" class="section">RINCIAN TRANSAKSI</td></tr>
+          <tr>
+            <td class="header">No.</td>
+            <td class="header">Tanggal</td>
+            <td class="header">Nama Kegiatan</td>
+            <td class="header">Kategori</td>
+            <td class="header">Nominal (Rp)</td>
+            <td class="header">Keterangan</td>
+            <td class="header">Nama Bukti</td>
+          </tr>
+          ${barisTransaksi}
+          <tr>
+            <td colspan="4" class="total-label">TOTAL PENGELUARAN</td>
+            <td class="total-value">${totalPengeluaran}</td>
+            <td colspan="2"></td>
+          </tr>
+          <tr><td colspan="7"></td></tr>
+          <tr><td colspan="7" class="note">Catatan: Laporan ini dibuat secara otomatis dari data pengeluaran yang tersimpan pada browser.</td></tr>
+        </table>
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob(["\\uFEFF" + excelHTML], {
+      type: "application/vnd.ms-excel;charset=utf-8;"
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "laporan-pengeluaran-techc.csv";
+    link.download = "Laporan_Pengeluaran_TECH-C.xls";
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
   if (!$("tanggal").value) $("tanggal").value = new Date().toISOString().slice(0, 10);
