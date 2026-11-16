@@ -321,7 +321,7 @@
             <h2>Riwayat Pengeluaran</h2>
             <div class="panel-note">Tabel contoh untuk rancangan halaman.</div>
           </div>
-          <button class="btn btn-secondary" id="eksporLaporan" type="button" style="cursor:pointer">Ekspor Excel</button>
+          <button class="btn btn-secondary" id="eksporLaporan" type="button" style="cursor:pointer">Ekspor Laporan</button>
         </div>
         <div class="filters">
           <input id="cariTransaksi" type="search" placeholder="Cari kegiatan atau keterangan..." aria-label="Cari transaksi">
@@ -547,104 +547,21 @@
       alert("Belum ada data untuk diekspor.");
       return;
     }
-
-    // Ekspor sebagai file Excel-compatible (.xls) dengan kolom, judul,
-    // ringkasan anggaran, format mata uang, dan tabel yang rapi.
-    const urut = [...transaksi].sort((a, b) => a.tanggal.localeCompare(b.tanggal));
-    const total = urut.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
-    const sisa = anggaran - total;
-    const tanggalCetak = new Date().toLocaleDateString("id-ID", {
-      day: "2-digit", month: "long", year: "numeric"
-    });
-
-    const safe = (value) => escapeHTML(value ?? "");
-    const rows = urut.map((item, index) => `
-      <tr>
-        <td class="center">${index + 1}</td>
-        <td>${safe(item.tanggal)}</td>
-        <td>${safe(item.kegiatan)}</td>
-        <td>${safe(item.kategori)}</td>
-        <td class="number">${Number(item.nominal || 0)}</td>
-        <td>${safe(item.keterangan || "-")}</td>
-        <td>${safe(item.buktiNama || "-")}</td>
-      </tr>
-    `).join("");
-
-    const excelHTML = `
-      <!DOCTYPE html>
-      <html xmlns:o="urn:schemas-microsoft-com:office:office"
-            xmlns:x="urn:schemas-microsoft-com:office:excel"
-            xmlns="http://www.w3.org/TR/REC-html40">
-      <head>
-        <meta charset="UTF-8">
-        <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
-        <x:ExcelWorksheet><x:Name>Pengeluaran</x:Name><x:WorksheetOptions>
-        <x:DisplayGridlines/><x:FreezePanes/><x:FrozenNoSplit/>
-        <x:SplitHorizontal>5</x:SplitHorizontal><x:TopRowBottomPane>5</x:TopRowBottomPane>
-        </x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-        <style>
-          body { font-family: Calibri, Arial, sans-serif; color: #24324a; }
-          table { border-collapse: collapse; width: 100%; }
-          td, th { border: 1px solid #d7e0ec; padding: 8px; }
-          .title { font-size: 18pt; font-weight: bold; color: #205fe0; border: 0; }
-          .subtitle { color: #687b9b; border: 0; }
-          .summary-label { background: #edf4ff; font-weight: bold; }
-          .summary-value { font-weight: bold; }
-          .header th { background: #3478f6; color: #ffffff; font-weight: bold; text-align: center; }
-          tbody tr:nth-child(even) { background: #f4f8fd; }
-          .number { text-align: right; mso-number-format: '"Rp" #,##0'; }
-          .center { text-align: center; }
-          .total-label { background: #e8f0ff; font-weight: bold; }
-          .total-value { background: #e8f0ff; font-weight: bold; text-align: right; mso-number-format: '"Rp" #,##0'; }
-          .note { color: #687b9b; font-style: italic; border: 0; }
-        </style>
-      </head>
-      <body>
-        <table>
-          <tr><td colspan="7" class="title">LAPORAN PENGELUARAN OPERASIONAL TECH-C</td></tr>
-          <tr><td colspan="7" class="subtitle">Tanggal ekspor: ${safe(tanggalCetak)}</td></tr>
-          <tr><td colspan="7"></td></tr>
-          <tr>
-            <td class="summary-label">Total Anggaran</td>
-            <td class="summary-value number">${anggaran}</td>
-            <td class="summary-label">Total Pengeluaran</td>
-            <td class="summary-value number">${total}</td>
-            <td class="summary-label">Sisa Anggaran</td>
-            <td class="summary-value number">${anggaran > 0 ? sisa : 0}</td>
-            <td class="summary-label">Jumlah Transaksi: ${urut.length}</td>
-          </tr>
-          <tr><td colspan="7"></td></tr>
-          <thead>
-            <tr class="header">
-              <th>No.</th><th>Tanggal</th><th>Nama Kegiatan</th><th>Kategori</th>
-              <th>Nominal (Rp)</th><th>Keterangan</th><th>Nama Bukti</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-          <tfoot>
-            <tr>
-              <td colspan="4" class="total-label">TOTAL PENGELUARAN</td>
-              <td class="total-value">${total}</td>
-              <td colspan="2" class="total-label"></td>
-            </tr>
-          </tfoot>
-          <tr><td colspan="7" class="note">Catatan: File ini merupakan salinan laporan dari penyimpanan lokal browser.</td></tr>
-        </table>
-      </body>
-      </html>
-    `;
-
-    const blob = new Blob(["\uFEFF", excelHTML], {
-      type: "application/vnd.ms-excel;charset=utf-8;"
-    });
+    const kolom = ["Tanggal", "Nama Kegiatan", "Kategori", "Nominal (Rp)", "Keterangan", "Nama Bukti"];
+    const baris = transaksi.map(item => [
+      item.tanggal, item.kegiatan, item.kategori, item.nominal,
+      item.keterangan || "", item.buktiNama || ""
+    ]);
+    const csv = [kolom, ...baris].map(row =>
+      row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(";")
+    ).join("\r\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "Laporan_Pengeluaran_TECH-C.xls";
-    document.body.appendChild(link);
+    link.download = "laporan-pengeluaran-techc.csv";
     link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    URL.revokeObjectURL(url);
   });
 
   if (!$("tanggal").value) $("tanggal").value = new Date().toISOString().slice(0, 10);
